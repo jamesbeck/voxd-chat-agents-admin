@@ -6,6 +6,7 @@ import TableLink from "@/components/adminui/TableLink";
 import saGetInvoiceTableData from "@/actions/saGetInvoiceTableData";
 import { getPendingInvoiceSearchParams } from "@/lib/pendingInvoiceGrouping";
 import { format } from "date-fns";
+import CreateInvoiceFromPendingButton from "./createInvoiceFromPendingButton";
 
 const getInvoiceHref = (row: any) => {
   if (!row.isPlaceholder) {
@@ -146,6 +147,15 @@ export default function InvoicesTable() {
       columns={columns}
       actions={(row: any) => (
         <TableActions
+          custom={
+            row.isPlaceholder ? (
+              <CreateInvoiceFromPendingButton
+                fromPartnerId={row.fromPartnerId}
+                toOrganisationId={row.toOrganisationId}
+                toPartnerId={row.toPartnerId}
+              />
+            ) : undefined
+          }
           buttons={[
             {
               label: "View",

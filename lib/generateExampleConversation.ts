@@ -446,6 +446,8 @@ ${quote.otherNotes || "Not specified"}
 
         IMPORTANT: ONLY reference knowledge sources and integrations that are explicitly listed in the specification below. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The chatbot will only have access to the listed knowledge sources and integrations.
 
+        For example conversations, prefer to showcase the chatbot being helpful, capable and well-informed. When a user asks something that would reasonably be answerable using the listed knowledge sources or integrations, assume the chatbot can access enough relevant information to give a satisfactorily informative answer instead of saying it does not know. However, do not imply access to any knowledge, integration or capability that is not explicitly listed below.
+
         Here's the specification for the bot:
         ${context}
       `,

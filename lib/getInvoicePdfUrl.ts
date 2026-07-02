@@ -18,16 +18,18 @@ type InvoicePdfUrlParams =
       toPartnerId: string;
     };
 
+const coreBaseUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_CORE_BASE_URL || "https://core.voxd.ai";
+
 const getInvoicePdfUrl = (params: InvoicePdfUrlParams) => {
   const searchParams = new URLSearchParams();
 
   if (typeof params.invoiceId === "string") {
     searchParams.set("invoiceId", params.invoiceId);
-    return `/api/invoice/pdf?${searchParams.toString()}`;
+    return `${coreBaseUrl}/api/invoice/pdf?${searchParams.toString()}`;
   }
-
-  const previewBaseUrl =
-    process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
 
   searchParams.set("fromPartnerId", params.fromPartnerId);
 
@@ -39,7 +41,7 @@ const getInvoicePdfUrl = (params: InvoicePdfUrlParams) => {
     searchParams.set("toPartnerId", params.toPartnerId);
   }
 
-  return `${previewBaseUrl}/api/invoice/pdf?${searchParams.toString()}`;
+  return `${coreBaseUrl}/api/invoice/pdf?${searchParams.toString()}`;
 };
 
 export default getInvoicePdfUrl;

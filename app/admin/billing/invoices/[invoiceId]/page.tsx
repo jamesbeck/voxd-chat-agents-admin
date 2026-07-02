@@ -21,6 +21,7 @@ import { notFound } from "next/navigation";
 import InvoiceDetailsTab from "./invoiceDetailsTab";
 import InvoiceActions from "./invoiceActions";
 import InvoicePdfTab from "./invoicePdfTab";
+import CreateInvoiceFromPendingButton from "../createInvoiceFromPendingButton";
 import LineItemsTable from "../../line-items/lineItemsTable";
 
 const PENDING_INVOICE_ORGANISATION_ID_SQL =
@@ -156,6 +157,7 @@ export default async function Page({
     const isPartnerToPartnerInvoice = isPartnerToPartnerPendingInvoice({
       toPartnerId,
     });
+    const canEdit = await canMutateBillingRecords({ accessToken });
     const pdfUrl = toPartnerId
       ? getInvoicePdfUrl({ fromPartnerId, toPartnerId })
       : getInvoicePdfUrl({
@@ -194,6 +196,16 @@ export default async function Page({
               href: `/admin/billing/invoices/pending?${pendingQueryString}&tab=pdf`,
             },
           ]}
+          actions={
+            canEdit ? (
+              <CreateInvoiceFromPendingButton
+                fromPartnerId={fromPartnerId}
+                toOrganisationId={toOrganisationId}
+                toPartnerId={toPartnerId}
+                size="sm"
+              />
+            ) : undefined
+          }
         >
           <TabsContent value="details">
             <Container>
