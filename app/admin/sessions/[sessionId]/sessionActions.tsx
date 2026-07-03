@@ -187,6 +187,7 @@ export default function SessionActions({
         open={translateDialogOpen}
         onOpenChange={setTranslateDialogOpen}
         sessionId={sessionId}
+        messages={messages}
       />
 
       <RecordActions

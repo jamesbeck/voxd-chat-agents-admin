@@ -24,20 +24,47 @@ import { Spinner } from "@/components/ui/spinner";
 
 type TargetLanguage = "en";
 
+type TranslationMap = Record<string, string>;
+
+type SessionMessage = {
+  text?: string | null;
+  translations?: TranslationMap | null;
+};
+
+const LANGUAGE_LABELS: Record<TargetLanguage, string> = {
+  en: "English",
+};
+
 export default function TranslateSessionDialog({
   open,
   onOpenChange,
   sessionId,
+  messages,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sessionId: string;
+  messages: SessionMessage[];
 }) {
   const [targetLanguage, setTargetLanguage] = useState<TargetLanguage>("en");
   const [isTranslating, setIsTranslating] = useState(false);
   const router = useRouter();
 
+  const translatableMessages = messages.filter(
+    (message) => (message.text?.trim() ?? "") !== "",
+  );
+
+  const isAlreadyTranslated =
+    translatableMessages.length > 0 &&
+    translatableMessages.every(
+      (message) => !!message.translations?.[targetLanguage],
+    );
+
   const handleTranslate = async () => {
+    if (isAlreadyTranslated) {
+      return;
+    }
+
     setIsTranslating(true);
 
     const response = await saTranslateSession({
@@ -92,7 +119,10 @@ export default function TranslateSessionDialog({
               <SelectValue placeholder="Select a language" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="en" disabled={isAlreadyTranslated}>
+                {LANGUAGE_LABELS.en}
+                {isAlreadyTranslated ? " (already translated)" : ""}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -105,7 +135,10 @@ export default function TranslateSessionDialog({
           >
             Cancel
           </Button>
-          <Button onClick={handleTranslate} disabled={isTranslating}>
+          <Button
+            onClick={handleTranslate}
+            disabled={isTranslating || isAlreadyTranslated}
+          >
             {isTranslating ? <Spinner className="mr-2 h-4 w-4" /> : null}
             Translate
           </Button>
