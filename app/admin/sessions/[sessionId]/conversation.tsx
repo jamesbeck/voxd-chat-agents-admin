@@ -13,10 +13,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Bot, Clock, Cog, Coins, Type, Wrench } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import MessageActions from "./MessageActions";
 import ReactMarkdown from "react-markdown";
 import MessageAttachments from "./MessageAttachments";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import useSessionSSE from "@/hooks/useSessionSSE";
 
@@ -31,6 +38,12 @@ type Ticket = {
 
 type TicketsByMessage = {
   [messageId: string]: Ticket[];
+};
+
+type TranslationMap = Record<string, string>;
+
+const LANGUAGE_LABELS: Record<string, string> = {
+  en: "English",
 };
 
 export default function Conversation({
@@ -52,6 +65,7 @@ export default function Conversation({
 }) {
   const router = useRouter();
   const messages = useSessionSSE(sessionId, coreBaseUrl, initialMessages);
+  const [selectedLanguage, setSelectedLanguage] = useState("original");
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasInitiallyScrolled = useRef(false);
 
@@ -90,6 +104,24 @@ export default function Conversation({
     ? differenceInSeconds(new Date(), lastMessageFromUser.createdAt)
     : null;
 
+  const availableLanguages = Array.from(
+    new Set(
+      messages.flatMap((message) =>
+        Object.keys((message.translations as TranslationMap | null) ?? {}),
+      ),
+    ),
+  ).sort();
+
+  const showLanguageSelector = availableLanguages.length > 0;
+
+  const getDisplayText = (message: any) => {
+    if (selectedLanguage === "original") {
+      return message.text;
+    }
+
+    return message.translations?.[selectedLanguage] ?? message.text;
+  };
+
   return (
     <>
       {deletedByUser ? (
@@ -106,6 +138,24 @@ export default function Conversation({
             can resume the session using the button above, or reply manually
             using the form below.
           </p>
+        </div>
+      ) : null}
+      {showLanguageSelector ? (
+        <div className="mb-4 flex items-center justify-end gap-3">
+          <span className="text-sm text-muted-foreground">Show language</span>
+          <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+            <SelectTrigger className="w-[180px] bg-background">
+              <SelectValue placeholder="Original" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="original">Original</SelectItem>
+              {availableLanguages.map((language) => (
+                <SelectItem key={language} value={language}>
+                  {LANGUAGE_LABELS[language] || language.toUpperCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       ) : null}
       <div
@@ -153,7 +203,7 @@ export default function Conversation({
                   )}
 
                   <div className="text-sm">
-                    {message._streaming && !message.text ? (
+                    {message._streaming && !getDisplayText(message) ? (
                       <div className="flex items-center gap-1 py-2 px-1">
                         <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:0ms]" />
                         <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:150ms]" />
@@ -213,7 +263,7 @@ export default function Conversation({
                           ),
                         }}
                       >
-                        {message.text}
+                        {getDisplayText(message)}
                       </ReactMarkdown>
                     )}
                   </div>

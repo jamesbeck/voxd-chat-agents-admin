@@ -135,12 +135,26 @@ export function getAdminAiLanguageModel({
   providerName: string;
   apiKey: string;
 }) {
+  return getAdminAiLanguageModelById({
+    providerName,
+    apiKey,
+    modelId: getAdminAiModelId({ providerName, taskType: "text" }),
+  });
+}
+
+export function getAdminAiLanguageModelById({
+  providerName,
+  apiKey,
+  modelId,
+}: {
+  providerName: string;
+  apiKey: string;
+  modelId: string;
+}) {
   const provider = resolveAdminAiProvider(providerName);
   const client = getAdminAiProviderClient({ provider, apiKey });
 
-  return client.languageModel(
-    getAdminAiModelId({ providerName, taskType: "text" }),
-  );
+  return client.languageModel(modelId);
 }
 
 export function getAdminAiEmbeddingModel({

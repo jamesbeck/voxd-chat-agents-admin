@@ -13,6 +13,7 @@ import {
   PauseIcon,
   PlayIcon,
   Trash2Icon,
+  LanguagesIcon,
   Wrench,
   XCircleIcon,
 } from "lucide-react";
@@ -32,6 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import TranslateSessionDialog from "./TranslateSessionDialog";
 
 type Ticket = {
   id: string;
@@ -64,6 +66,7 @@ export default function SessionActions({
   const [isResumingSession, setIsResumingSession] = useState(false);
   const [isEndingSession, setIsEndingSession] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [translateDialogOpen, setTranslateDialogOpen] = useState(false);
   const [runDialogOpen, setRunDialogOpen] = useState(false);
   const [selectedFunctionId, setSelectedFunctionId] = useState<string>();
   const router = useRouter();
@@ -180,6 +183,12 @@ export default function SessionActions({
         sessionId={sessionId}
       />
 
+      <TranslateSessionDialog
+        open={translateDialogOpen}
+        onOpenChange={setTranslateDialogOpen}
+        sessionId={sessionId}
+      />
+
       <RecordActions
         custom={
           <ButtonGroup>
@@ -281,6 +290,11 @@ export default function SessionActions({
                   label: "Copy Conversation",
                   icon: <CopyIcon />,
                   onSelect: copyConversation,
+                },
+                {
+                  label: "Translate Session",
+                  icon: <LanguagesIcon />,
+                  onSelect: () => setTranslateDialogOpen(true),
                 },
               ],
             },
