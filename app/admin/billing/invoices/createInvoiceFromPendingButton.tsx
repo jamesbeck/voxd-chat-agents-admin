@@ -8,14 +8,12 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function CreateInvoiceFromPendingButton({
-  fromPartnerId,
   toOrganisationId,
   toPartnerId,
   label = "Make Invoice",
   variant = "outline",
   size = "xs",
 }: {
-  fromPartnerId: string;
   toOrganisationId?: string | null;
   toPartnerId?: string | null;
   label?: string;
@@ -29,7 +27,6 @@ export default function CreateInvoiceFromPendingButton({
     setLoading(true);
 
     const response = await saCreateInvoiceFromPending({
-      fromPartnerId,
       toOrganisationId,
       toPartnerId,
     });

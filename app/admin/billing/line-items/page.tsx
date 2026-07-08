@@ -3,6 +3,7 @@ import Container from "@/components/adminui/Container";
 import H1 from "@/components/adminui/H1";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import { canAccessBillingPages } from "@/lib/billingAccess";
+import { getBillingLineItemFormOptions } from "@/lib/billingLineItemFormOptions";
 import { notFound } from "next/navigation";
 import LineItemsTable from "./lineItemsTable";
 
@@ -12,6 +13,9 @@ export default async function Page() {
   if (!(await canAccessBillingPages({ accessToken }))) {
     return notFound();
   }
+
+  const { agentOptions, organisationOptions, partnerOptions } =
+    await getBillingLineItemFormOptions({ accessToken });
 
   return (
     <Container>
@@ -23,7 +27,11 @@ export default async function Page() {
         ]}
       />
       <H1>Line Items</H1>
-      <LineItemsTable />
+      <LineItemsTable
+        agentOptions={agentOptions}
+        organisationOptions={organisationOptions}
+        partnerOptions={partnerOptions}
+      />
     </Container>
   );
 }

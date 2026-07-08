@@ -46,7 +46,6 @@ export default async function Page({
   params: { invoiceId: string };
   searchParams: {
     tab?: string;
-    fromPartnerId?: string;
     toOrganisationId?: string;
     toPartnerId?: string;
   };
@@ -67,11 +66,10 @@ export default async function Page({
   const isPendingInvoice = invoiceId === "pending";
 
   if (isPendingInvoice) {
-    const fromPartnerId = resolvedSearchParams.fromPartnerId;
     const toOrganisationId = resolvedSearchParams.toOrganisationId;
     const toPartnerId = resolvedSearchParams.toPartnerId;
 
-    if (!fromPartnerId || (!toOrganisationId && !toPartnerId)) {
+    if (!toOrganisationId && !toPartnerId) {
       return notFound();
     }
 
@@ -82,17 +80,11 @@ export default async function Page({
         "invoiceLineItem.toOrganisationId",
       )
       .leftJoin(
-        "organisation as fromPartnerOrganisation",
-        "fromPartnerOrganisation.id",
-        "invoiceLineItem.fromPartnerId",
-      )
-      .leftJoin(
         "organisation as toPartnerOrganisation",
         "toPartnerOrganisation.id",
         "invoiceLineItem.toPartnerId",
       )
-      .whereNull("invoiceLineItem.invoiceId")
-      .where("invoiceLineItem.fromPartnerId", fromPartnerId);
+      .whereNull("invoiceLineItem.invoiceId");
 
     if (toPartnerId) {
       pendingInvoiceQuery.where("invoiceLineItem.toPartnerId", toPartnerId);
@@ -111,22 +103,15 @@ export default async function Page({
 
     const pendingInvoice = await pendingInvoiceQuery
       .clone()
-      .groupBy(
-        "invoiceLineItem.fromPartnerId",
-        "invoiceLineItem.toPartnerId",
-        "fromPartnerOrganisation.name",
-        "toPartnerOrganisation.name",
-      )
+      .groupBy("invoiceLineItem.toPartnerId", "toPartnerOrganisation.name")
       .groupByRaw(PENDING_INVOICE_ORGANISATION_ID_SQL)
       .groupByRaw(PENDING_INVOICE_ORGANISATION_NAME_SQL)
       .select(
-        "invoiceLineItem.fromPartnerId",
         db.raw(`${PENDING_INVOICE_ORGANISATION_ID_SQL} as "toOrganisationId"`),
         "invoiceLineItem.toPartnerId",
         db.raw(
           `${PENDING_INVOICE_ORGANISATION_NAME_SQL} as "toOrganisationName"`,
         ),
-        "fromPartnerOrganisation.name as fromPartnerName",
         "toPartnerOrganisation.name as toPartnerName",
         db.raw('COUNT(*)::int as "lineItemCount"'),
         db.raw(
@@ -134,11 +119,9 @@ export default async function Page({
         ),
       )
       .first<{
-        fromPartnerId: string;
         toOrganisationId: string | null;
         toPartnerId: string | null;
         toOrganisationName: string | null;
-        fromPartnerName: string | null;
         toPartnerName: string | null;
         lineItemCount: number;
         totalExVat: number;
@@ -149,7 +132,6 @@ export default async function Page({
     }
 
     const pendingQueryString = getPendingInvoiceSearchParams({
-      fromPartnerId,
       toOrganisationId,
       toPartnerId,
     }).toString();
@@ -159,11 +141,8 @@ export default async function Page({
     });
     const canEdit = await canMutateBillingRecords({ accessToken });
     const pdfUrl = toPartnerId
-      ? getInvoicePdfUrl({ fromPartnerId, toPartnerId })
-      : getInvoicePdfUrl({
-          fromPartnerId,
-          toOrganisationId: toOrganisationId!,
-        });
+      ? getInvoicePdfUrl({ toPartnerId })
+      : getInvoicePdfUrl({ toOrganisationId: toOrganisationId! });
 
     return (
       <Container>
@@ -199,7 +178,6 @@ export default async function Page({
           actions={
             canEdit ? (
               <CreateInvoiceFromPendingButton
-                fromPartnerId={fromPartnerId}
                 toOrganisationId={toOrganisationId}
                 toPartnerId={toPartnerId}
                 size="sm"
@@ -214,12 +192,6 @@ export default async function Page({
                   {
                     label: "Status",
                     value: "Waiting to send",
-                  },
-                  {
-                    label: "From Partner",
-                    value:
-                      pendingInvoice.fromPartnerName ||
-                      pendingInvoice.fromPartnerId,
                   },
                   {
                     label: "To Organisation",
@@ -250,13 +222,12 @@ export default async function Page({
           <TabsContent value="lineItems">
             <Container>
               <LineItemsTable
-                fromPartnerId={fromPartnerId}
                 toOrganisationId={
                   isPartnerToPartnerInvoice ? undefined : toOrganisationId
                 }
                 toPartnerId={toPartnerId ?? null}
                 unsentOnly
-                tableId={`admin-billing-pending-invoice-${fromPartnerId}-${toPartnerId ? `partner-${toPartnerId}` : `organisation-${toOrganisationId}`}-line-items`}
+                tableId={`admin-billing-pending-invoice-${toPartnerId ? `partner-${toPartnerId}` : `organisation-${toOrganisationId}`}-line-items`}
               />
             </Container>
           </TabsContent>
@@ -281,11 +252,6 @@ export default async function Page({
       "invoice.toOrganisationId",
     )
     .leftJoin(
-      "organisation as fromPartnerOrganisation",
-      "fromPartnerOrganisation.id",
-      "invoice.fromPartnerId",
-    )
-    .leftJoin(
       "organisation as toPartnerOrganisation",
       "toPartnerOrganisation.id",
       "invoice.toPartnerId",
@@ -293,8 +259,10 @@ export default async function Page({
     .select(
       "invoice.*",
       "toOrganisation.name as toOrganisationName",
-      "fromPartnerOrganisation.name as fromPartnerName",
       "toPartnerOrganisation.name as toPartnerName",
+      db.raw(
+        'COALESCE("toOrganisation"."gcMandateId", "toPartnerOrganisation"."gcMandateId") IS NOT NULL as "hasGoCardlessMandate"',
+      ),
     )
     .where("invoice.id", invoiceId)
     .first();
@@ -342,6 +310,9 @@ export default async function Page({
             <InvoiceActions
               invoiceId={invoiceId}
               invoiceNumber={invoice.number}
+              hasGoCardlessPayment={!!invoice.gcPaymentID}
+              hasGoCardlessMandate={!!invoice.hasGoCardlessMandate}
+              hasInvoiceEmailSent={!!invoice.emailSentAt}
             />
           ) : undefined
         }

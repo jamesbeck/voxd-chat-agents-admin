@@ -27,7 +27,6 @@ const getOrganisationById = async ({
   vatNumber?: string | null;
   registeredAddress?: string | null;
   legalEmail?: string | null;
-  gcAccessToken?: string | null;
   goCardlessMandateLink?: string | null;
   salesEmail?: string | null;
   accountsEmail?: string | null;

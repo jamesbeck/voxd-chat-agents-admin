@@ -21,7 +21,6 @@ const SORT_FIELD_MAP: Record<string, string> = {
   agentName: 'COALESCE("agent"."niceName", "agent"."name")',
   invoiceNumber: '"invoice"."number"',
   toOrganisationName: '"toOrganisation"."name"',
-  fromPartnerName: '"fromPartnerOrganisation"."name"',
   toPartnerName: '"toPartnerOrganisation"."name"',
 };
 
@@ -32,13 +31,11 @@ const saGetInvoiceLineItemTableData = async ({
   sortField = "serviceFromDate",
   sortDirection = "desc",
   invoiceId,
-  fromPartnerId,
   toOrganisationId,
   toPartnerId,
   unsentOnly,
 }: ServerActionReadParams<{
   invoiceId?: string;
-  fromPartnerId?: string;
   toOrganisationId?: string;
   toPartnerId?: string | null;
   unsentOnly?: boolean;
@@ -58,11 +55,6 @@ const saGetInvoiceLineItemTableData = async ({
       "invoiceLineItem.toOrganisationId",
     )
     .leftJoin(
-      "organisation as fromPartnerOrganisation",
-      "fromPartnerOrganisation.id",
-      "invoiceLineItem.fromPartnerId",
-    )
-    .leftJoin(
       "organisation as toPartnerOrganisation",
       "toPartnerOrganisation.id",
       "invoiceLineItem.toPartnerId",
@@ -71,7 +63,6 @@ const saGetInvoiceLineItemTableData = async ({
       if (search) {
         qb.where("invoiceLineItem.description", "ilike", `%${search}%`)
           .orWhere("toOrganisation.name", "ilike", `%${search}%`)
-          .orWhere("fromPartnerOrganisation.name", "ilike", `%${search}%`)
           .orWhere("toPartnerOrganisation.name", "ilike", `%${search}%`)
           .orWhere("agent.name", "ilike", `%${search}%`)
           .orWhere("agent.niceName", "ilike", `%${search}%`);
@@ -85,10 +76,6 @@ const saGetInvoiceLineItemTableData = async ({
 
   if (invoiceId) {
     base.where("invoiceLineItem.invoiceId", invoiceId);
-  }
-
-  if (fromPartnerId) {
-    base.where("invoiceLineItem.fromPartnerId", fromPartnerId);
   }
 
   if (toOrganisationId) {
@@ -133,7 +120,6 @@ const saGetInvoiceLineItemTableData = async ({
       "agent.niceName as agentNiceName",
       "agent.organisationId as agentOrganisationId",
       "toOrganisation.name as toOrganisationName",
-      "fromPartnerOrganisation.name as fromPartnerName",
       "toPartnerOrganisation.name as toPartnerName",
     )
     .orderByRaw(

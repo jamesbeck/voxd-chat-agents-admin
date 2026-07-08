@@ -23,7 +23,6 @@ import EditPartnerDomainsForm from "./partnerSettings/EditPartnerDomainsForm";
 import EditPartnerPrototypingForm from "./partnerSettings/EditPartnerPrototypingForm";
 import EditPartnerSalesAgentForm from "./partnerSettings/EditPartnerSalesAgentForm";
 import EditPartnerPricingForm from "./partnerSettings/EditPartnerPricingForm";
-import EditPartnerGoCardlessForm from "./partnerSettings/EditPartnerGoCardlessForm";
 import EditPartnerContactLegalForm from "./partnerSettings/EditPartnerContactLegalForm";
 import { hasAdminUserPermission } from "@/lib/adminUserPermissions";
 import db from "@/database/db";
@@ -193,11 +192,6 @@ export default async function Page({
                         href: `/admin/organisations/${organisation.id}?tab=partnerPricing`,
                       },
                       {
-                        value: "partnerGoCardless",
-                        label: "GoCardless",
-                        href: `/admin/organisations/${organisation.id}?tab=partnerGoCardless`,
-                      },
-                      {
                         value: "partnerContactLegal",
                         label: "Contact & Legal",
                         href: `/admin/organisations/${organisation.id}?tab=partnerContactLegal`,
@@ -326,16 +320,6 @@ export default async function Page({
                     hourlyRate={organisation.hourlyRate}
                     monthlyBaseFee={organisation.monthlyBaseFee}
                     monthlyPerIntegration={organisation.monthlyPerIntegration}
-                  />
-                </Container>
-              </TabsContent>
-            ) : null}
-            {showPartnerTabs ? (
-              <TabsContent value="partnerGoCardless">
-                <Container>
-                  <EditPartnerGoCardlessForm
-                    partnerId={organisation.id}
-                    gcAccessToken={organisation.gcAccessToken ?? undefined}
                   />
                 </Container>
               </TabsContent>

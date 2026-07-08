@@ -10,6 +10,7 @@ import {
   userCanViewInvoiceLineItem,
 } from "@/lib/billingAccess";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
+import { getBillingLineItemFormOptions } from "@/lib/billingLineItemFormOptions";
 import { notFound } from "next/navigation";
 import LineItemDetailsTab from "./lineItemDetailsTab";
 import LineItemActions from "./lineItemActions";
@@ -44,11 +45,6 @@ export default async function Page({
       "invoiceLineItem.toOrganisationId",
     )
     .leftJoin(
-      "organisation as fromPartnerOrganisation",
-      "fromPartnerOrganisation.id",
-      "invoiceLineItem.fromPartnerId",
-    )
-    .leftJoin(
       "organisation as toPartnerOrganisation",
       "toPartnerOrganisation.id",
       "invoiceLineItem.toPartnerId",
@@ -59,7 +55,6 @@ export default async function Page({
       "agent.name as agentName",
       "agent.niceName as agentNiceName",
       "toOrganisation.name as toOrganisationName",
-      "fromPartnerOrganisation.name as fromPartnerName",
       "toPartnerOrganisation.name as toPartnerName",
     )
     .where("invoiceLineItem.id", lineItemId)
@@ -70,6 +65,8 @@ export default async function Page({
   }
 
   const canEdit = await canMutateBillingRecords({ accessToken });
+  const { agentOptions, organisationOptions, partnerOptions } =
+    await getBillingLineItemFormOptions({ accessToken });
 
   return (
     <Container>
@@ -103,7 +100,13 @@ export default async function Page({
       >
         <TabsContent value="details">
           <Container>
-            <LineItemDetailsTab lineItem={lineItem} canEdit={canEdit} />
+            <LineItemDetailsTab
+              lineItem={lineItem}
+              canEdit={canEdit}
+              agentOptions={agentOptions}
+              organisationOptions={organisationOptions}
+              partnerOptions={partnerOptions}
+            />
           </Container>
         </TabsContent>
       </RecordTabs>

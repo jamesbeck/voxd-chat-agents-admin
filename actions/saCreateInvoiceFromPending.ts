@@ -19,11 +19,9 @@ const addDays = (date: Date, days: number) => {
 const toDateString = (date: Date) => date.toISOString().slice(0, 10);
 
 const saCreateInvoiceFromPending = async ({
-  fromPartnerId,
   toOrganisationId,
   toPartnerId,
 }: {
-  fromPartnerId: string;
   toOrganisationId?: string | null;
   toPartnerId?: string | null;
 }): Promise<ServerActionResponse> => {
@@ -36,25 +34,10 @@ const saCreateInvoiceFromPending = async ({
     };
   }
 
-  if (!fromPartnerId) {
+  if (!toOrganisationId && !toPartnerId) {
     return {
       success: false,
-      error: "A billing partner is required",
-    };
-  }
-
-  if (toPartnerId) {
-    return {
-      success: false,
-      error:
-        "Partner-to-partner invoice creation is blocked until the invoice schema supports partner-only targets",
-    };
-  }
-
-  if (!toOrganisationId) {
-    return {
-      success: false,
-      error: "A destination organisation is required",
+      error: "A billing destination is required",
     };
   }
 
@@ -62,9 +45,17 @@ const saCreateInvoiceFromPending = async ({
     const data = await db.transaction(async (trx) => {
       const scopedPendingItemsQuery = trx("invoiceLineItem")
         .whereNull("invoiceLineItem.invoiceId")
-        .where("invoiceLineItem.fromPartnerId", fromPartnerId)
-        .where("invoiceLineItem.toOrganisationId", toOrganisationId)
-        .whereNull("invoiceLineItem.toPartnerId");
+        .modify((pendingQuery) => {
+          if (toPartnerId) {
+            pendingQuery.where("invoiceLineItem.toPartnerId", toPartnerId);
+          } else {
+            pendingQuery.where(
+              "invoiceLineItem.toOrganisationId",
+              toOrganisationId!,
+            );
+            pendingQuery.whereNull("invoiceLineItem.toPartnerId");
+          }
+        });
 
       await applyInvoiceLineItemReadScope({
         query: scopedPendingItemsQuery,
@@ -72,7 +63,7 @@ const saCreateInvoiceFromPending = async ({
         trx,
       });
 
-      const pendingItems = await scopedPendingItemsQuery
+      const pendingItems: Array<{ id: string }> = await scopedPendingItemsQuery
         .clone()
         .select("invoiceLineItem.id")
         .forUpdate();
@@ -92,9 +83,8 @@ const saCreateInvoiceFromPending = async ({
           number: invoiceNumber,
           invoiceDate: toDateString(invoiceDate),
           dueDate: toDateString(dueDate),
-          toOrganisationId,
-          fromPartnerId,
-          toPartnerId: null,
+          toOrganisationId: toPartnerId ? null : (toOrganisationId ?? null),
+          toPartnerId: toPartnerId ?? null,
         })
         .returning(["id", "number"]);
 
@@ -120,8 +110,8 @@ const saCreateInvoiceFromPending = async ({
       data: {
         invoiceId: data.id,
         number: data.number,
-        fromPartnerId,
-        toOrganisationId,
+        toOrganisationId: toPartnerId ? null : (toOrganisationId ?? null),
+        toPartnerId: toPartnerId ?? null,
         lineItemCount: data.lineItemCount,
         createdFromPending: true,
       },

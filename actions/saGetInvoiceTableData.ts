@@ -20,14 +20,14 @@ type InvoiceTableRow = {
   dueDate: string | Date | null;
   totalExVat: number;
   toOrganisationId: string | null;
-  fromPartnerId: string;
   toPartnerId: string | null;
   toOrganisationName: string | null;
-  fromPartnerName: string | null;
   toPartnerName: string | null;
   gcPaymentID: string | null;
   gcStatus: string | null;
   gcChargeDate: string | Date | null;
+  emailSentAt: string | Date | null;
+  hasGoCardlessMandate: boolean;
   sent: boolean;
   isPlaceholder: boolean;
 };
@@ -116,11 +116,6 @@ const saGetInvoiceTableData = async ({
       "invoice.toOrganisationId",
     )
     .leftJoin(
-      "organisation as fromPartnerOrganisation",
-      "fromPartnerOrganisation.id",
-      "invoice.fromPartnerId",
-    )
-    .leftJoin(
       "organisation as toPartnerOrganisation",
       "toPartnerOrganisation.id",
       "invoice.toPartnerId",
@@ -128,7 +123,6 @@ const saGetInvoiceTableData = async ({
     .where((qb) => {
       if (search) {
         qb.where("toOrganisation.name", "ilike", `%${search}%`)
-          .orWhere("fromPartnerOrganisation.name", "ilike", `%${search}%`)
           .orWhere("toPartnerOrganisation.name", "ilike", `%${search}%`)
           .orWhere("invoice.gcStatus", "ilike", `%${search}%`)
           .orWhere("invoice.gcPaymentID", "ilike", `%${search}%`);
@@ -150,8 +144,10 @@ const saGetInvoiceTableData = async ({
     .select(
       "invoice.*",
       "toOrganisation.name as toOrganisationName",
-      "fromPartnerOrganisation.name as fromPartnerName",
       "toPartnerOrganisation.name as toPartnerName",
+      db.raw(
+        'COALESCE("toOrganisation"."gcMandateId", "toPartnerOrganisation"."gcMandateId") IS NOT NULL as "hasGoCardlessMandate"',
+      ),
       db.raw(`(
         SELECT COALESCE(SUM("invoiceLineItem"."amount"), 0)::int
         FROM "invoiceLineItem"
@@ -174,11 +170,6 @@ const saGetInvoiceTableData = async ({
       "invoiceLineItem.toOrganisationId",
     )
     .leftJoin(
-      "organisation as fromPartnerOrganisation",
-      "fromPartnerOrganisation.id",
-      "invoiceLineItem.fromPartnerId",
-    )
-    .leftJoin(
       "organisation as toPartnerOrganisation",
       "toPartnerOrganisation.id",
       "invoiceLineItem.toPartnerId",
@@ -187,7 +178,6 @@ const saGetInvoiceTableData = async ({
     .where((qb) => {
       if (search) {
         qb.where("toOrganisation.name", "ilike", `%${search}%`)
-          .orWhere("fromPartnerOrganisation.name", "ilike", `%${search}%`)
           .orWhere("toPartnerOrganisation.name", "ilike", `%${search}%`)
           .orWhere("invoiceLineItem.description", "ilike", `%${search}%`);
       }
@@ -200,22 +190,15 @@ const saGetInvoiceTableData = async ({
 
   const pendingInvoices = await pendingInvoiceBase
     .clone()
-    .groupBy(
-      "invoiceLineItem.fromPartnerId",
-      "invoiceLineItem.toPartnerId",
-      "fromPartnerOrganisation.name",
-      "toPartnerOrganisation.name",
-    )
+    .groupBy("invoiceLineItem.toPartnerId", "toPartnerOrganisation.name")
     .groupByRaw(PENDING_INVOICE_ORGANISATION_ID_SQL)
     .groupByRaw(PENDING_INVOICE_ORGANISATION_NAME_SQL)
     .select(
-      "invoiceLineItem.fromPartnerId",
       db.raw(`${PENDING_INVOICE_ORGANISATION_ID_SQL} as "toOrganisationId"`),
       "invoiceLineItem.toPartnerId",
       db.raw(
         `${PENDING_INVOICE_ORGANISATION_NAME_SQL} as "toOrganisationName"`,
       ),
-      "fromPartnerOrganisation.name as fromPartnerName",
       "toPartnerOrganisation.name as toPartnerName",
       db.raw(
         'COALESCE(SUM("invoiceLineItem"."amount"), 0)::int as "totalExVat"',
@@ -224,7 +207,6 @@ const saGetInvoiceTableData = async ({
     .then((rows) =>
       rows.map<InvoiceTableRow>((row) => ({
         id: getPendingInvoiceId({
-          fromPartnerId: row.fromPartnerId,
           toOrganisationId: row.toOrganisationId,
           toPartnerId: row.toPartnerId,
         }),
@@ -233,14 +215,14 @@ const saGetInvoiceTableData = async ({
         dueDate: null,
         totalExVat: row.totalExVat ?? 0,
         toOrganisationId: row.toOrganisationId || null,
-        fromPartnerId: row.fromPartnerId,
         toPartnerId: row.toPartnerId || null,
         toOrganisationName: row.toOrganisationName || null,
-        fromPartnerName: row.fromPartnerName || null,
         toPartnerName: row.toPartnerName || null,
         gcPaymentID: null,
         gcStatus: null,
         gcChargeDate: null,
+        emailSentAt: null,
+        hasGoCardlessMandate: false,
         sent: false,
         isPlaceholder: true,
       })),

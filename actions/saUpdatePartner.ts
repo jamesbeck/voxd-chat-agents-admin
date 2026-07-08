@@ -21,7 +21,6 @@ const saUpdatePartner = async ({
   vatNumber,
   registeredAddress,
   legalEmail,
-  gcAccessToken,
   goCardlessMandateLink,
   salesEmail,
   accountsEmail,
@@ -48,7 +47,6 @@ const saUpdatePartner = async ({
   vatNumber?: string;
   registeredAddress?: string;
   legalEmail?: string;
-  gcAccessToken?: string;
   goCardlessMandateLink?: string;
   salesEmail?: string;
   accountsEmail?: string;
@@ -110,7 +108,6 @@ const saUpdatePartner = async ({
       vatNumber,
       registeredAddress,
       legalEmail,
-      gcAccessToken,
       goCardlessMandateLink,
       salesEmail,
       accountsEmail,

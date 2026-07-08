@@ -19,22 +19,51 @@ import {
 } from "@/components/ui/form";
 import saUpdateInvoice from "@/actions/saUpdateInvoice";
 
-const formSchema = z.object({
-  number: z.coerce.number().int(),
-  invoiceDate: z.string().min(1),
-  dueDate: z.string().min(1),
-  toOrganisationId: z.string().min(1),
-  fromPartnerId: z.string().min(1),
-  toPartnerId: z.string().optional(),
-  gcPaymentID: z.string().optional(),
-  gcStatus: z.string().optional(),
-  gcChargeDate: z.string().optional(),
-});
+const formSchema = z
+  .object({
+    number: z.coerce.number().int(),
+    invoiceDate: z.string().min(1),
+    dueDate: z.string().min(1),
+    toOrganisationId: z.string().optional(),
+    toPartnerId: z.string().optional(),
+    gcPaymentID: z.string().optional(),
+    gcStatus: z.string().optional(),
+    gcChargeDate: z.string().optional(),
+  })
+  .superRefine((values, ctx) => {
+    const hasToOrganisation = !!values.toOrganisationId?.trim();
+    const hasToPartner = !!values.toPartnerId?.trim();
+
+    if (hasToOrganisation === hasToPartner) {
+      const message =
+        "Select exactly one billing target: either to organisation or to partner.";
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message,
+        path: ["toOrganisationId"],
+      });
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message,
+        path: ["toPartnerId"],
+      });
+    }
+  });
 
 const formatDateInput = (value?: string | Date | null) => {
   if (!value) return "";
 
-  return new Date(value).toISOString().slice(0, 10);
+  if (value instanceof Date) {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  return value.slice(0, 10);
 };
 
 const formatDateTimeInput = (value?: string | Date | null) => {
@@ -63,8 +92,7 @@ export default function InvoiceDetailsTab({
       number: invoice.number,
       invoiceDate: formatDateInput(invoice.invoiceDate),
       dueDate: formatDateInput(invoice.dueDate),
-      toOrganisationId: invoice.toOrganisationId,
-      fromPartnerId: invoice.fromPartnerId,
+      toOrganisationId: invoice.toOrganisationId || "",
       toPartnerId: invoice.toPartnerId || "",
       gcPaymentID: invoice.gcPaymentID || "",
       gcStatus: invoice.gcStatus || "",
@@ -150,19 +178,6 @@ export default function InvoiceDetailsTab({
                 <FormLabel>Due Date</FormLabel>
                 <FormControl>
                   <Input type="date" disabled={!canEdit} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="fromPartnerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>From Partner ID</FormLabel>
-                <FormControl>
-                  <Input disabled={!canEdit} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

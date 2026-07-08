@@ -4,9 +4,11 @@ import db from "@/database/db";
 import { addLog } from "@/lib/addLog";
 import {
   canMutateBillingRecords,
-  userCanViewInvoiceLineItem,
+  userCanViewInvoice,
 } from "@/lib/billingAccess";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
+import userCanViewOrganisation from "@/lib/organisationAccess";
+import userCanViewAgent from "@/lib/userCanViewAgent";
 import { ServerActionResponse } from "@/types/types";
 
 const emptyToNull = (value?: string | null) => {
@@ -15,8 +17,7 @@ const emptyToNull = (value?: string | null) => {
   return trimmedValue === "" ? null : trimmedValue;
 };
 
-const saUpdateInvoiceLineItem = async ({
-  lineItemId,
+const saCreateInvoiceLineItem = async ({
   invoiceId,
   agentId,
   toOrganisationId,
@@ -28,7 +29,6 @@ const saUpdateInvoiceLineItem = async ({
   amount,
   VAT,
 }: {
-  lineItemId: string;
   invoiceId?: string;
   agentId: string;
   toOrganisationId?: string;
@@ -50,14 +50,14 @@ const saUpdateInvoiceLineItem = async ({
   if (!(await canMutateBillingRecords({ accessToken }))) {
     return {
       success: false,
-      error: "You do not have permission to update line items",
+      error: "You do not have permission to create line items",
     };
   }
 
-  if (!(await userCanViewInvoiceLineItem({ lineItemId, accessToken }))) {
+  if (!(await userCanViewAgent({ agentId, accessToken }))) {
     return {
       success: false,
-      error: "Line item not found",
+      error: "Agent not found",
     };
   }
 
@@ -69,22 +69,62 @@ const saUpdateInvoiceLineItem = async ({
     };
   }
 
-  await db("invoiceLineItem").where({ id: lineItemId }).update({
-    invoiceId: resolvedInvoiceId,
-    agentId,
-    toOrganisationId: resolvedToOrganisationId,
-    toPartnerId: resolvedToPartnerId,
-    serviceFromDate: resolvedServiceFromDate,
-    serviceToDate: resolvedServiceToDate,
-    quantity,
-    description,
-    amount,
-    VAT,
-  });
+  if (
+    resolvedToOrganisationId &&
+    !(await userCanViewOrganisation({
+      organisationId: resolvedToOrganisationId,
+      accessToken,
+    }))
+  ) {
+    return {
+      success: false,
+      error: "To organisation not found",
+    };
+  }
+
+  if (
+    resolvedToPartnerId &&
+    !(await userCanViewOrganisation({
+      organisationId: resolvedToPartnerId,
+      accessToken,
+    }))
+  ) {
+    return {
+      success: false,
+      error: "To partner not found",
+    };
+  }
+
+  if (
+    resolvedInvoiceId &&
+    !(await userCanViewInvoice({ invoiceId: resolvedInvoiceId, accessToken }))
+  ) {
+    return {
+      success: false,
+      error: "Invoice not found",
+    };
+  }
+
+  const createdLineItem = await db("invoiceLineItem")
+    .insert({
+      invoiceId: resolvedInvoiceId,
+      agentId,
+      toOrganisationId: resolvedToOrganisationId,
+      toPartnerId: resolvedToPartnerId,
+      serviceFromDate: resolvedServiceFromDate,
+      serviceToDate: resolvedServiceToDate,
+      quantity,
+      description,
+      amount,
+      VAT,
+    })
+    .returning(["id"]);
+
+  const lineItemId = createdLineItem[0]?.id;
 
   await addLog({
     adminUserId: accessToken.adminUserId,
-    event: "INVOICE_LINE_ITEM_UPDATED",
+    event: "INVOICE_LINE_ITEM_CREATED",
     data: {
       lineItemId,
       invoiceId: resolvedInvoiceId,
@@ -100,7 +140,10 @@ const saUpdateInvoiceLineItem = async ({
     },
   });
 
-  return { success: true };
+  return {
+    success: true,
+    data: { lineItemId },
+  };
 };
 
-export default saUpdateInvoiceLineItem;
+export default saCreateInvoiceLineItem;

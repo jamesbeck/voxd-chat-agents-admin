@@ -7,6 +7,8 @@ import saGetInvoiceTableData from "@/actions/saGetInvoiceTableData";
 import { getPendingInvoiceSearchParams } from "@/lib/pendingInvoiceGrouping";
 import { format } from "date-fns";
 import CreateInvoiceFromPendingButton from "./createInvoiceFromPendingButton";
+import SendInvoiceToGoCardlessButton from "./sendInvoiceToGoCardlessButton";
+import SendInvoiceEmailButton from "./sendInvoiceEmailButton";
 
 const getInvoiceHref = (row: any) => {
   if (!row.isPlaceholder) {
@@ -14,19 +16,23 @@ const getInvoiceHref = (row: any) => {
   }
 
   const params = getPendingInvoiceSearchParams({
-    fromPartnerId: row.fromPartnerId,
     toOrganisationId: row.toOrganisationId,
+    toPartnerId: row.toPartnerId,
   });
-
-  if (row.toPartnerId) {
-    params.set("toPartnerId", row.toPartnerId);
-  }
 
   return `/admin/billing/invoices/pending?${params.toString()}`;
 };
 
 const formatDate = (value: string | Date | null | undefined) => {
   if (!value) return "-";
+
+  if (typeof value === "string") {
+    const [year, month, day] = value.slice(0, 10).split("-").map(Number);
+
+    if (year && month && day) {
+      return format(new Date(year, month - 1, day), "dd/MM/yyyy");
+    }
+  }
 
   return format(new Date(value), "dd/MM/yyyy");
 };
@@ -79,16 +85,6 @@ export default function InvoicesTable() {
       name: "totalExVat",
       sort: true,
       format: (row: any) => formatMoney(row.totalExVat),
-    },
-    {
-      label: "From Partner",
-      name: "fromPartnerName",
-      sort: true,
-      format: (row: any) => (
-        <TableLink href={`/admin/organisations/${row.fromPartnerId}`}>
-          {row.fromPartnerName || "-"}
-        </TableLink>
-      ),
     },
     {
       label: "To Organisation",
@@ -150,11 +146,31 @@ export default function InvoicesTable() {
           custom={
             row.isPlaceholder ? (
               <CreateInvoiceFromPendingButton
-                fromPartnerId={row.fromPartnerId}
                 toOrganisationId={row.toOrganisationId}
                 toPartnerId={row.toPartnerId}
               />
-            ) : undefined
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <SendInvoiceEmailButton
+                  invoiceId={row.id}
+                  invoiceNumber={row.number}
+                  mode="real"
+                  isSent={!!row.emailSentAt}
+                />
+                <SendInvoiceEmailButton
+                  invoiceId={row.id}
+                  invoiceNumber={row.number}
+                  mode="test"
+                />
+                {row.hasGoCardlessMandate ? (
+                  <SendInvoiceToGoCardlessButton
+                    invoiceId={row.id}
+                    invoiceNumber={row.number}
+                    isSent={!!row.gcPaymentID}
+                  />
+                ) : null}
+              </div>
+            )
           }
           buttons={[
             {

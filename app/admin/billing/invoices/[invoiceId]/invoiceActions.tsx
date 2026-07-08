@@ -6,13 +6,21 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Trash2Icon } from "lucide-react";
+import SendInvoiceToGoCardlessButton from "../sendInvoiceToGoCardlessButton";
+import SendInvoiceEmailButton from "../sendInvoiceEmailButton";
 
 export default function InvoiceActions({
   invoiceId,
   invoiceNumber,
+  hasGoCardlessPayment,
+  hasGoCardlessMandate,
+  hasInvoiceEmailSent,
 }: {
   invoiceId: string;
   invoiceNumber: number;
+  hasGoCardlessPayment: boolean;
+  hasGoCardlessMandate: boolean;
+  hasInvoiceEmailSent: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -34,6 +42,31 @@ export default function InvoiceActions({
 
   return (
     <RecordActions
+      custom={
+        <div className="flex items-center gap-2">
+          <SendInvoiceEmailButton
+            invoiceId={invoiceId}
+            invoiceNumber={invoiceNumber}
+            mode="real"
+            isSent={hasInvoiceEmailSent}
+            size="sm"
+          />
+          <SendInvoiceEmailButton
+            invoiceId={invoiceId}
+            invoiceNumber={invoiceNumber}
+            mode="test"
+            size="sm"
+          />
+          {!hasGoCardlessMandate ? null : (
+            <SendInvoiceToGoCardlessButton
+              invoiceId={invoiceId}
+              invoiceNumber={invoiceNumber}
+              size="sm"
+              isSent={hasGoCardlessPayment}
+            />
+          )}
+        </div>
+      }
       dropdown={{
         loading,
         groups: [

@@ -21,7 +21,6 @@ const saUpdateInvoice = async ({
   invoiceDate,
   dueDate,
   toOrganisationId,
-  fromPartnerId,
   toPartnerId,
   gcPaymentID,
   gcStatus,
@@ -31,8 +30,7 @@ const saUpdateInvoice = async ({
   number: number;
   invoiceDate: string;
   dueDate: string;
-  toOrganisationId: string;
-  fromPartnerId: string;
+  toOrganisationId?: string;
   toPartnerId?: string;
   gcPaymentID?: string;
   gcStatus?: string;
@@ -60,8 +58,7 @@ const saUpdateInvoice = async ({
       number,
       invoiceDate,
       dueDate,
-      toOrganisationId,
-      fromPartnerId,
+      toOrganisationId: emptyToNull(toOrganisationId),
       toPartnerId: emptyToNull(toPartnerId),
       gcPaymentID: emptyToNull(gcPaymentID),
       gcStatus: emptyToNull(gcStatus),
@@ -76,8 +73,7 @@ const saUpdateInvoice = async ({
       number,
       invoiceDate,
       dueDate,
-      toOrganisationId,
-      fromPartnerId,
+      toOrganisationId: emptyToNull(toOrganisationId),
       toPartnerId: emptyToNull(toPartnerId),
       gcPaymentID: emptyToNull(gcPaymentID),
       gcStatus: emptyToNull(gcStatus),

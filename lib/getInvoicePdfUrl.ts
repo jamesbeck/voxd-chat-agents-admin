@@ -1,19 +1,16 @@
 type InvoicePdfUrlParams =
   | {
       invoiceId: string;
-      fromPartnerId?: never;
       toOrganisationId?: never;
       toPartnerId?: never;
     }
   | {
       invoiceId?: never;
-      fromPartnerId: string;
       toOrganisationId: string;
       toPartnerId?: never;
     }
   | {
       invoiceId?: never;
-      fromPartnerId: string;
       toOrganisationId?: never;
       toPartnerId: string;
     };
@@ -30,8 +27,6 @@ const getInvoicePdfUrl = (params: InvoicePdfUrlParams) => {
     searchParams.set("invoiceId", params.invoiceId);
     return `${coreBaseUrl}/api/invoice/pdf?${searchParams.toString()}`;
   }
-
-  searchParams.set("fromPartnerId", params.fromPartnerId);
 
   if (typeof params.toOrganisationId === "string") {
     searchParams.set("toOrganisationId", params.toOrganisationId);

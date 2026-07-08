@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
+import { XIcon } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -17,21 +18,49 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import saUpdateInvoiceLineItem from "@/actions/saUpdateInvoiceLineItem";
 
-const formSchema = z.object({
-  invoiceId: z.string().optional(),
-  agentId: z.string().min(1),
-  toOrganisationId: z.string().min(1),
-  fromPartnerId: z.string().min(1),
-  toPartnerId: z.string().optional(),
-  serviceFromDate: z.string().min(1),
-  serviceToDate: z.string().min(1),
-  quantity: z.string().min(1),
-  description: z.string().min(1),
-  amount: z.coerce.number().int(),
-  VAT: z.coerce.number().int(),
-});
+const formSchema = z
+  .object({
+    invoiceId: z.string().optional(),
+    agentId: z.string().min(1),
+    toOrganisationId: z.string().optional(),
+    toPartnerId: z.string().optional(),
+    serviceFromDate: z.string().optional(),
+    serviceToDate: z.string().optional(),
+    quantity: z.string().min(1),
+    description: z.string().min(1),
+    amount: z.coerce.number().int(),
+    VAT: z.coerce.number().int(),
+  })
+  .superRefine((values, ctx) => {
+    const hasToOrganisation = !!values.toOrganisationId?.trim();
+    const hasToPartner = !!values.toPartnerId?.trim();
+
+    if (hasToOrganisation === hasToPartner) {
+      const message =
+        "Select exactly one billing target: either to organisation or to partner.";
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message,
+        path: ["toOrganisationId"],
+      });
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message,
+        path: ["toPartnerId"],
+      });
+    }
+  });
 
 const formatDateInput = (value?: string | Date | null) => {
   if (!value) return "";
@@ -39,12 +68,20 @@ const formatDateInput = (value?: string | Date | null) => {
   return new Date(value).toISOString().slice(0, 10);
 };
 
+const nullableStringToEmpty = (value?: string | null) => value ?? "";
+
 export default function LineItemDetailsTab({
   lineItem,
   canEdit,
+  agentOptions,
+  organisationOptions,
+  partnerOptions,
 }: {
   lineItem: any;
   canEdit: boolean;
+  agentOptions: { value: string; label: string }[];
+  organisationOptions: { value: string; label: string }[];
+  partnerOptions: { value: string; label: string }[];
 }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -56,19 +93,30 @@ export default function LineItemDetailsTab({
   >({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      invoiceId: lineItem.invoiceId || "",
-      agentId: lineItem.agentId,
-      toOrganisationId: lineItem.toOrganisationId,
-      fromPartnerId: lineItem.fromPartnerId,
-      toPartnerId: lineItem.toPartnerId || "",
+      invoiceId: nullableStringToEmpty(lineItem.invoiceId),
+      agentId: nullableStringToEmpty(lineItem.agentId),
+      toOrganisationId: nullableStringToEmpty(lineItem.toOrganisationId),
+      toPartnerId: nullableStringToEmpty(lineItem.toPartnerId),
       serviceFromDate: formatDateInput(lineItem.serviceFromDate),
       serviceToDate: formatDateInput(lineItem.serviceToDate),
       quantity: String(lineItem.quantity),
-      description: lineItem.description,
+      description: nullableStringToEmpty(lineItem.description),
       amount: lineItem.amount,
       VAT: lineItem.VAT,
     },
   });
+
+  const selectToOrganisation = (value: string) => {
+    form.setValue("toPartnerId", "", { shouldValidate: false });
+    form.setValue("toOrganisationId", value, { shouldValidate: false });
+    void form.trigger(["toOrganisationId", "toPartnerId"]);
+  };
+
+  const selectToPartner = (value: string) => {
+    form.setValue("toOrganisationId", "", { shouldValidate: false });
+    form.setValue("toPartnerId", value, { shouldValidate: false });
+    void form.trigger(["toOrganisationId", "toPartnerId"]);
+  };
 
   async function onSubmit(values: z.output<typeof formSchema>) {
     setLoading(true);
@@ -126,10 +174,37 @@ export default function LineItemDetailsTab({
             name="agentId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Agent ID</FormLabel>
-                <FormControl>
-                  <Input disabled={!canEdit} {...field} />
-                </FormControl>
+                <FormLabel>Agent</FormLabel>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={!canEdit}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an agent" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {agentOptions.map((agent) => (
+                          <SelectItem key={agent.value} value={agent.value}>
+                            {agent.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => field.onChange("")}
+                    disabled={!canEdit || !field.value}
+                    aria-label="Clear agent"
+                  >
+                    <XIcon className="h-4 w-4" />
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -139,23 +214,43 @@ export default function LineItemDetailsTab({
             name="toOrganisationId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>To Organisation ID</FormLabel>
-                <FormControl>
-                  <Input disabled={!canEdit} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="fromPartnerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>From Partner ID</FormLabel>
-                <FormControl>
-                  <Input disabled={!canEdit} {...field} />
-                </FormControl>
+                <FormLabel>To Organisation</FormLabel>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={selectToOrganisation}
+                      disabled={!canEdit}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an organisation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {organisationOptions.map((organisation) => (
+                          <SelectItem
+                            key={organisation.value}
+                            value={organisation.value}
+                          >
+                            {organisation.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => {
+                      field.onChange("");
+                      void form.trigger(["toOrganisationId", "toPartnerId"]);
+                    }}
+                    disabled={!canEdit || !field.value}
+                    aria-label="Clear to organisation"
+                  >
+                    <XIcon className="h-4 w-4" />
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -165,10 +260,40 @@ export default function LineItemDetailsTab({
             name="toPartnerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>To Partner ID</FormLabel>
-                <FormControl>
-                  <Input disabled={!canEdit} {...field} />
-                </FormControl>
+                <FormLabel>To Partner</FormLabel>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={selectToPartner}
+                      disabled={!canEdit}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Optional partner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {partnerOptions.map((partner) => (
+                          <SelectItem key={partner.value} value={partner.value}>
+                            {partner.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => {
+                      field.onChange("");
+                      void form.trigger(["toOrganisationId", "toPartnerId"]);
+                    }}
+                    disabled={!canEdit || !field.value}
+                    aria-label="Clear to partner"
+                  >
+                    <XIcon className="h-4 w-4" />
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -238,7 +363,7 @@ export default function LineItemDetailsTab({
             name="VAT"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>VAT (pence)</FormLabel>
+                <FormLabel>VAT (%)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"

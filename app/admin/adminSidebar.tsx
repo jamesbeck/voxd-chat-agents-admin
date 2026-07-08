@@ -385,7 +385,7 @@ export default function AdminSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {(superAdmin || partner) && (
+        {superAdmin && (
           <SidebarGroup>
             <SidebarGroupLabel>Billing</SidebarGroupLabel>
             <SidebarGroupContent>

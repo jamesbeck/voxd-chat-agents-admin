@@ -1,5 +1,4 @@
 export type PendingInvoiceGrouping = {
-  fromPartnerId: string;
   toOrganisationId?: string | null;
   toPartnerId?: string | null;
 };
@@ -9,29 +8,27 @@ export const isPartnerToPartnerPendingInvoice = ({
 }: Pick<PendingInvoiceGrouping, "toPartnerId">) => Boolean(toPartnerId);
 
 export const getPendingInvoiceId = ({
-  fromPartnerId,
   toOrganisationId,
   toPartnerId,
 }: PendingInvoiceGrouping) => {
   if (toPartnerId) {
-    return `pending:${fromPartnerId}:partner:${toPartnerId}`;
+    return `pending:partner:${toPartnerId}`;
   }
 
   if (!toOrganisationId) {
     throw new Error(
-      "Pending partner-to-organisation invoices require a destination organisation",
+      "Pending invoices require a destination organisation when no partner target is set",
     );
   }
 
-  return `pending:${fromPartnerId}:organisation:${toOrganisationId}`;
+  return `pending:organisation:${toOrganisationId}`;
 };
 
 export const getPendingInvoiceSearchParams = ({
-  fromPartnerId,
   toOrganisationId,
   toPartnerId,
 }: PendingInvoiceGrouping) => {
-  const params = new URLSearchParams({ fromPartnerId });
+  const params = new URLSearchParams();
 
   if (toPartnerId) {
     params.set("toPartnerId", toPartnerId);

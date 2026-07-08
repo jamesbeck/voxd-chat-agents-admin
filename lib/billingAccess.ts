@@ -46,6 +46,8 @@ const buildVisibleOrganisationScopeSubquery = ({
   );
 };
 
+const applyNoRowsScope = (query: Knex.QueryBuilder) => query.whereRaw("1 = 0");
+
 export const applyInvoiceReadScope = async ({
   query,
   accessToken,
@@ -57,6 +59,14 @@ export const applyInvoiceReadScope = async ({
   invoiceTableAlias?: string;
   trx?: Knex | Knex.Transaction;
 }) => {
+  if (accessToken.superAdmin) {
+    return query;
+  }
+
+  if (!accessToken.partner && !accessToken.organisationId) {
+    return applyNoRowsScope(query);
+  }
+
   const scopedOrganisationQuery = buildVisibleOrganisationScopeSubquery({
     accessToken,
     organisationIdReference: `"${invoiceTableAlias}"."toOrganisationId"`,
@@ -77,6 +87,14 @@ export const applyInvoiceLineItemReadScope = async ({
   lineItemTableAlias?: string;
   trx?: Knex | Knex.Transaction;
 }) => {
+  if (accessToken.superAdmin) {
+    return query;
+  }
+
+  if (!accessToken.partner && !accessToken.organisationId) {
+    return applyNoRowsScope(query);
+  }
+
   return query.where((scopedQuery) => {
     scopedQuery
       .whereExists(
@@ -162,7 +180,7 @@ export const canAccessBillingPages = async ({
 }) => {
   const resolvedAccessToken = accessToken ?? (await verifyAccessToken());
 
-  return resolvedAccessToken.superAdmin || resolvedAccessToken.partner;
+  return resolvedAccessToken.superAdmin;
 };
 
 export const canMutateBillingRecords = async ({

@@ -5,6 +5,9 @@ import TableActions from "@/components/admin/TableActions";
 import TableLink from "@/components/adminui/TableLink";
 import saGetInvoiceLineItemTableData from "@/actions/saGetInvoiceLineItemTableData";
 import { format } from "date-fns";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import CreateLineItemDialog from "./CreateLineItemDialog";
 
 const formatDate = (value: string | Date | null | undefined) => {
   if (!value) return "-";
@@ -29,35 +32,35 @@ const formatVat = (value: number | null | undefined) => {
 
 export default function LineItemsTable({
   invoiceId,
-  fromPartnerId,
   toOrganisationId,
   toPartnerId,
   unsentOnly,
+  agentOptions = [],
+  organisationOptions = [],
+  partnerOptions = [],
   tableId = "admin-billing-line-items",
 }: {
   invoiceId?: string;
-  fromPartnerId?: string;
   toOrganisationId?: string;
   toPartnerId?: string | null;
   unsentOnly?: boolean;
+  agentOptions?: { value: string; label: string }[];
+  organisationOptions?: { value: string; label: string }[];
+  partnerOptions?: { value: string; label: string }[];
   tableId?: string;
 }) {
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const canCreateLineItems =
+    agentOptions.length > 0 &&
+    organisationOptions.length > 0 &&
+    partnerOptions.length > 0;
+
   const columns = [
     {
       label: "Description",
       name: "description",
       sort: true,
       linkTo: (row: any) => `/admin/billing/line-items/${row.id}`,
-    },
-    {
-      label: "From Partner",
-      name: "fromPartnerName",
-      sort: true,
-      format: (row: any) => (
-        <TableLink href={`/admin/organisations/${row.fromPartnerId}`}>
-          {row.fromPartnerName || row.fromPartnerId}
-        </TableLink>
-      ),
     },
     {
       label: "To Organisation",
@@ -137,24 +140,43 @@ export default function LineItemsTable({
   ];
 
   return (
-    <DataTable
-      tableId={tableId}
-      defaultSort={{
-        name: "serviceFromDate",
-        direction: "desc",
-      }}
-      getData={saGetInvoiceLineItemTableData}
-      getDataParams={{
-        invoiceId,
-        fromPartnerId,
-        toOrganisationId,
-        toPartnerId,
-        unsentOnly,
-      }}
-      columns={columns}
-      actions={(row: any) => (
-        <TableActions href={`/admin/billing/line-items/${row.id}`} />
-      )}
-    />
+    <>
+      {canCreateLineItems ? (
+        <div className="mb-4 flex justify-end">
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            Add Line Item
+          </Button>
+        </div>
+      ) : null}
+
+      <DataTable
+        tableId={tableId}
+        defaultSort={{
+          name: "serviceFromDate",
+          direction: "desc",
+        }}
+        getData={saGetInvoiceLineItemTableData}
+        getDataParams={{
+          invoiceId,
+          toOrganisationId,
+          toPartnerId,
+          unsentOnly,
+        }}
+        columns={columns}
+        actions={(row: any) => (
+          <TableActions href={`/admin/billing/line-items/${row.id}`} />
+        )}
+      />
+
+      {canCreateLineItems ? (
+        <CreateLineItemDialog
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+          agentOptions={agentOptions}
+          organisationOptions={organisationOptions}
+          partnerOptions={partnerOptions}
+        />
+      ) : null}
+    </>
   );
 }

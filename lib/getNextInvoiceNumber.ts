@@ -2,12 +2,13 @@ import { Knex } from "knex";
 
 const getNextInvoiceNumber = async ({ trx }: { trx: Knex.Transaction }) => {
   const latestInvoice = await trx("invoice")
-    .select("number")
-    .orderBy("number", "desc")
+    .select(trx.raw('CAST("number" AS INTEGER) as "numericNumber"'))
+    .whereRaw('"number" ~ ?', ["^[0-9]+$"])
+    .orderByRaw('CAST("number" AS INTEGER) DESC')
     .forUpdate()
-    .first<{ number: number }>();
+    .first<{ numericNumber: number | string }>();
 
-  return (latestInvoice?.number ?? 0) + 1;
+  return Number(latestInvoice?.numericNumber ?? 0) + 1;
 };
 
 export default getNextInvoiceNumber;
