@@ -17,13 +17,11 @@ import DataCard from "@/components/adminui/DataCard";
 import {
   Calendar,
   FileText,
-  Activity,
   Building,
   User,
   CalendarClock,
 } from "lucide-react";
 import Link from "next/link";
-import QuoteProgress from "./QuoteProgress";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import EditProposalForm from "./EditProposalForm";
 import EditQuoteTitleDialog from "./EditQuoteTitleDialog";
@@ -34,6 +32,7 @@ import QuoteHeroImageTab from "./QuoteHeroImageTab";
 import QuoteActionsTab from "./QuoteActionsTab";
 import userCanViewQuote from "@/lib/quoteAccess";
 import { hasAdminUserPermission } from "@/lib/adminUserPermissions";
+import { Badge } from "@/components/ui/badge";
 
 const applyMarkup = (
   value: number | null | undefined,
@@ -195,7 +194,12 @@ export default async function Page({
         {quote ? (
           <span className="inline-flex items-center gap-2">
             {quote.organisationName} - {quote.title}
-            <EditQuoteTitleDialog quoteId={quote.id} title={quote.title} />
+            {quote.archived && <Badge variant="outline">Archived</Badge>}
+            <EditQuoteTitleDialog
+              quoteId={quote.id}
+              title={quote.title}
+              archived={quote.archived}
+            />
           </span>
         ) : (
           "New Quote"
@@ -204,8 +208,6 @@ export default async function Page({
 
       {quote && (
         <>
-          <QuoteProgress status={quote.status} />
-
           <RecordTabs
             value={activeTab}
             tabs={
@@ -270,10 +272,9 @@ export default async function Page({
                 organisationName={quote.organisationName}
                 organisationId={quote.organisationId}
                 prototypingAgentId={prototypingAgentId}
-                status={quote.status}
+                archived={quote.archived}
                 canDelete={isSuperAdmin || isOwnerPartner}
                 createdByAdminUserId={quote.createdByAdminUserId}
-                isSuperAdmin={isSuperAdmin}
               />
             }
           >
@@ -309,17 +310,6 @@ export default async function Page({
                       </Link>
                     ),
                     icon: <Building className="h-4 w-4" />,
-                  },
-                  {
-                    label: "Status",
-                    value: <span className="capitalize">{quote.status}</span>,
-                    icon: <Activity className="h-4 w-4" />,
-                    variant:
-                      quote.status === "accepted"
-                        ? "success"
-                        : quote.status === "rejected"
-                          ? "danger"
-                          : "default",
                   },
                   {
                     label: "Owner",
@@ -359,12 +349,14 @@ export default async function Page({
                 quoteId={quote.id}
                 nextAction={quote.nextAction}
                 nextActionDate={quote.nextActionDate}
+                archived={quote.archived}
               />
             </TabsContent>
             <TabsContent value="background">
               <EditBackgroundForm
                 quoteId={quote.id}
                 background={quote.background}
+                archived={quote.archived}
               />
             </TabsContent>
             <TabsContent value="specification">
@@ -373,7 +365,7 @@ export default async function Page({
                 objectives={quote.objectives}
                 dataSourcesAndIntegrations={quote.dataSourcesAndIntegrations}
                 otherNotes={quote.otherNotes}
-                status={quote.status}
+                archived={quote.archived}
                 isSuperAdmin={isSuperAdmin}
                 quoteIntegrations={quote.quoteIntegrations}
                 quoteKnowledgeSources={quote.quoteKnowledgeSources}

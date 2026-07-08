@@ -34,6 +34,13 @@ const saDeleteQuoteExampleConversation = async ({
     };
   }
 
+  if (conversation.archived) {
+    return {
+      success: false,
+      error: "Archived quotes cannot be edited",
+    };
+  }
+
   // Check if user is super admin or the partner that owns this quote
   const isSuperAdmin = accessToken.superAdmin;
   const isOwnerPartner =

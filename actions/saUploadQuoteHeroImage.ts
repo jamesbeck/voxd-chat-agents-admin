@@ -57,6 +57,13 @@ const saUploadQuoteHeroImage = async ({
     };
   }
 
+  if (quote.archived) {
+    return {
+      success: false,
+      error: "Archived quotes cannot be edited",
+    };
+  }
+
   // Get the organisation with partner info to check partnerId
   const organisation = await db("organisation")
     .where("organisation.id", quote.organisationId)

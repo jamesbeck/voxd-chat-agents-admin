@@ -25,6 +25,7 @@ const saUpdateInvoice = async ({
   gcPaymentID,
   gcStatus,
   gcChargeDate,
+  emailSentAt,
 }: {
   invoiceId: string;
   number: number;
@@ -35,6 +36,7 @@ const saUpdateInvoice = async ({
   gcPaymentID?: string;
   gcStatus?: string;
   gcChargeDate?: string;
+  emailSentAt?: string;
 }): Promise<ServerActionResponse> => {
   const accessToken = await verifyAccessToken();
 
@@ -63,6 +65,7 @@ const saUpdateInvoice = async ({
       gcPaymentID: emptyToNull(gcPaymentID),
       gcStatus: emptyToNull(gcStatus),
       gcChargeDate: emptyToNull(gcChargeDate),
+      emailSentAt: emptyToNull(emailSentAt),
     });
 
   await addLog({
@@ -78,6 +81,7 @@ const saUpdateInvoice = async ({
       gcPaymentID: emptyToNull(gcPaymentID),
       gcStatus: emptyToNull(gcStatus),
       gcChargeDate: emptyToNull(gcChargeDate),
+      emailSentAt: emptyToNull(emailSentAt),
     },
   });
 

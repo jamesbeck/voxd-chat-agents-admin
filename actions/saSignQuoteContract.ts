@@ -92,8 +92,7 @@ const saSignQuoteContract = async ({
     };
   }
 
-  // Only prevent signing if already signed (Closed Won)
-  if (existingQuote.status === "Closed Won") {
+  if (existingQuote.signOffDate) {
     return {
       success: false,
       error: "This proposal has already been signed",
@@ -102,7 +101,7 @@ const saSignQuoteContract = async ({
 
   const signOffDate = new Date();
 
-  // Update the quote with sign-off details and change status to Closed Won
+  // Update the quote with sign-off details
   await db("quote").where({ id: quoteId }).update({
     signOffName: signOffName.trim(),
     signOffEmail: signOffEmail.trim().toLowerCase(),
@@ -110,7 +109,6 @@ const saSignQuoteContract = async ({
     signOffDate,
     signOffIPAddress: ipAddress,
     signOffUserAgent: userAgent,
-    status: "Closed Won",
   });
 
   // Send confirmation email

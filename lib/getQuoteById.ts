@@ -50,7 +50,7 @@ export type Quote = {
   parentPartnerId: string | null;
   parentPartnerName: string | null;
   effectivePartnerName: string | null;
-  status: string;
+  archived: boolean;
   background: string | null;
   objectives: string | null;
   dataSourcesAndIntegrations: string | null;

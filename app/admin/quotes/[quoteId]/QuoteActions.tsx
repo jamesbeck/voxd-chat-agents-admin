@@ -3,26 +3,21 @@
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import saMarkQuoteConceptSentToClient from "@/actions/saMarkQuoteConceptSentToClient";
+import saArchiveQuote from "@/actions/saArchiveQuote";
 import saDeleteQuote from "@/actions/saDeleteQuote";
-import saReopenQuote from "@/actions/saReopenQuote";
-import saReturnQuoteToDraft from "@/actions/saReturnQuoteToDraft";
-import saMarkQuoteSentToClient from "@/actions/saMarkQuoteSentToClient";
-import saCloseQuote from "@/actions/saCloseQuote";
+import saUnarchiveQuote from "@/actions/saUnarchiveQuote";
 import {
   Trash2,
   UserCog,
   ExternalLink,
   Copy,
   CopyPlus,
-  RotateCcw,
-  RotateCw,
-  XCircle,
+  Archive,
+  ArchiveRestore,
 } from "lucide-react";
 import ChangeOwnerDialog from "./ChangeOwnerDialog";
 import CloneQuoteDialog from "./CloneQuoteDialog";
 import RecordActions, {
-  type ActionButton,
   type DropdownGroup,
 } from "@/components/admin/RecordActions";
 
@@ -33,10 +28,9 @@ export default function QuoteActions({
   organisationName,
   organisationId,
   prototypingAgentId,
-  status,
+  archived,
   canDelete,
   createdByAdminUserId,
-  isSuperAdmin = false,
 }: {
   quoteId: string;
   shortLinkId: string;
@@ -44,46 +38,53 @@ export default function QuoteActions({
   organisationName: string;
   organisationId: string;
   prototypingAgentId: string | null;
-  status: string;
+  archived: boolean;
   canDelete: boolean;
   createdByAdminUserId: string | null;
-  isSuperAdmin?: boolean;
 }) {
-  const [isSendingConcept, setIsSendingConcept] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [isUnarchiving, setIsUnarchiving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isReturningToDraft, setIsReturningToDraft] = useState(false);
-  const [isMarkingSentToClient, setIsMarkingSentToClient] = useState(false);
-  const [isClosingWon, setIsClosingWon] = useState(false);
-  const [isClosingLost, setIsClosingLost] = useState(false);
-  const [isReopening, setIsReopening] = useState(false);
   const [changeOwnerOpen, setChangeOwnerOpen] = useState(false);
   const [cloneDialogOpen, setCloneDialogOpen] = useState(false);
 
   const router = useRouter();
 
-  const canSendConceptToClient = status === "Draft";
-  const canReturnToDraft =
-    status !== "Draft" && status !== "Closed Won" && status !== "Closed Lost";
-  const canMarkSentToClient = status === "Concept Sent to Client";
-  const canClose = status === "Proposal with Client";
-  const canReopen = status === "Closed Won" || status === "Closed Lost";
-
-  const sendConceptToClient = async () => {
-    setIsSendingConcept(true);
-    const saResponse = await saMarkQuoteConceptSentToClient({ quoteId });
+  const archiveQuote = async () => {
+    setIsArchiving(true);
+    const saResponse = await saArchiveQuote({ quoteId });
 
     if (!saResponse.success) {
       toast.error(
-        `Error Sending Concept: ${
-          saResponse.error || "There was an error sending the concept"
+        `Error Archiving Quote: ${
+          saResponse.error || "There was an error archiving the quote"
         }`,
       );
-      setIsSendingConcept(false);
+      setIsArchiving(false);
       return;
     }
-    // If successful
-    toast.success(`Successfully sent ${name} concept to client`);
-    setIsSendingConcept(false);
+
+    toast.success(`Successfully archived ${name}`);
+    setIsArchiving(false);
+    router.refresh();
+  };
+
+  const unarchiveQuote = async () => {
+    setIsUnarchiving(true);
+    const saResponse = await saUnarchiveQuote({ quoteId });
+
+    if (!saResponse.success) {
+      toast.error(
+        `Error Unarchiving Quote: ${
+          saResponse.error || "There was an error unarchiving the quote"
+        }`,
+      );
+      setIsUnarchiving(false);
+      return;
+    }
+
+    toast.success(`Successfully unarchived ${name}`);
+    setIsUnarchiving(false);
     router.refresh();
   };
 
@@ -100,169 +101,11 @@ export default function QuoteActions({
       setIsDeleting(false);
       return;
     }
-    // If successful
+
     toast.success(`Successfully deleted ${name}`);
     router.push("/admin/quotes");
   };
 
-  const returnToDraft = async () => {
-    setIsReturningToDraft(true);
-    const saResponse = await saReturnQuoteToDraft({ quoteId });
-
-    if (!saResponse.success) {
-      toast.error(
-        `Error Returning to Draft: ${
-          saResponse.error || "There was an error returning to draft"
-        }`,
-      );
-      setIsReturningToDraft(false);
-      return;
-    }
-    // If successful
-    toast.success(`Successfully returned ${name} to draft status`);
-    setIsReturningToDraft(false);
-    router.refresh();
-  };
-
-  const markSentToClient = async () => {
-    setIsMarkingSentToClient(true);
-    const saResponse = await saMarkQuoteSentToClient({
-      quoteId,
-    });
-
-    if (!saResponse.success) {
-      toast.error(
-        `Error Marking as Proposal with Client: ${
-          saResponse.error ||
-          "There was an error marking as proposal with client"
-        }`,
-      );
-      setIsMarkingSentToClient(false);
-      return;
-    }
-    // If successful
-    toast.success(`Successfully marked ${name} as proposal with client`);
-    setIsMarkingSentToClient(false);
-    router.refresh();
-  };
-
-  const closeQuoteWon = async () => {
-    setIsClosingWon(true);
-    const saResponse = await saCloseQuote({ quoteId, outcome: "won" });
-
-    if (!saResponse.success) {
-      toast.error(
-        `Error Closing Quote: ${
-          saResponse.error || "There was an error closing the quote"
-        }`,
-      );
-      setIsClosingWon(false);
-      return;
-    }
-    // If successful
-    toast.success(`${name} marked as WON!`);
-    setIsClosingWon(false);
-    router.refresh();
-  };
-
-  const closeQuoteLost = async () => {
-    setIsClosingLost(true);
-    const saResponse = await saCloseQuote({ quoteId, outcome: "lost" });
-
-    if (!saResponse.success) {
-      toast.error(
-        `Error Closing Quote: ${
-          saResponse.error || "There was an error closing the quote"
-        }`,
-      );
-      setIsClosingLost(false);
-      return;
-    }
-    // If successful
-    toast.success(`${name} marked as LOST`);
-    setIsClosingLost(false);
-    router.refresh();
-  };
-
-  const reopenQuote = async () => {
-    setIsReopening(true);
-    const saResponse = await saReopenQuote({ quoteId });
-
-    if (!saResponse.success) {
-      toast.error(
-        `Error Re-opening Quote: ${
-          saResponse.error || "There was an error re-opening the quote"
-        }`,
-      );
-      setIsReopening(false);
-      return;
-    }
-    // If successful
-    toast.success(`Successfully re-opened ${name}`);
-    setIsReopening(false);
-    router.refresh();
-  };
-
-  // Build workflow buttons based on status
-  const workflowButtons: ActionButton[] = [];
-
-  if (canSendConceptToClient) {
-    workflowButtons.push({
-      label: "Send Concept",
-      loading: isSendingConcept,
-      confirm: {
-        title: `Send ${name} Concept to Client`,
-        description:
-          "Are you sure you want to send this concept to the client?",
-        actionText: "Send Concept",
-      },
-      onClick: sendConceptToClient,
-    });
-  }
-
-  if (canMarkSentToClient) {
-    workflowButtons.push({
-      label: "Mark as Proposal with Client",
-      loading: isMarkingSentToClient,
-      confirm: {
-        title: `Mark ${name} as Proposal with Client`,
-        description:
-          "Are you sure you want to mark this quote as proposal with client?",
-        actionText: "Mark as Proposal with Client",
-      },
-      onClick: markSentToClient,
-    });
-  }
-
-  if (canClose) {
-    workflowButtons.push({
-      label: "WON",
-      loading: isClosingWon,
-      className: "bg-green-500 hover:bg-green-600 text-white",
-      confirm: {
-        title: `Mark ${name} as WON`,
-        description:
-          "Are you sure you want to mark this quote as won? This will close the quote.",
-        actionText: "Mark as WON",
-      },
-      onClick: closeQuoteWon,
-    });
-    workflowButtons.push({
-      label: "LOST",
-      variant: "destructive",
-      loading: isClosingLost,
-      confirm: {
-        title: `Mark ${name} as LOST`,
-        description:
-          "Are you sure you want to mark this quote as lost? This will close the quote.",
-        actionText: "Mark as LOST",
-        destructive: true,
-      },
-      onClick: closeQuoteLost,
-    });
-  }
-
-  // Build dropdown groups
   const dropdownGroups: DropdownGroup[] = [
     {
       items: [
@@ -306,7 +149,6 @@ export default function QuoteActions({
     },
   ];
 
-  // Test Prototype links (only if partner has a prototypingAgentId)
   if (prototypingAgentId) {
     const prototypeUrl = `/prototypes/${shortLinkId}`;
     dropdownGroups.push({
@@ -331,55 +173,36 @@ export default function QuoteActions({
     });
   }
 
-  // Status change items
-  const statusItems = [];
-  if (canReturnToDraft) {
-    statusItems.push({
-      label: "Return to Draft",
-      icon: <RotateCcw />,
-      loading: isReturningToDraft,
-      confirm: {
-        title: "Return to Draft Status",
-        description:
-          "Are you sure you want to return this quote to Draft status? This will allow the specification to be edited again.",
-        actionText: "Return to Draft",
-        onAction: returnToDraft,
-      },
-    });
-  }
-  statusItems.push({
-    label: "Mark as Closed Lost",
-    icon: <XCircle />,
-    danger: true,
-    loading: isClosingLost,
-    confirm: {
-      title: `Mark ${name} as Closed Lost`,
-      description:
-        "Are you sure you want to mark this quote as closed lost? This will close the quote.",
-      actionText: "Mark as Closed Lost",
-      destructive: true,
-      onAction: closeQuoteLost,
-    },
+  dropdownGroups.push({
+    items: [
+      archived
+        ? {
+            label: "Unarchive Quote",
+            icon: <ArchiveRestore />,
+            loading: isUnarchiving,
+            confirm: {
+              title: `Unarchive ${name}`,
+              description:
+                "Are you sure you want to unarchive this quote? Editing will be enabled again.",
+              actionText: "Unarchive Quote",
+              onAction: unarchiveQuote,
+            },
+          }
+        : {
+            label: "Archive Quote",
+            icon: <Archive />,
+            loading: isArchiving,
+            confirm: {
+              title: `Archive ${name}`,
+              description:
+                "Are you sure you want to archive this quote? Archived quotes become read-only until unarchived.",
+              actionText: "Archive Quote",
+              onAction: archiveQuote,
+            },
+          },
+    ],
   });
-  if (canReopen) {
-    statusItems.push({
-      label: "Re-open Quote",
-      icon: <RotateCw />,
-      loading: isReopening,
-      confirm: {
-        title: "Re-open Quote",
-        description:
-          "Are you sure you want to re-open this quote? This will set the quote back to 'Proposal with Client' status.",
-        actionText: "Re-open Quote",
-        onAction: reopenQuote,
-      },
-    });
-  }
-  if (statusItems.length > 0) {
-    dropdownGroups.push({ items: statusItems });
-  }
 
-  // Clone + management items
   const managementItems = [
     {
       label: "Clone to Organisation",
@@ -420,9 +243,8 @@ export default function QuoteActions({
   return (
     <>
       <RecordActions
-        buttons={workflowButtons}
         dropdown={{
-          loading: isDeleting,
+          loading: isDeleting || isArchiving || isUnarchiving,
           groups: dropdownGroups,
         }}
       />

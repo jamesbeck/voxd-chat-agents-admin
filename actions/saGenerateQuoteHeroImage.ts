@@ -61,6 +61,13 @@ const saGenerateQuoteHeroImage = async ({
     };
   }
 
+  if (quote.archived) {
+    return {
+      success: false,
+      error: "Archived quotes cannot be edited",
+    };
+  }
+
   // Partners can only generate hero images for their own quotes
   if (accessToken.partner && !accessToken.superAdmin) {
     if (quote.partnerId !== accessToken.partnerId) {

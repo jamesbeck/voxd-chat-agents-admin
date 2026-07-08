@@ -10,6 +10,7 @@ import saGetPartnerAdminUsers from "@/actions/saGetPartnerAdminUsers";
 import { useTableFilters } from "@/hooks/useTableFilters";
 import { TableFilterConfig, TableFilterOption } from "@/types/types";
 import TableActions from "@/components/admin/TableActions";
+import TableLink from "@/components/adminui/TableLink";
 
 interface OrganisationsTableProps {
   isSuperAdmin?: boolean;
@@ -84,38 +85,40 @@ const OrganisationsTable = ({
       name: "logoFileExtension",
       format: (row: any) =>
         row.logoFileExtension || row.primaryColour ? (
-          <div className="flex items-center gap-3">
-            {row.logoFileExtension ? (
-              <div
-                className="inline-flex rounded p-1"
-                style={
-                  row.showLogoOnColour
-                    ? { backgroundColor: row.showLogoOnColour }
-                    : undefined
-                }
-              >
-                <Image
-                  src={`https://s3.eu-west-1.wasabisys.com/voxd/organisationLogos/${row.id}.${row.logoFileExtension}`}
-                  alt={row.name || "Organisation logo"}
-                  width={80}
-                  height={32}
-                  className="h-8 w-auto object-contain"
-                  unoptimized
-                />
-              </div>
-            ) : null}
-            {row.primaryColour ? (
-              <div className="flex items-center gap-2">
+          <TableLink href={`/admin/organisations/${row.id}`} showIcon={false}>
+            <div className="flex items-center gap-3">
+              {row.logoFileExtension ? (
                 <div
-                  className="h-6 w-6 rounded border"
-                  style={{ backgroundColor: row.primaryColour }}
-                />
-                <span className="text-xs text-muted-foreground">
-                  {row.primaryColour}
-                </span>
-              </div>
-            ) : null}
-          </div>
+                  className="inline-flex rounded p-1"
+                  style={
+                    row.showLogoOnColour
+                      ? { backgroundColor: row.showLogoOnColour }
+                      : undefined
+                  }
+                >
+                  <Image
+                    src={`https://s3.eu-west-1.wasabisys.com/voxd/organisationLogos/${row.id}.${row.logoFileExtension}`}
+                    alt={row.name || "Organisation logo"}
+                    width={80}
+                    height={32}
+                    className="h-8 w-auto object-contain"
+                    unoptimized
+                  />
+                </div>
+              ) : null}
+              {row.primaryColour ? (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-6 w-6 rounded border"
+                    style={{ backgroundColor: row.primaryColour }}
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    {row.primaryColour}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          </TableLink>
         ) : null,
     },
     {

@@ -27,6 +27,13 @@ const saUpdateQuoteBackground = async ({
     };
   }
 
+  if (existingQuote.archived) {
+    return {
+      success: false,
+      error: "Quote background cannot be edited while archived",
+    };
+  }
+
   // Update the quote background
   await db("quote").where({ id: quoteId }).update({
     background,

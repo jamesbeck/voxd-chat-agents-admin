@@ -26,7 +26,7 @@ export type PublicQuote = {
   partnerOrganisationPrimaryColour: string | null;
   partnerOrganisationLogoFileExtension: string | null;
   partnerOrganisationShowLogoOnColour: string | null;
-  status: string;
+  archived: boolean;
   background: string | null;
   objectives: string | null;
   dataSourcesAndIntegrations: string | null;
@@ -100,7 +100,7 @@ export const getQuoteForPublic = async ({
       "quote.title",
       "quote.createdAt",
       "quote.shortLinkId",
-      "quote.status",
+      "quote.archived",
       "quote.background",
       "quote.objectives",
       "quote.dataSourcesAndIntegrations",
@@ -213,7 +213,7 @@ export const getQuoteForPublic = async ({
       effectivePartnerBranding?.logoFileExtension ?? null,
     partnerOrganisationShowLogoOnColour:
       effectivePartnerBranding?.showLogoOnColour ?? null,
-    status: quote.status,
+    archived: quote.archived,
     background: quote.background,
     objectives: quote.objectives,
     dataSourcesAndIntegrations: quote.dataSourcesAndIntegrations,

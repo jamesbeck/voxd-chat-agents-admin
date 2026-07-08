@@ -6,31 +6,12 @@ import saGetQuoteTableData from "@/actions/saGetQuoteTableData";
 import { format } from "date-fns";
 import TableActions from "@/components/admin/TableActions";
 
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "Draft":
-      return <Badge variant="secondary">{status}</Badge>;
-    case "Concept Sent to Client":
-      return (
-        <Badge className="bg-cyan-500 text-white border-transparent">
-          Concept Sent to Client
-        </Badge>
-      );
-    case "Proposal with Client":
-      return (
-        <Badge className="bg-purple-500 text-white border-transparent">
-          Proposal with Client
-        </Badge>
-      );
-    case "Closed":
-      return (
-        <Badge className="bg-green-600 text-white border-transparent">
-          Closed
-        </Badge>
-      );
-    default:
-      return <Badge variant="outline">{status || "-"}</Badge>;
+const getArchiveBadge = (archived: boolean) => {
+  if (!archived) {
+    return <Badge variant="secondary">Active</Badge>;
   }
+
+  return <Badge variant="outline">Archived</Badge>;
 };
 
 const QuotesTable = ({ organisationId }: { organisationId: string }) => {
@@ -43,10 +24,10 @@ const QuotesTable = ({ organisationId }: { organisationId: string }) => {
       format: (row: any) => row.title || "",
     },
     {
-      label: "Stage",
-      name: "status",
+      label: "Status",
+      name: "archived",
       sort: true,
-      format: (row: any) => getStatusBadge(row.status),
+      format: (row: any) => getArchiveBadge(Boolean(row.archived)),
     },
     {
       label: "Created At",
@@ -79,7 +60,7 @@ const QuotesTable = ({ organisationId }: { organisationId: string }) => {
   return (
     <DataTable
       getData={saGetQuoteTableData}
-      getDataParams={{ organisationId }}
+      getDataParams={{ organisationId, archived: false }}
       columns={columns}
       actions={actions}
     />

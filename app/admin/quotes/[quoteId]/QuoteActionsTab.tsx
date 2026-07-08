@@ -37,12 +37,14 @@ interface QuoteActionsTabProps {
   quoteId: string;
   nextAction: string | null;
   nextActionDate: string | null;
+  archived: boolean;
 }
 
 export default function QuoteActionsTab({
   quoteId,
   nextAction: initialNextAction,
   nextActionDate: initialNextActionDate,
+  archived,
 }: QuoteActionsTabProps) {
   const router = useRouter();
   const [nextAction, setNextAction] = useState(initialNextAction || "");
@@ -175,6 +177,13 @@ export default function QuoteActionsTab({
 
   return (
     <div className="space-y-6">
+      {archived && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          This quote is archived. Unarchive it to edit next actions or action
+          history.
+        </div>
+      )}
+
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Next Action</h3>
 
@@ -186,6 +195,7 @@ export default function QuoteActionsTab({
               value={nextAction}
               onChange={(e) => setNextAction(e.target.value)}
               className="min-h-[100px]"
+              disabled={archived}
             />
           </div>
 
@@ -199,6 +209,7 @@ export default function QuoteActionsTab({
                     "w-full justify-start text-left font-normal",
                     !nextActionDate && "text-muted-foreground",
                   )}
+                  disabled={archived}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {nextActionDate
@@ -210,7 +221,7 @@ export default function QuoteActionsTab({
                 <Calendar
                   mode="single"
                   selected={nextActionDate}
-                  onSelect={handleDateChange}
+                  onSelect={archived ? undefined : handleDateChange}
                   initialFocus
                 />
               </PopoverContent>
@@ -221,6 +232,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(new Date())}
+                disabled={archived}
               >
                 Today
               </Button>
@@ -229,6 +241,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addDays(new Date(), 1))}
+                disabled={archived}
               >
                 Tomorrow
               </Button>
@@ -237,6 +250,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addDays(new Date(), 2))}
+                disabled={archived}
               >
                 +2 days
               </Button>
@@ -245,6 +259,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addDays(new Date(), 3))}
+                disabled={archived}
               >
                 +3 days
               </Button>
@@ -253,6 +268,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addWeeks(new Date(), 1))}
+                disabled={archived}
               >
                 +1 week
               </Button>
@@ -261,6 +277,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addWeeks(new Date(), 2))}
+                disabled={archived}
               >
                 +2 weeks
               </Button>
@@ -269,6 +286,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addMonths(new Date(), 1))}
+                disabled={archived}
               >
                 +1 month
               </Button>
@@ -277,6 +295,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addMonths(new Date(), 2))}
+                disabled={archived}
               >
                 +2 months
               </Button>
@@ -285,6 +304,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addMonths(new Date(), 3))}
+                disabled={archived}
               >
                 +3 months
               </Button>
@@ -293,6 +313,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addMonths(new Date(), 6))}
+                disabled={archived}
               >
                 +6 months
               </Button>
@@ -301,6 +322,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(addYears(new Date(), 1))}
+                disabled={archived}
               >
                 +1 year
               </Button>
@@ -309,6 +331,7 @@ export default function QuoteActionsTab({
                 size="sm"
                 className="text-xs h-7 px-2"
                 onClick={() => handleDateChange(undefined)}
+                disabled={archived}
               >
                 No date
               </Button>

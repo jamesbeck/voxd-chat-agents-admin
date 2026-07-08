@@ -74,6 +74,13 @@ const saCreatePendingExampleConversations = async (
       };
     }
 
+    if (quote.archived) {
+      return {
+        success: false,
+        error: "Archived quotes cannot be edited",
+      };
+    }
+
     const isSuperAdmin = accessToken.superAdmin;
     const isOwnerPartner =
       accessToken.partner && accessToken.partnerId === quote.partnerId;

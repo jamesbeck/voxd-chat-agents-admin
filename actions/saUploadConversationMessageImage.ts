@@ -3,6 +3,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { ServerActionResponse } from "@/types/types";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
+import db from "../database/db";
 
 const saUploadConversationMessageImage = async ({
   conversationId,
@@ -34,6 +35,36 @@ const saUploadConversationMessageImage = async ({
       success: false,
       error: "Only partners and super admins can upload images",
     };
+  }
+
+  const conversation = await db("exampleConversation")
+    .leftJoin("quote", "exampleConversation.quoteId", "quote.id")
+    .leftJoin("organisation", "quote.organisationId", "organisation.id")
+    .where("exampleConversation.id", conversationId)
+    .select("quote.archived", "organisation.partnerId")
+    .first();
+
+  if (!conversation) {
+    return {
+      success: false,
+      error: "Conversation not found",
+    };
+  }
+
+  if (conversation.archived) {
+    return {
+      success: false,
+      error: "Archived quotes cannot be edited",
+    };
+  }
+
+  if (accessToken.partner && !accessToken.superAdmin) {
+    if (conversation.partnerId !== accessToken.partnerId) {
+      return {
+        success: false,
+        error: "You don't have permission to edit this conversation",
+      };
+    }
   }
 
   const allowedExtensions = ["png", "jpg", "jpeg", "gif", "webp"];

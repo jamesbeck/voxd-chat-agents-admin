@@ -36,6 +36,13 @@ const saUpdateQuote = async ({
     };
   }
 
+  if (existingQuote.archived) {
+    return {
+      success: false,
+      error: "Quote cannot be edited while archived",
+    };
+  }
+
   // Build update object with only provided values
   const updateData: Record<string, any> = {};
   if (title !== undefined) updateData.title = title;

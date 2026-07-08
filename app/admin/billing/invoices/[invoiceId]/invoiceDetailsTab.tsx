@@ -29,6 +29,7 @@ const formSchema = z
     gcPaymentID: z.string().optional(),
     gcStatus: z.string().optional(),
     gcChargeDate: z.string().optional(),
+    emailSentAt: z.string().optional(),
   })
   .superRefine((values, ctx) => {
     const hasToOrganisation = !!values.toOrganisationId?.trim();
@@ -97,6 +98,7 @@ export default function InvoiceDetailsTab({
       gcPaymentID: invoice.gcPaymentID || "",
       gcStatus: invoice.gcStatus || "",
       gcChargeDate: formatDateTimeInput(invoice.gcChargeDate),
+      emailSentAt: formatDateTimeInput(invoice.emailSentAt),
     },
   });
 
@@ -228,6 +230,19 @@ export default function InvoiceDetailsTab({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>GC Charge Date</FormLabel>
+                <FormControl>
+                  <Input type="datetime-local" disabled={!canEdit} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="emailSentAt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Invoice Email Sent At</FormLabel>
                 <FormControl>
                   <Input type="datetime-local" disabled={!canEdit} {...field} />
                 </FormControl>

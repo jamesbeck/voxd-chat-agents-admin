@@ -44,7 +44,7 @@ export default function EditSpecificationForm({
   objectives,
   dataSourcesAndIntegrations,
   otherNotes,
-  status,
+  archived,
   isSuperAdmin = false,
   quoteIntegrations,
   quoteKnowledgeSources,
@@ -53,13 +53,12 @@ export default function EditSpecificationForm({
   objectives: string | null;
   dataSourcesAndIntegrations: string | null;
   otherNotes: string | null;
-  status: string;
+  archived: boolean;
   isSuperAdmin?: boolean;
   quoteIntegrations: LinkedItem[];
   quoteKnowledgeSources: LinkedItem[];
 }) {
-  const isReadOnly =
-    !isSuperAdmin && status !== "Draft" && status !== "Concept Sent to Client";
+  const isReadOnly = archived;
   const [saving, setSaving] = useState(false);
   const router = useRouter();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -143,9 +142,8 @@ export default function EditSpecificationForm({
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Read Only</AlertTitle>
             <AlertDescription>
-              The specification cannot be edited because this quote has already
-              been submitted for pricing. To make changes, the quote must be put
-              back into Draft status.
+              The specification cannot be edited while this quote is archived.
+              Unarchive the quote to make changes.
             </AlertDescription>
           </Alert>
         )}

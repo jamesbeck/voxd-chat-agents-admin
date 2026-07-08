@@ -300,7 +300,6 @@ ${rewriteContext}`,
     const [newQuote] = await db("quote")
       .insert({
         organisationId: targetOrganisationId,
-        status: "Draft",
         title: rewrittenTitle,
         background: newBackground,
         objectives: rewrittenObjectives,

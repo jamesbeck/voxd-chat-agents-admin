@@ -31,9 +31,11 @@ const formSchema = z.object({
 export default function EditBackgroundForm({
   quoteId,
   background,
+  archived,
 }: {
   quoteId: string;
   background: string | null;
+  archived: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -79,6 +81,17 @@ export default function EditBackgroundForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {archived && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Read Only</AlertTitle>
+            <AlertDescription>
+              The background cannot be edited while this quote is archived.
+              Unarchive the quote to make changes.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {!hasContent && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
@@ -99,7 +112,7 @@ export default function EditBackgroundForm({
               <FormControl>
                 <SimpleMarkdownEditor
                   value={field.value || ""}
-                  onChange={field.onChange}
+                  onChange={archived ? () => {} : field.onChange}
                   placeholder="Enter the background..."
                 />
               </FormControl>
@@ -123,7 +136,7 @@ export default function EditBackgroundForm({
           </div>
         )}
 
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || archived}>
           {loading && <Spinner className="mr-2" />}
           Save Changes
         </Button>

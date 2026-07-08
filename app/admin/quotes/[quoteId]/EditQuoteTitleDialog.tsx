@@ -35,9 +35,11 @@ const formSchema = z.object({
 export default function EditQuoteTitleDialog({
   quoteId,
   title,
+  archived = false,
 }: {
   quoteId: string;
   title: string;
+  archived?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -94,6 +96,7 @@ export default function EditQuoteTitleDialog({
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-foreground"
           aria-label="Edit quote title"
+          disabled={archived}
         >
           <PencilIcon className="h-4 w-4" />
         </Button>
@@ -131,7 +134,7 @@ export default function EditQuoteTitleDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isUpdating}>
+              <Button type="submit" disabled={isUpdating || archived}>
                 {isUpdating && <Spinner className="mr-2" />}
                 Save
               </Button>

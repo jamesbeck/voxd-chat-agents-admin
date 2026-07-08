@@ -35,6 +35,25 @@ const saCreateQuoteAction = async ({
     };
   }
 
+  const quote = await db("quote")
+    .select("archived")
+    .where({ id: quoteId })
+    .first();
+
+  if (!quote) {
+    return {
+      success: false,
+      error: "Quote not found",
+    };
+  }
+
+  if (quote.archived) {
+    return {
+      success: false,
+      error: "Action history cannot be edited while the quote is archived",
+    };
+  }
+
   try {
     const [newAction] = await db("quoteAction")
       .insert({

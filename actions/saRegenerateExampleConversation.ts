@@ -48,6 +48,13 @@ const saRegenerateExampleConversation = async ({
     };
   }
 
+  if (conversation.archived) {
+    return {
+      success: false,
+      error: "Archived quotes cannot be edited",
+    };
+  }
+
   const ownerPartnerId =
     conversation.examplePartnerId || conversation.quotePartnerId;
   const isSuperAdmin = accessToken.superAdmin;

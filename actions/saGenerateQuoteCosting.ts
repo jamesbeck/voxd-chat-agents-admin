@@ -325,6 +325,22 @@ const saGenerateQuoteCosting = async ({
     return { success: false, error: "Quote not found" };
   }
 
+  const quote = await db("quote")
+    .select("archived")
+    .where({ id: quoteId })
+    .first();
+
+  if (!quote) {
+    return { success: false, error: "Quote not found" };
+  }
+
+  if (quote.archived) {
+    return {
+      success: false,
+      error: "Archived quotes cannot be edited",
+    };
+  }
+
   const canViewCostPrice =
     !!accessToken.superAdmin ||
     (!!accessToken.adminUserId &&

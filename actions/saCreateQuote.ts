@@ -60,7 +60,6 @@ const saCreateQuote = async (input: {
       .insert({
         title,
         organisationId,
-        status: "Draft",
         createdByAdminUserId: accessToken.adminUserId,
         background: organisation?.about || null,
         shortLinkId,

@@ -26,7 +26,7 @@ export type PublicConcept = {
   partnerOrganisationPrimaryColour: string | null;
   partnerOrganisationLogoFileExtension: string | null;
   partnerOrganisationShowLogoOnColour: string | null;
-  status: string;
+  archived: boolean;
   conceptPersonalMessage: string | null;
   generatedConceptIntroduction: string | null;
   generatedConcept: string | null;
@@ -83,7 +83,7 @@ export const getConceptForPublic = async ({
       "quote.title",
       "quote.createdAt",
       "quote.shortLinkId",
-      "quote.status",
+      "quote.archived",
       "quote.conceptPersonalMessage",
       "quote.generatedConceptIntroduction",
       "quote.generatedConcept",
@@ -181,7 +181,7 @@ export const getConceptForPublic = async ({
       effectivePartnerBranding?.logoFileExtension ?? null,
     partnerOrganisationShowLogoOnColour:
       effectivePartnerBranding?.showLogoOnColour ?? null,
-    status: quote.status,
+    archived: quote.archived,
     conceptPersonalMessage: quote.conceptPersonalMessage,
     generatedConceptIntroduction: quote.generatedConceptIntroduction,
     generatedConcept: quote.generatedConcept,

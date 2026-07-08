@@ -36,6 +36,13 @@ const saUpdateQuoteConcept = async ({
     };
   }
 
+  if (existingQuote.archived) {
+    return {
+      success: false,
+      error: "Quote concept cannot be edited while archived",
+    };
+  }
+
   // Build update object with only provided values
   const updateData: Record<string, any> = {};
   if (conceptPersonalMessage !== undefined)

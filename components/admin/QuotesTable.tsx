@@ -18,59 +18,12 @@ import { TableFilterConfig, TableFilterOption } from "@/types/types";
 import { format, isToday, isPast, startOfDay } from "date-fns";
 import TableActions from "@/components/admin/TableActions";
 
-const STATUS_OPTIONS = [
-  { value: "open", label: "Open Quotes" },
-  { value: "Draft", label: "Draft" },
-  { value: "Concept Sent to Client", label: "Concept Sent" },
-  { value: "Proposal with Client", label: "With Client" },
-  { value: "Closed Won", label: "Closed Won" },
-  { value: "Closed Lost", label: "Closed Lost" },
-  { value: "all", label: "All Quotes" },
-];
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case "Draft":
-      return <Badge variant="secondary">{status}</Badge>;
-    case "Concept Sent to Client":
-      return (
-        <Badge className="bg-cyan-500 text-white border-transparent">
-          Concept Sent to Client
-        </Badge>
-      );
-    case "Proposal with Client":
-      return (
-        <Badge className="bg-purple-500 text-white border-transparent">
-          Proposal with Client
-        </Badge>
-      );
-    case "Closed Won":
-      return (
-        <Badge
-          className="border-transparent"
-          style={{ backgroundColor: "#16a34a", color: "white" }}
-        >
-          Closed Won
-        </Badge>
-      );
-    case "Closed Lost":
-      return (
-        <Badge
-          className="border-transparent"
-          style={{ backgroundColor: "#dc2626", color: "white" }}
-        >
-          Closed Lost
-        </Badge>
-      );
-    case "Closed":
-      return (
-        <Badge className="bg-green-600 text-white border-transparent">
-          Closed
-        </Badge>
-      );
-    default:
-      return <Badge variant="outline">{status || "-"}</Badge>;
+const getArchiveBadge = (archived: boolean) => {
+  if (!archived) {
+    return <Badge variant="secondary">Active</Badge>;
   }
+
+  return <Badge variant="outline">Archived</Badge>;
 };
 
 interface QuotesTableProps {
@@ -96,14 +49,11 @@ const QuotesTable = ({
   // Define filter configuration
   const filterConfig: TableFilterConfig[] = useMemo(
     () => [
-      // Status filter (always shown)
       {
-        name: "statusFilter",
-        label: "Status",
-        type: "select",
-        defaultValue: "open",
-        placeholder: "All Statuses",
-        options: STATUS_OPTIONS,
+        name: "archived",
+        label: "Archived",
+        type: "switch",
+        defaultValue: false,
       },
       ...(showPartnerFilter
         ? [
@@ -207,21 +157,18 @@ const QuotesTable = ({
       },
     },
     {
-      label: "Stage",
-      name: "status",
+      label: "Status",
+      name: "archived",
       sort: true,
-      format: (row: any) => getStatusBadge(row.status),
+      format: (row: any) => getArchiveBadge(Boolean(row.archived)),
     },
     {
       label: "Next Action Date",
       name: "nextActionDate",
       sort: true,
       format: (row: any) => {
-        // If no next action text and quote is not closed, show red NONE badge
         if (!row.nextAction) {
-          const isClosed =
-            row.status === "Closed Won" || row.status === "Closed Lost";
-          if (!isClosed) {
+          if (!row.archived) {
             return (
               <Badge
                 className="border-transparent"
@@ -332,10 +279,7 @@ const QuotesTable = ({
       : filterValues.partnerId
         ? { partnerId: filterValues.partnerId as string }
         : {}),
-    // Add status filter if not "all"
-    ...(filterValues.statusFilter && filterValues.statusFilter !== "all"
-      ? { statusFilter: filterValues.statusFilter as string }
-      : {}),
+    archived: Boolean(filterValues.archived),
     // Add owner filter if set
     ...(filterValues.ownerId
       ? { ownerId: filterValues.ownerId as string }

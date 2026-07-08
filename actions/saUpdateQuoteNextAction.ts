@@ -32,6 +32,13 @@ const saUpdateQuoteNextAction = async ({
     };
   }
 
+  if (existingQuote.archived) {
+    return {
+      success: false,
+      error: "Next actions cannot be edited while the quote is archived",
+    };
+  }
+
   // Build update object with only provided values
   const updateData: Record<string, any> = {};
   if (nextAction !== undefined) updateData.nextAction = nextAction || null;
