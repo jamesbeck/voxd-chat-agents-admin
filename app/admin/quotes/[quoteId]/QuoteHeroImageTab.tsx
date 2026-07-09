@@ -7,37 +7,19 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
-import { Upload, Trash2, Sparkles } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 import saUploadQuoteHeroImage from "@/actions/saUploadQuoteHeroImage";
-import saGenerateQuoteHeroImage from "@/actions/saGenerateQuoteHeroImage";
 import Image from "next/image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 
 export default function QuoteHeroImageTab({
   quoteId,
   heroImageFileExtension,
-  organisationName,
-  background,
 }: {
   quoteId: string;
   heroImageFileExtension: string | null;
-  organisationName: string;
-  background: string;
 }) {
   const [uploading, setUploading] = useState(false);
-  const [generating, setGenerating] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [userPrompt, setUserPrompt] = useState("");
   const [cacheBuster, setCacheBuster] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -141,102 +123,17 @@ export default function QuoteHeroImageTab({
     }
   };
 
-  const handleGenerateHeroImage = async () => {
-    setGenerating(true);
-    setDialogOpen(false);
-
-    try {
-      const result = await saGenerateQuoteHeroImage({
-        quoteId,
-        userPrompt: userPrompt.trim() || undefined,
-      });
-
-      if (result.success) {
-        toast.success("Hero image generated successfully!");
-        setUserPrompt("");
-        setCacheBuster(Date.now());
-        router.refresh();
-      } else {
-        toast.error(result.error || "Failed to generate hero image");
-      }
-    } catch (error) {
-      console.error("Generate error:", error);
-      toast.error("Failed to generate hero image");
-    } finally {
-      setGenerating(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-semibold mb-2">Quote Hero Image</h2>
         <p className="text-sm text-muted-foreground">
-          Upload a hero image for this quote or generate one using AI. The hero
-          image will be displayed as the banner on the proposal and concept
-          pages.
+          Upload a hero image for this quote. The hero image will be displayed
+          as the banner on the proposal and concept pages.
         </p>
       </div>
 
-      {/* Generate / Replace Hero Image Buttons */}
       <div className="flex gap-2 items-center">
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" disabled={generating}>
-              {generating ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Generate Hero Image with AI
-                </>
-              )}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Generate Hero Image with AI</DialogTitle>
-              <DialogDescription>
-                We'll use AI to create a professional hero banner image based on
-                the quote background and organisation details. You can
-                optionally provide additional guidance below.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="userPrompt">
-                  Additional Guidance (Optional)
-                </Label>
-                <Textarea
-                  id="userPrompt"
-                  placeholder="e.g., Modern office setting, technology theme, blue tones..."
-                  value={userPrompt}
-                  onChange={(e) => setUserPrompt(e.target.value)}
-                  className="min-h-[100px]"
-                />
-                <p className="text-xs text-muted-foreground">
-                  This will be used in addition to the quote's organisation name
-                  and background.
-                </p>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleGenerateHeroImage}>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Generate Hero Image
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <span className="text-muted-foreground text-sm">or</span>
-
         <Button
           variant="outline"
           onClick={() => fileInputRef.current?.click()}

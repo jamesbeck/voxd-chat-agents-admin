@@ -36,15 +36,6 @@ const QuotesTable = ({ organisationId }: { organisationId: string }) => {
       format: (row: any) => format(new Date(row.createdAt), "dd/MM/yyyy") || "",
     },
     {
-      label: "Next Action Date",
-      name: "nextActionDate",
-      sort: true,
-      format: (row: any) =>
-        row.nextActionDate
-          ? format(new Date(row.nextActionDate), "dd/MM/yyyy")
-          : "-",
-    },
-    {
       label: "Organisation",
       name: "organisationName",
       sort: true,

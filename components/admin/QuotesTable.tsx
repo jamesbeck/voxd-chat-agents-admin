@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import DataTable from "@/components/adminui/Table";
 import TableFilters from "@/components/adminui/TableFilters";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -15,16 +14,10 @@ import saGetQuoteTableData from "@/actions/saGetQuoteTableData";
 import saGetPartnerAdminUsers from "@/actions/saGetPartnerAdminUsers";
 import { useTableFilters } from "@/hooks/useTableFilters";
 import { TableFilterConfig, TableFilterOption } from "@/types/types";
-import { format, isToday, isPast, startOfDay } from "date-fns";
+import { format } from "date-fns";
 import TableActions from "@/components/admin/TableActions";
 
-const getArchiveBadge = (archived: boolean) => {
-  if (!archived) {
-    return <Badge variant="secondary">Active</Badge>;
-  }
-
-  return <Badge variant="outline">Archived</Badge>;
-};
+const EMPTY_PARTNER_FILTER_OPTIONS: TableFilterOption[] = [];
 
 interface QuotesTableProps {
   organisationId?: string;
@@ -41,7 +34,7 @@ const QuotesTable = ({
   partnerId,
   userPartnerId,
   showOwnerFilter = true,
-  partnerFilterOptions = [],
+  partnerFilterOptions = EMPTY_PARTNER_FILTER_OPTIONS,
 }: QuotesTableProps) => {
   const showPartnerFilter =
     !organisationId && !partnerId && partnerFilterOptions.length > 1;
@@ -150,60 +143,6 @@ const QuotesTable = ({
               </TooltipTrigger>
               <TooltipContent>
                 <p className="max-w-xs">{title}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        );
-      },
-    },
-    {
-      label: "Status",
-      name: "archived",
-      sort: true,
-      format: (row: any) => getArchiveBadge(Boolean(row.archived)),
-    },
-    {
-      label: "Next Action Date",
-      name: "nextActionDate",
-      sort: true,
-      format: (row: any) => {
-        if (!row.nextAction) {
-          if (!row.archived) {
-            return (
-              <Badge
-                className="border-transparent"
-                style={{ backgroundColor: "#dc2626", color: "white" }}
-              >
-                NONE
-              </Badge>
-            );
-          }
-          return "-";
-        }
-        if (!row.nextActionDate) return "-";
-        const date = new Date(row.nextActionDate);
-        const dateStr = format(date, "dd/MM/yyyy");
-        const isOverdue = isToday(date) || isPast(startOfDay(date));
-
-        const content = isOverdue ? (
-          <Badge
-            className="border-transparent"
-            style={{ backgroundColor: "#dc2626", color: "white" }}
-          >
-            {dateStr}
-          </Badge>
-        ) : (
-          <span>{dateStr}</span>
-        );
-
-        return (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="cursor-help">{content}</span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="max-w-xs">{row.nextAction}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

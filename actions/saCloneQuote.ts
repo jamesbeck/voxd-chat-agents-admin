@@ -359,20 +359,6 @@ ${rewriteContext}`,
       );
     }
 
-    // --- Create audit trail ---
-    await db("quoteAction").insert([
-      {
-        quoteId: newQuoteId,
-        adminUserId: accessToken.adminUserId,
-        action: `Cloned from "${sourceQuote.title}" (${sourceOrgName})`,
-      },
-      {
-        quoteId: quoteId,
-        adminUserId: accessToken.adminUserId,
-        action: `Cloned to "${targetOrgName}" as new quote`,
-      },
-    ]);
-
     // --- Generate OG image (fire-and-forget) ---
     createQuoteOgWithLogo({
       quoteId: newQuoteId,

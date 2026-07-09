@@ -29,7 +29,6 @@ import EditBackgroundForm from "./EditBackgroundForm";
 import EditConceptForm from "./EditConceptForm";
 import QuoteViewsTable from "./QuoteViewsTable";
 import QuoteHeroImageTab from "./QuoteHeroImageTab";
-import QuoteActionsTab from "./QuoteActionsTab";
 import userCanViewQuote from "@/lib/quoteAccess";
 import { hasAdminUserPermission } from "@/lib/adminUserPermissions";
 import { Badge } from "@/components/ui/badge";
@@ -218,11 +217,6 @@ export default async function Page({
                   href: `/admin/quotes/${quote.id}?tab=info`,
                 },
                 {
-                  value: "actions",
-                  label: "Actions",
-                  href: `/admin/quotes/${quote.id}?tab=actions`,
-                },
-                {
                   value: "background",
                   label: "Background",
                   href: `/admin/quotes/${quote.id}?tab=background`,
@@ -329,27 +323,7 @@ export default async function Page({
                     ),
                     icon: <User className="h-4 w-4" />,
                   },
-                  {
-                    label: "Next Action Date",
-                    value: quote.nextActionDate
-                      ? format(quote.nextActionDate, "dd/MM/yyyy")
-                      : "Not set",
-                    icon: <CalendarClock className="h-4 w-4" />,
-                    variant:
-                      quote.nextActionDate &&
-                      new Date(quote.nextActionDate) <= new Date()
-                        ? "danger"
-                        : "default",
-                  },
                 ]}
-              />
-            </TabsContent>
-            <TabsContent value="actions">
-              <QuoteActionsTab
-                quoteId={quote.id}
-                nextAction={quote.nextAction}
-                nextActionDate={quote.nextActionDate}
-                archived={quote.archived}
               />
             </TabsContent>
             <TabsContent value="background">
@@ -452,8 +426,6 @@ export default async function Page({
               <QuoteHeroImageTab
                 quoteId={quote.id}
                 heroImageFileExtension={quote.heroImageFileExtension}
-                organisationName={quote.organisationName}
-                background={quote.background || ""}
               />
             </TabsContent>
             <TabsContent value="views">
