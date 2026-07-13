@@ -7,8 +7,6 @@ import {
   AlertCircle,
   Cpu,
   Database,
-  Info,
-  KeyRound,
   Loader2,
   Save,
   TriangleAlert,
@@ -35,10 +33,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import saUpdateAgentModel from "@/actions/saUpdateAgentModel";
 
@@ -66,6 +61,7 @@ interface AgentModelSettingsEditorProps {
   currentModelId?: string;
   currentEmbeddingModelId?: string;
   currentProviderApiKeyId?: string;
+  currentEmbeddingProviderApiKeyId?: string;
   avgInputTokens?: number;
   avgOutputTokens?: number;
   totalSessions?: number;
@@ -78,6 +74,7 @@ export default function AgentModelSettingsEditor({
   currentModelId,
   currentEmbeddingModelId,
   currentProviderApiKeyId,
+  currentEmbeddingProviderApiKeyId,
   avgInputTokens = 0,
   avgOutputTokens = 0,
   totalSessions = 0,
@@ -85,6 +82,10 @@ export default function AgentModelSettingsEditor({
   const router = useRouter();
   const currentProviderApiKey = providerApiKeys.find(
     (providerApiKey) => providerApiKey.id === currentProviderApiKeyId,
+  );
+  const currentEmbeddingProviderApiKey = providerApiKeys.find(
+    (providerApiKey) =>
+      providerApiKey.id === currentEmbeddingProviderApiKeyId,
   );
   const currentModel = models.find((model) => model.id === currentModelId);
   const currentEmbeddingModel = models.find(
@@ -94,9 +95,14 @@ export default function AgentModelSettingsEditor({
   const initialProviderId =
     currentProviderApiKey?.providerId ||
     currentModel?.providerId ||
-    currentEmbeddingModel?.providerId ||
     providerApiKeys[0]?.providerId ||
     models[0]?.providerId ||
+    "";
+  const initialEmbeddingProviderId =
+    currentEmbeddingProviderApiKey?.providerId ||
+    currentEmbeddingModel?.providerId ||
+    providerApiKeys[0]?.providerId ||
+    models.find((model) => model.embeddings)?.providerId ||
     "";
 
   const [savedModelId, setSavedModelId] = useState(currentModelId || "");
@@ -106,8 +112,12 @@ export default function AgentModelSettingsEditor({
   const [savedProviderApiKeyId, setSavedProviderApiKeyId] = useState(
     currentProviderApiKeyId || "",
   );
+  const [savedEmbeddingProviderApiKeyId, setSavedEmbeddingProviderApiKeyId] =
+    useState(currentEmbeddingProviderApiKeyId || "");
   const [selectedProviderId, setSelectedProviderId] =
     useState(initialProviderId);
+  const [selectedEmbeddingProviderId, setSelectedEmbeddingProviderId] =
+    useState(initialEmbeddingProviderId);
   const [selectedModelId, setSelectedModelId] = useState(currentModelId || "");
   const [selectedEmbeddingModelId, setSelectedEmbeddingModelId] = useState(
     currentEmbeddingModelId || "",
@@ -115,6 +125,10 @@ export default function AgentModelSettingsEditor({
   const [selectedProviderApiKeyId, setSelectedProviderApiKeyId] = useState(
     currentProviderApiKeyId || "",
   );
+  const [
+    selectedEmbeddingProviderApiKeyId,
+    setSelectedEmbeddingProviderApiKeyId,
+  ] = useState(currentEmbeddingProviderApiKeyId || "");
   const [isSaving, setIsSaving] = useState(false);
   const [showEmbeddingChangeDialog, setShowEmbeddingChangeDialog] =
     useState(false);
@@ -148,6 +162,15 @@ export default function AgentModelSettingsEditor({
     [providerApiKeys, selectedProviderId],
   );
 
+  const filteredEmbeddingProviderApiKeys = useMemo(
+    () =>
+      providerApiKeys.filter(
+        (providerApiKey) =>
+          providerApiKey.providerId === selectedEmbeddingProviderId,
+      ),
+    [providerApiKeys, selectedEmbeddingProviderId],
+  );
+
   const filteredChatModels = useMemo(
     () =>
       models
@@ -171,27 +194,19 @@ export default function AgentModelSettingsEditor({
   const filteredEmbeddingModels = useMemo(
     () =>
       models.filter(
-        (model) => model.providerId === selectedProviderId && model.embeddings,
+        (model) =>
+          model.providerId === selectedEmbeddingProviderId && model.embeddings,
       ),
-    [models, selectedProviderId],
+    [models, selectedEmbeddingProviderId],
   );
 
-  const selectedProviderApiKey = useMemo(
+  const selectedEmbeddingProviderApiKey = useMemo(
     () =>
-      providerApiKeys.find((providerApiKey) => {
-        return providerApiKey.id === selectedProviderApiKeyId;
-      }),
-    [providerApiKeys, selectedProviderApiKeyId],
-  );
-
-  const selectedModel = useMemo(
-    () => models.find((model) => model.id === selectedModelId),
-    [models, selectedModelId],
-  );
-
-  const selectedEmbeddingModel = useMemo(
-    () => models.find((model) => model.id === selectedEmbeddingModelId),
-    [models, selectedEmbeddingModelId],
+      providerApiKeys.find(
+        (providerApiKey) =>
+          providerApiKey.id === selectedEmbeddingProviderApiKeyId,
+      ),
+    [providerApiKeys, selectedEmbeddingProviderApiKeyId],
   );
 
   const hasProviderApiKeys = providerApiKeys.length > 0;
@@ -199,6 +214,10 @@ export default function AgentModelSettingsEditor({
   const selectedProviderName =
     providerOptions.find(
       (provider) => provider.providerId === selectedProviderId,
+    )?.providerName || "None";
+  const selectedEmbeddingProviderName =
+    providerOptions.find(
+      (provider) => provider.providerId === selectedEmbeddingProviderId,
     )?.providerName || "None";
   const isEmbeddingModelDirty =
     !!selectedEmbeddingModelId &&
@@ -210,25 +229,25 @@ export default function AgentModelSettingsEditor({
     return `$${numericCost.toFixed(6)}`;
   };
 
-  const formatTokens = (tokens: number) => {
-    if (tokens === 0) return "0";
-    if (tokens >= 1000000) return `${(tokens / 1000000).toFixed(2)}M`;
-    if (tokens >= 1000) return `${(tokens / 1000).toFixed(2)}K`;
-    return tokens.toFixed(0);
-  };
-
   const persistSelection = async ({
     modelId,
     embeddingModelId,
     providerApiKeyId,
+    embeddingProviderApiKeyId,
     successMessage,
   }: {
     modelId: string;
     embeddingModelId: string;
     providerApiKeyId: string;
+    embeddingProviderApiKeyId: string;
     successMessage: string;
   }) => {
-    if (!modelId || !embeddingModelId || !providerApiKeyId) {
+    if (
+      !modelId ||
+      !embeddingModelId ||
+      !providerApiKeyId ||
+      !embeddingProviderApiKeyId
+    ) {
       return;
     }
 
@@ -239,6 +258,7 @@ export default function AgentModelSettingsEditor({
         modelId,
         embeddingModelId,
         providerApiKeyId,
+        embeddingProviderApiKeyId,
       });
 
       if (!result.success) {
@@ -249,9 +269,11 @@ export default function AgentModelSettingsEditor({
       setSavedModelId(modelId);
       setSavedEmbeddingModelId(embeddingModelId);
       setSavedProviderApiKeyId(providerApiKeyId);
+      setSavedEmbeddingProviderApiKeyId(embeddingProviderApiKeyId);
       setSelectedModelId(modelId);
       setSelectedEmbeddingModelId(embeddingModelId);
       setSelectedProviderApiKeyId(providerApiKeyId);
+      setSelectedEmbeddingProviderApiKeyId(embeddingProviderApiKeyId);
 
       toast.success(successMessage);
       router.refresh();
@@ -282,14 +304,22 @@ export default function AgentModelSettingsEditor({
         ? currentSelectedModelId
         : "";
     });
+  };
 
-    setSelectedEmbeddingModelId((currentSelectedEmbeddingModelId) => {
-      const currentEmbeddingChoice = models.find(
-        (model) => model.id === currentSelectedEmbeddingModelId,
+  const handleEmbeddingProviderChange = (providerId: string) => {
+    setSelectedEmbeddingProviderId(providerId);
+
+    setSelectedEmbeddingProviderApiKeyId((currentKeyId) => {
+      const currentKey = providerApiKeys.find(
+        (providerApiKey) => providerApiKey.id === currentKeyId,
       );
-      return currentEmbeddingChoice?.providerId === providerId &&
-        currentEmbeddingChoice.embeddings
-        ? currentSelectedEmbeddingModelId
+      return currentKey?.providerId === providerId ? currentKeyId : "";
+    });
+
+    setSelectedEmbeddingModelId((currentModelId) => {
+      const currentModel = models.find((model) => model.id === currentModelId);
+      return currentModel?.providerId === providerId && currentModel.embeddings
+        ? currentModelId
         : "";
     });
   };
@@ -317,7 +347,9 @@ export default function AgentModelSettingsEditor({
 
     if (
       !selectedProviderId ||
+      !selectedEmbeddingProviderId ||
       !nextProviderApiKey ||
+      !selectedEmbeddingProviderApiKey ||
       !nextModel ||
       !nextEmbeddingModel ||
       nextModel.embeddings ||
@@ -329,12 +361,16 @@ export default function AgentModelSettingsEditor({
     return (
       nextProviderApiKey.providerId === selectedProviderId &&
       nextModel.providerId === selectedProviderId &&
-      nextEmbeddingModel.providerId === selectedProviderId
+      selectedEmbeddingProviderApiKey.providerId ===
+        selectedEmbeddingProviderId &&
+      nextEmbeddingModel.providerId === selectedEmbeddingProviderId
     );
   }, [
     models,
     providerApiKeys,
     selectedEmbeddingModelId,
+    selectedEmbeddingProviderApiKey,
+    selectedEmbeddingProviderId,
     selectedModelId,
     selectedProviderApiKeyId,
     selectedProviderId,
@@ -342,12 +378,14 @@ export default function AgentModelSettingsEditor({
 
   const hasUnsavedChanges =
     selectedProviderApiKeyId !== savedProviderApiKeyId ||
+    selectedEmbeddingProviderApiKeyId !== savedEmbeddingProviderApiKeyId ||
     selectedModelId !== savedModelId ||
     selectedEmbeddingModelId !== savedEmbeddingModelId;
 
   const saveMessage = useMemo(() => {
     if (
       selectedProviderApiKeyId !== savedProviderApiKeyId &&
+      selectedEmbeddingProviderApiKeyId === savedEmbeddingProviderApiKeyId &&
       selectedModelId === savedModelId &&
       selectedEmbeddingModelId === savedEmbeddingModelId
     ) {
@@ -357,7 +395,8 @@ export default function AgentModelSettingsEditor({
     if (
       selectedModelId !== savedModelId &&
       selectedEmbeddingModelId === savedEmbeddingModelId &&
-      selectedProviderApiKeyId === savedProviderApiKeyId
+      selectedProviderApiKeyId === savedProviderApiKeyId &&
+      selectedEmbeddingProviderApiKeyId === savedEmbeddingProviderApiKeyId
     ) {
       return "Chat response model updated successfully";
     }
@@ -365,7 +404,8 @@ export default function AgentModelSettingsEditor({
     if (
       selectedEmbeddingModelId !== savedEmbeddingModelId &&
       selectedModelId === savedModelId &&
-      selectedProviderApiKeyId === savedProviderApiKeyId
+      selectedProviderApiKeyId === savedProviderApiKeyId &&
+      selectedEmbeddingProviderApiKeyId === savedEmbeddingProviderApiKeyId
     ) {
       return "Embedding model updated successfully";
     }
@@ -375,9 +415,11 @@ export default function AgentModelSettingsEditor({
     savedEmbeddingModelId,
     savedModelId,
     savedProviderApiKeyId,
+    savedEmbeddingProviderApiKeyId,
     selectedEmbeddingModelId,
     selectedModelId,
     selectedProviderApiKeyId,
+    selectedEmbeddingProviderApiKeyId,
   ]);
 
   const handleSave = async () => {
@@ -394,6 +436,7 @@ export default function AgentModelSettingsEditor({
       modelId: selectedModelId,
       embeddingModelId: selectedEmbeddingModelId,
       providerApiKeyId: selectedProviderApiKeyId,
+      embeddingProviderApiKeyId: selectedEmbeddingProviderApiKeyId,
       successMessage: saveMessage,
     });
   };
@@ -405,6 +448,7 @@ export default function AgentModelSettingsEditor({
       modelId: selectedModelId,
       embeddingModelId: selectedEmbeddingModelId,
       providerApiKeyId: selectedProviderApiKeyId,
+      embeddingProviderApiKeyId: selectedEmbeddingProviderApiKeyId,
       successMessage: saveMessage,
     });
   };
@@ -450,138 +494,6 @@ export default function AgentModelSettingsEditor({
   return (
     <TooltipProvider>
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <KeyRound className="h-5 w-5" />
-              Model Settings
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2 max-w-xl">
-              <Label htmlFor="provider-filter">Provider</Label>
-              <Select
-                value={selectedProviderId || undefined}
-                onValueChange={handleProviderChange}
-                disabled={!hasProviders || isSaving}
-              >
-                <SelectTrigger
-                  id="provider-filter"
-                  className="w-full text-left"
-                >
-                  <SelectValue placeholder="Select a provider..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {providerOptions.map((provider) => (
-                    <SelectItem
-                      key={provider.providerId}
-                      value={provider.providerId}
-                    >
-                      {provider.providerName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2 max-w-xl">
-              <Label htmlFor="provider-api-key">Provider API Key</Label>
-              <Select
-                value={selectedProviderApiKeyId || undefined}
-                onValueChange={handleProviderApiKeyChange}
-                disabled={
-                  !hasProviderApiKeys || !selectedProviderId || isSaving
-                }
-              >
-                <SelectTrigger
-                  id="provider-api-key"
-                  className="w-full text-left"
-                >
-                  <SelectValue placeholder="Select a provider API key..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredProviderApiKeys.map((providerApiKey) => (
-                    <SelectItem
-                      key={providerApiKey.id}
-                      value={providerApiKey.id}
-                    >
-                      {providerApiKey.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {!hasProviders && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No providers available</AlertTitle>
-                <AlertDescription>
-                  No enabled providers or models are available for this agent
-                  yet.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {!hasProviderApiKeys && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No API keys available</AlertTitle>
-                <AlertDescription>
-                  This organisation does not have any provider API keys yet, so
-                  model changes are currently disabled.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {selectedProviderId && filteredProviderApiKeys.length === 0 && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No API keys for this provider</AlertTitle>
-                <AlertDescription>
-                  This organisation does not have a {selectedProviderName} API
-                  key yet, so model changes for this provider cannot be saved.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {selectedProviderId && filteredEmbeddingModels.length === 0 && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No embedding models for this provider</AlertTitle>
-                <AlertDescription>
-                  There are no embedding-capable models available for{" "}
-                  {selectedProviderName}.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              <span>
-                Choose the provider, API key, chat response model, and embedding
-                model, then save the combination explicitly.
-              </span>
-              <span>
-                Selected provider:{" "}
-                <span className="font-medium text-foreground">
-                  {selectedProviderName}
-                </span>
-              </span>
-              {hasUnsavedChanges && (
-                <span className="font-medium text-foreground">
-                  Unsaved changes
-                </span>
-              )}
-              {isSaving && (
-                <span className="inline-flex items-center gap-2 font-medium text-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Saving...
-                </span>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
@@ -595,6 +507,68 @@ export default function AgentModelSettingsEditor({
                 Controls the model used to generate the agent&apos;s chat
                 responses and the session cost profile.
               </p>
+              <div className="space-y-2">
+                <Label htmlFor="provider-filter">Provider</Label>
+                <Select
+                  value={selectedProviderId || undefined}
+                  onValueChange={handleProviderChange}
+                  disabled={!hasProviders || isSaving}
+                >
+                  <SelectTrigger
+                    id="provider-filter"
+                    className="w-full text-left"
+                  >
+                    <SelectValue placeholder="Select a provider..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {providerOptions.map((provider) => (
+                      <SelectItem
+                        key={provider.providerId}
+                        value={provider.providerId}
+                      >
+                        {provider.providerName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="provider-api-key">Provider API Key</Label>
+                <Select
+                  value={selectedProviderApiKeyId || undefined}
+                  onValueChange={handleProviderApiKeyChange}
+                  disabled={
+                    !hasProviderApiKeys || !selectedProviderId || isSaving
+                  }
+                >
+                  <SelectTrigger
+                    id="provider-api-key"
+                    className="w-full text-left"
+                  >
+                    <SelectValue placeholder="Select a provider API key..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredProviderApiKeys.map((providerApiKey) => (
+                      <SelectItem
+                        key={providerApiKey.id}
+                        value={providerApiKey.id}
+                      >
+                        {providerApiKey.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedProviderId && filteredProviderApiKeys.length === 0 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No API keys for this provider</AlertTitle>
+                  <AlertDescription>
+                    This organisation does not have a {selectedProviderName} API
+                    key.
+                  </AlertDescription>
+                </Alert>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="chat-model">Chat Response Model</Label>
                 <Select
@@ -624,7 +598,7 @@ export default function AgentModelSettingsEditor({
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Database className="h-5 w-5" />
-                Embedding Model
+                Embeddings Model
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -633,11 +607,93 @@ export default function AgentModelSettingsEditor({
                 knowledge search and user memory.
               </p>
               <div className="space-y-2">
+                <Label htmlFor="embedding-provider">Embedding Provider</Label>
+                <Select
+                  value={selectedEmbeddingProviderId || undefined}
+                  onValueChange={handleEmbeddingProviderChange}
+                  disabled={!hasProviders || isSaving}
+                >
+                  <SelectTrigger
+                    id="embedding-provider"
+                    className="w-full text-left"
+                  >
+                    <SelectValue placeholder="Select an embedding provider..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {providerOptions.map((provider) => (
+                      <SelectItem
+                        key={provider.providerId}
+                        value={provider.providerId}
+                      >
+                        {provider.providerName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="embedding-provider-api-key">
+                  Embedding Provider API Key
+                </Label>
+                <Select
+                  value={selectedEmbeddingProviderApiKeyId || undefined}
+                  onValueChange={setSelectedEmbeddingProviderApiKeyId}
+                  disabled={
+                    !hasProviderApiKeys ||
+                    !selectedEmbeddingProviderId ||
+                    isSaving
+                  }
+                >
+                  <SelectTrigger
+                    id="embedding-provider-api-key"
+                    className="w-full text-left"
+                  >
+                    <SelectValue placeholder="Select an embedding API key..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredEmbeddingProviderApiKeys.map((providerApiKey) => (
+                      <SelectItem
+                        key={providerApiKey.id}
+                        value={providerApiKey.id}
+                      >
+                        {providerApiKey.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedEmbeddingProviderId &&
+                filteredEmbeddingProviderApiKeys.length === 0 && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>
+                      No API keys for this embedding provider
+                    </AlertTitle>
+                    <AlertDescription>
+                      This organisation does not have a{" "}
+                      {selectedEmbeddingProviderName} API key.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              {selectedEmbeddingProviderId &&
+                filteredEmbeddingModels.length === 0 && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>
+                      No embedding models for this provider
+                    </AlertTitle>
+                    <AlertDescription>
+                      There are no embedding-capable models available for{" "}
+                      {selectedEmbeddingProviderName}.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              <div className="space-y-2">
                 <Label htmlFor="embedding-model">Embedding Model</Label>
                 <Select
                   value={selectedEmbeddingModelId || undefined}
                   onValueChange={handleEmbeddingModelSelection}
-                  disabled={!selectedProviderId || isSaving}
+                  disabled={!selectedEmbeddingProviderId || isSaving}
                 >
                   <SelectTrigger
                     id="embedding-model"
@@ -680,8 +736,8 @@ export default function AgentModelSettingsEditor({
             </Button>
             {!currentSelectionIsValid && (
               <span className="text-sm text-muted-foreground">
-                Select a compatible provider key, chat model, and embedding
-                model to save.
+                Select compatible provider keys and models for both chat and
+                embeddings to save.
               </span>
             )}
           </div>

@@ -67,6 +67,10 @@ const saCloneAgent = async (input: {
       organisationId === sourceAgent.organisationId
         ? sourceAgent.providerApiKeyId
         : providerApiKeyId || null;
+    const resolvedEmbeddingProviderApiKeyId =
+      organisationId === sourceAgent.organisationId
+        ? sourceAgent.embeddingProviderApiKeyId
+        : null;
 
     // Use a transaction for the entire clone operation
     const newAgentId = await db.transaction(async (trx) => {
@@ -78,12 +82,14 @@ const saCloneAgent = async (input: {
           organisationId,
           phoneNumberId: phoneNumberId || null,
           providerApiKeyId: resolvedProviderApiKeyId,
+          embeddingProviderApiKeyId: resolvedEmbeddingProviderApiKeyId,
           targetMessageLengthCharacters:
             sourceAgent.targetMessageLengthCharacters,
           maxMessageHistory: sourceAgent.maxMessageHistory,
           autoCloseSessionAfterSeconds:
             sourceAgent.autoCloseSessionAfterSeconds,
           modelId: sourceAgent.modelId,
+          embeddingModelId: sourceAgent.embeddingModelId,
           config: sourceAgent.config
             ? JSON.stringify(sourceAgent.config)
             : null,

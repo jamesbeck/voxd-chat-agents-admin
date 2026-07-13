@@ -32,6 +32,16 @@ const getAgentById = async ({ agentId }: { agentId: string }) => {
       "providerApiKey.organisationId",
       "keyOrganisation.id",
     )
+    .leftJoin(
+      "providerApiKey as embeddingProviderApiKey",
+      "agent.embeddingProviderApiKeyId",
+      "embeddingProviderApiKey.id",
+    )
+    .leftJoin(
+      "provider as embeddingKeyProvider",
+      "embeddingProviderApiKey.providerId",
+      "embeddingKeyProvider.id",
+    )
     .where("agent.id", agentId)
     .select(
       "agent.*",
@@ -39,6 +49,7 @@ const getAgentById = async ({ agentId }: { agentId: string }) => {
       "embeddingModel.model as embeddingModelName",
       "provider.name as provider",
       "keyProvider.name as providerApiKeyProviderName",
+      "embeddingKeyProvider.name as embeddingProviderApiKeyProviderName",
       "model.inputTokenCost",
       "model.outputTokenCost",
       "phoneNumber.displayPhoneNumber",
@@ -49,6 +60,9 @@ const getAgentById = async ({ agentId }: { agentId: string }) => {
       "directPartnerOrganisation.partnerId as parentPartnerId",
       "parentPartnerOrganisation.name as parentPartnerName",
       db.raw('"providerApiKey"."key" as "providerApiKey"'),
+      db.raw(
+        '"embeddingProviderApiKey"."key" as "embeddingProviderApiKey"',
+      ),
       db.raw(
         `CASE WHEN "providerApiKey"."id" IS NOT NULL THEN "keyProvider"."name" || ' — ' || LEFT("providerApiKey"."key", 6) || '...' || RIGHT("providerApiKey"."key", 4) || COALESCE(' (' || "keyOrganisation"."name" || ')', '') ELSE NULL END as "providerApiKeyLabel"`,
       ),

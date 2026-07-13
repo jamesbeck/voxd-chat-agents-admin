@@ -33,17 +33,27 @@ const saUpdateKnowledgeBlock = async ({
       "agent.embeddingModelId",
       "embeddingModel.id",
     )
-    .leftJoin("providerApiKey", "agent.providerApiKeyId", "providerApiKey.id")
-    .leftJoin("provider", "providerApiKey.providerId", "provider.id")
+    .leftJoin(
+      "providerApiKey as embeddingProviderApiKey",
+      "agent.embeddingProviderApiKeyId",
+      "embeddingProviderApiKey.id",
+    )
+    .leftJoin(
+      "provider as embeddingProvider",
+      "embeddingProviderApiKey.providerId",
+      "embeddingProvider.id",
+    )
     .where("knowledgeBlock.id", blockId)
     .select(
       "knowledgeBlock.*",
       "knowledgeDocument.agentId",
       "knowledgeDocument.title as documentTitle",
       "knowledgeDocument.sourceType",
-      db.raw('"providerApiKey"."key" as "providerApiKey"'),
-      "provider.name as providerName",
-      "provider.id as providerId",
+      db.raw(
+        '"embeddingProviderApiKey"."key" as "embeddingProviderApiKey"',
+      ),
+      "embeddingProvider.name as embeddingProviderName",
+      "embeddingProvider.id as embeddingProviderId",
       "embeddingModel.model as embeddingModelName",
     )
     .first();
@@ -68,10 +78,10 @@ const saUpdateKnowledgeBlock = async ({
     };
   }
 
-  if (!block.providerApiKey || !block.providerName) {
+  if (!block.embeddingProviderApiKey || !block.embeddingProviderName) {
     return {
       success: false,
-      error: "Agent does not have a provider API key configured",
+      error: "Agent does not have an embedding provider API key configured",
     };
   }
 
@@ -82,7 +92,7 @@ const saUpdateKnowledgeBlock = async ({
     };
   }
 
-  // Generate new embedding using the agent's OpenAI API key
+  // Generate the new embedding with the embedding-specific API key
   // Include document title and block title for better semantic context
   let embeddingText = content;
   if (block.documentTitle && title) {
@@ -98,8 +108,8 @@ const saUpdateKnowledgeBlock = async ({
   try {
     const { embedding, usage } = await embed({
       model: getAdminAiEmbeddingModel({
-        providerName: block.providerName,
-        apiKey: block.providerApiKey,
+        providerName: block.embeddingProviderName,
+        apiKey: block.embeddingProviderApiKey,
         modelId: block.embeddingModelName,
       }),
       value: embeddingText,
@@ -129,7 +139,7 @@ const saUpdateKnowledgeBlock = async ({
       title,
       tokenCount,
       embedding: embeddingVector ? `[${embeddingVector.join(",")}]` : null,
-      embeddingProviderId: block.providerId,
+      embeddingProviderId: block.embeddingProviderId,
       embeddingModel,
       embeddingDimensions: embeddingVector ? embeddingVector.length : 0,
     })

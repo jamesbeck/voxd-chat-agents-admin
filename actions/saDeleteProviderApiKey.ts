@@ -32,7 +32,11 @@ const saDeleteProviderApiKey = async ({
 
   // Check for references from agents or partners
   const agentRef = await db("agent")
-    .where("providerApiKeyId", providerApiKeyId)
+    .where((query) =>
+      query
+        .where("providerApiKeyId", providerApiKeyId)
+        .orWhere("embeddingProviderApiKeyId", providerApiKeyId),
+    )
     .first();
   if (agentRef) {
     return {

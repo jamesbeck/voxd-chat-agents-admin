@@ -19,7 +19,7 @@ const saCreateKnowledgeBlock = async ({
 }): Promise<ServerActionResponse> => {
   const accessToken = await verifyAccessToken();
 
-  // Get the document and its associated agent's API key
+  // Get the document and its associated agent's embedding configuration
   const document = await db("knowledgeDocument")
     .join("agent", "knowledgeDocument.agentId", "agent.id")
     .leftJoin(
@@ -27,14 +27,24 @@ const saCreateKnowledgeBlock = async ({
       "agent.embeddingModelId",
       "embeddingModel.id",
     )
-    .leftJoin("providerApiKey", "agent.providerApiKeyId", "providerApiKey.id")
-    .leftJoin("provider", "providerApiKey.providerId", "provider.id")
+    .leftJoin(
+      "providerApiKey as embeddingProviderApiKey",
+      "agent.embeddingProviderApiKeyId",
+      "embeddingProviderApiKey.id",
+    )
+    .leftJoin(
+      "provider as embeddingProvider",
+      "embeddingProviderApiKey.providerId",
+      "embeddingProvider.id",
+    )
     .where("knowledgeDocument.id", documentId)
     .select(
       "knowledgeDocument.*",
-      db.raw('"providerApiKey"."key" as "providerApiKey"'),
-      "provider.name as providerName",
-      "provider.id as providerId",
+      db.raw(
+        '"embeddingProviderApiKey"."key" as "embeddingProviderApiKey"',
+      ),
+      "embeddingProvider.name as embeddingProviderName",
+      "embeddingProvider.id as embeddingProviderId",
       "embeddingModel.model as embeddingModelName",
     )
     .first();
@@ -54,10 +64,10 @@ const saCreateKnowledgeBlock = async ({
     };
   }
 
-  if (!document.providerApiKey || !document.providerName) {
+  if (!document.embeddingProviderApiKey || !document.embeddingProviderName) {
     return {
       success: false,
-      error: "Agent does not have a provider API key configured",
+      error: "Agent does not have an embedding provider API key configured",
     };
   }
 
@@ -76,7 +86,7 @@ const saCreateKnowledgeBlock = async ({
 
   const blockIndex = lastBlock ? lastBlock.blockIndex + 1 : 0;
 
-  // Generate embedding using the agent's OpenAI API key
+  // Generate the embedding with the agent's embedding-specific API key
   // Include document title and block title for better semantic context
   let embeddingText = content;
   if (document.title && title) {
@@ -92,8 +102,8 @@ const saCreateKnowledgeBlock = async ({
   try {
     const { embedding, usage } = await embed({
       model: getAdminAiEmbeddingModel({
-        providerName: document.providerName,
-        apiKey: document.providerApiKey,
+        providerName: document.embeddingProviderName,
+        apiKey: document.embeddingProviderApiKey,
         modelId: document.embeddingModelName,
       }),
       value: embeddingText,
@@ -124,7 +134,7 @@ const saCreateKnowledgeBlock = async ({
       blockIndex,
       tokenCount,
       embedding: embeddingVector ? `[${embeddingVector.join(",")}]` : null,
-      embeddingProviderId: document.providerId,
+      embeddingProviderId: document.embeddingProviderId,
       embeddingModel,
       embeddingDimensions: embeddingVector ? embeddingVector.length : 0,
     })

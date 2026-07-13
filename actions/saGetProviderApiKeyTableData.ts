@@ -84,7 +84,7 @@ const saGetProviderApiKeyTableData = async ({
         `(SELECT COUNT(*) FROM "providerApiKey" AS pk2 WHERE pk2."key" = "providerApiKey"."key" AND pk2."organisationId" != "providerApiKey"."organisationId")::int as "duplicateKeyCount"`,
       ),
       db.raw(
-        `COALESCE((SELECT json_agg(json_build_object('id', a."id", 'name', a."niceName")) FROM "agent" a WHERE a."providerApiKeyId" = "providerApiKey"."id"), '[]'::json) as "agents"`,
+        `COALESCE((SELECT json_agg(json_build_object('id', a."id", 'name', a."niceName")) FROM "agent" a WHERE a."providerApiKeyId" = "providerApiKey"."id" OR a."embeddingProviderApiKeyId" = "providerApiKey"."id"), '[]'::json) as "agents"`,
       ),
       db.raw(
         `COALESCE((SELECT json_agg(json_build_object('id', o."id", 'name', o."name")) FROM "organisation" o WHERE o."partner" = true AND o."providerApiKeyId" = "providerApiKey"."id"), '[]'::json) as "partners"`,

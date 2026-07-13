@@ -373,6 +373,9 @@ export default async function Page({
                   currentModelId={agent?.modelId}
                   currentEmbeddingModelId={agent?.embeddingModelId}
                   currentProviderApiKeyId={agent?.providerApiKeyId}
+                  currentEmbeddingProviderApiKeyId={
+                    agent?.embeddingProviderApiKeyId
+                  }
                 />
               </Container>
             </TabsContent>

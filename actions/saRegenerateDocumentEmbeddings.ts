@@ -15,7 +15,7 @@ const saRegenerateDocumentEmbeddings = async ({
 }): Promise<ServerActionResponse> => {
   const accessToken = await verifyAccessToken();
 
-  // Get the document and its associated agent's API key
+  // Get the document and its associated agent's embedding configuration
   const document = await db("knowledgeDocument")
     .join("agent", "knowledgeDocument.agentId", "agent.id")
     .leftJoin(
@@ -23,14 +23,24 @@ const saRegenerateDocumentEmbeddings = async ({
       "agent.embeddingModelId",
       "embeddingModel.id",
     )
-    .leftJoin("providerApiKey", "agent.providerApiKeyId", "providerApiKey.id")
-    .leftJoin("provider", "providerApiKey.providerId", "provider.id")
+    .leftJoin(
+      "providerApiKey as embeddingProviderApiKey",
+      "agent.embeddingProviderApiKeyId",
+      "embeddingProviderApiKey.id",
+    )
+    .leftJoin(
+      "provider as embeddingProvider",
+      "embeddingProviderApiKey.providerId",
+      "embeddingProvider.id",
+    )
     .where("knowledgeDocument.id", documentId)
     .select(
       "knowledgeDocument.*",
-      db.raw('"providerApiKey"."key" as "providerApiKey"'),
-      "provider.name as providerName",
-      "provider.id as providerId",
+      db.raw(
+        '"embeddingProviderApiKey"."key" as "embeddingProviderApiKey"',
+      ),
+      "embeddingProvider.name as embeddingProviderName",
+      "embeddingProvider.id as embeddingProviderId",
       "embeddingModel.model as embeddingModelName",
     )
     .first();
@@ -47,10 +57,10 @@ const saRegenerateDocumentEmbeddings = async ({
     return { success: false, error: "Unauthorized" };
   }
 
-  if (!document.providerApiKey || !document.providerName) {
+  if (!document.embeddingProviderApiKey || !document.embeddingProviderName) {
     return {
       success: false,
-      error: "Agent does not have a provider API key configured",
+      error: "Agent does not have an embedding provider API key configured",
     };
   }
 
@@ -92,8 +102,8 @@ const saRegenerateDocumentEmbeddings = async ({
 
       const { embedding, usage } = await embed({
         model: getAdminAiEmbeddingModel({
-          providerName: document.providerName,
-          apiKey: document.providerApiKey,
+          providerName: document.embeddingProviderName,
+          apiKey: document.embeddingProviderApiKey,
           modelId: document.embeddingModelName,
         }),
         value: embeddingText,
@@ -111,7 +121,7 @@ const saRegenerateDocumentEmbeddings = async ({
         .update({
           tokenCount,
           embedding: `[${embedding.join(",")}]`,
-          embeddingProviderId: document.providerId,
+          embeddingProviderId: document.embeddingProviderId,
           embeddingModel: document.embeddingModelName,
           embeddingDimensions: embedding.length,
         });

@@ -34,6 +34,9 @@ type KnowledgeDocumentImportContext = {
   providerApiKey: string;
   providerName: string;
   providerId: string;
+  embeddingProviderApiKey: string;
+  embeddingProviderName: string;
+  embeddingProviderId: string;
   embeddingModelName: string | null;
   modelName: string | null;
 };
@@ -227,6 +230,16 @@ export async function getKnowledgeDocumentImportContext({
     )
     .leftJoin("providerApiKey", "agent.providerApiKeyId", "providerApiKey.id")
     .leftJoin("provider", "providerApiKey.providerId", "provider.id")
+    .leftJoin(
+      "providerApiKey as embeddingProviderApiKey",
+      "agent.embeddingProviderApiKeyId",
+      "embeddingProviderApiKey.id",
+    )
+    .leftJoin(
+      "provider as embeddingProvider",
+      "embeddingProviderApiKey.providerId",
+      "embeddingProvider.id",
+    )
     .where("knowledgeDocument.id", documentId)
     .select(
       "knowledgeDocument.id",
@@ -237,6 +250,11 @@ export async function getKnowledgeDocumentImportContext({
       db.raw('"providerApiKey"."key" as "providerApiKey"'),
       "provider.name as providerName",
       "provider.id as providerId",
+      db.raw(
+        '"embeddingProviderApiKey"."key" as "embeddingProviderApiKey"',
+      ),
+      "embeddingProvider.name as embeddingProviderName",
+      "embeddingProvider.id as embeddingProviderId",
       "embeddingModel.model as embeddingModelName",
       "model.model as modelName",
     )
@@ -254,6 +272,16 @@ export async function getKnowledgeDocumentImportContext({
     throw new Error("Agent provider API key is missing its provider");
   }
 
+  if (!document.embeddingProviderApiKey) {
+    throw new Error(
+      "Agent does not have an embedding provider API key configured",
+    );
+  }
+
+  if (!document.embeddingProviderName) {
+    throw new Error("Agent embedding API key is missing its provider");
+  }
+
   if (!document.embeddingModelName) {
     throw new Error("Agent does not have an embedding model configured");
   }
@@ -267,6 +295,9 @@ export async function importKnowledgeBlocksFromText({
   providerApiKey,
   providerName,
   providerId,
+  embeddingProviderApiKey,
+  embeddingProviderName,
+  embeddingProviderId,
   embeddingModelName,
   trx,
   strategy = "ai",
@@ -277,6 +308,9 @@ export async function importKnowledgeBlocksFromText({
   providerApiKey: string;
   providerName?: string;
   providerId?: string;
+  embeddingProviderApiKey?: string;
+  embeddingProviderName?: string;
+  embeddingProviderId?: string;
   embeddingModelName?: string | null;
   modelName?: string | null;
   trx?: Knex | Knex.Transaction;
@@ -285,11 +319,21 @@ export async function importKnowledgeBlocksFromText({
 }) {
   const executor = getExecutor(trx);
   const resolvedContext =
-    !providerName || !providerId || !embeddingModelName
+    !providerName ||
+    !providerId ||
+    !embeddingProviderApiKey ||
+    !embeddingProviderName ||
+    !embeddingProviderId ||
+    !embeddingModelName
       ? await getKnowledgeDocumentImportContext({ documentId, trx })
       : null;
   const resolvedProviderName = providerName ?? resolvedContext!.providerName;
-  const resolvedProviderId = providerId ?? resolvedContext!.providerId;
+  const resolvedEmbeddingProviderApiKey =
+    embeddingProviderApiKey ?? resolvedContext!.embeddingProviderApiKey;
+  const resolvedEmbeddingProviderName =
+    embeddingProviderName ?? resolvedContext!.embeddingProviderName;
+  const resolvedEmbeddingProviderId =
+    embeddingProviderId ?? resolvedContext!.embeddingProviderId;
   const resolvedEmbeddingModelName =
     embeddingModelName ?? resolvedContext!.embeddingModelName;
 
@@ -324,8 +368,8 @@ export async function importKnowledgeBlocksFromText({
 
   const embeddingResult = await embedMany({
     model: getAdminAiEmbeddingModel({
-      providerName: resolvedProviderName,
-      apiKey: providerApiKey,
+      providerName: resolvedEmbeddingProviderName,
+      apiKey: resolvedEmbeddingProviderApiKey,
       modelId: resolvedEmbeddingModelName,
     }),
     values: embeddingInput,
@@ -341,7 +385,7 @@ export async function importKnowledgeBlocksFromText({
     embedding: embeddingResult.embeddings[index]
       ? `[${embeddingResult.embeddings[index].join(",")}]`
       : null,
-    embeddingProviderId: resolvedProviderId,
+    embeddingProviderId: resolvedEmbeddingProviderId,
     embeddingModel,
     embeddingDimensions: embeddingResult.embeddings[index]?.length ?? 0,
   }));
@@ -382,6 +426,10 @@ export async function refreshKnowledgeDocumentFromUrl({
     providerApiKey: document.providerApiKey,
     providerName: document.providerName,
     providerId: document.providerId,
+    embeddingProviderApiKey: document.embeddingProviderApiKey,
+    embeddingProviderName: document.embeddingProviderName,
+    embeddingProviderId: document.embeddingProviderId,
+    embeddingModelName: document.embeddingModelName,
     modelName: document.modelName,
     trx,
     strategy: "preserve-all",

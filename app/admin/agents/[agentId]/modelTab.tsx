@@ -13,6 +13,7 @@ interface ModelTabProps {
   currentModelId?: string;
   currentEmbeddingModelId?: string;
   currentProviderApiKeyId?: string;
+  currentEmbeddingProviderApiKeyId?: string;
 }
 
 interface Model {
@@ -38,6 +39,7 @@ export default async function ModelTab({
   currentModelId,
   currentEmbeddingModelId,
   currentProviderApiKeyId,
+  currentEmbeddingProviderApiKeyId,
 }: ModelTabProps) {
   const modelsResponse = await saGetAllModels();
   const allModels = modelsResponse.success ? modelsResponse.data : [];
@@ -215,6 +217,9 @@ export default async function ModelTab({
           currentModelId={currentModelId}
           currentEmbeddingModelId={currentEmbeddingModelId}
           currentProviderApiKeyId={currentProviderApiKeyId}
+          currentEmbeddingProviderApiKeyId={
+            currentEmbeddingProviderApiKeyId
+          }
           avgInputTokens={usageStats?.avgInputTokens}
           avgOutputTokens={usageStats?.avgOutputTokens}
           totalSessions={usageStats?.totalSessions}

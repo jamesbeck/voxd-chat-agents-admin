@@ -44,8 +44,8 @@ const saSearchKnowledgeByEmbedding = async ({
     const agent = await getAgentById({ agentId });
     if (
       !agent ||
-      !agent.providerApiKey ||
-      !agent.providerApiKeyProviderName ||
+      !agent.embeddingProviderApiKey ||
+      !agent.embeddingProviderApiKeyProviderName ||
       !agent.embeddingModelName
     ) {
       return { success: false, error: "Agent not found or missing API key" };
@@ -54,8 +54,8 @@ const saSearchKnowledgeByEmbedding = async ({
     // Generate embedding for the query
     const { embedding } = await embed({
       model: getAdminAiEmbeddingModel({
-        providerName: agent.providerApiKeyProviderName,
-        apiKey: agent.providerApiKey,
+        providerName: agent.embeddingProviderApiKeyProviderName,
+        apiKey: agent.embeddingProviderApiKey,
         modelId: agent.embeddingModelName,
       }),
       value: query,
