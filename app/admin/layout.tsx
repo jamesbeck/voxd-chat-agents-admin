@@ -7,15 +7,18 @@ import type { Metadata } from "next";
 import getPartnerFromHeaders from "@/lib/getPartnerFromHeaders";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import saGetUserAgents from "@/actions/saGetUserAgents";
+import { cookies } from "next/headers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const partner = await getPartnerFromHeaders();
+  const cookieStore = await cookies();
+  const brandingVersion = cookieStore.get("partner-branding-version")?.value;
   const brandName = partner?.effectivePartnerName || "VOXD";
 
   const favicon =
     partner?.effectivePartnerLogoFileExtension &&
     partner?.effectivePartnerOrganisationId
-      ? `https://s3.${process.env.NEXT_PUBLIC_WASABI_REGION || "eu-west-1"}.wasabisys.com/${process.env.NEXT_PUBLIC_WASABI_BUCKET_NAME || "voxd"}/organisationLogos/${partner.effectivePartnerOrganisationId}.${partner.effectivePartnerLogoFileExtension}`
+      ? `https://s3.${process.env.NEXT_PUBLIC_WASABI_REGION || "eu-west-1"}.wasabisys.com/${process.env.NEXT_PUBLIC_WASABI_BUCKET_NAME || "voxd"}/organisationLogos/${partner.effectivePartnerOrganisationId}.${partner.effectivePartnerLogoFileExtension}${brandingVersion ? `?v=${brandingVersion}` : ""}`
       : "/logo.svg";
 
   return {
@@ -35,6 +38,11 @@ export default async function RootLayout({
   const partner = await getPartnerFromHeaders();
   const accessToken = await verifyAccessToken();
   const userAgents = await saGetUserAgents();
+  const cookieStore = await cookies();
+  // Logos are overwritten at the same object key and have a long cache lifetime.
+  // The uploader's cookie changes with each save, giving their refreshed layout
+  // a new URL without causing every render to refetch the image.
+  const brandingVersion = cookieStore.get("partner-branding-version")?.value;
 
   return (
     <SidebarProvider>
@@ -51,7 +59,7 @@ export default async function RootLayout({
             logoUrl={
               partner?.effectivePartnerLogoFileExtension &&
               partner?.effectivePartnerOrganisationId
-                ? `https://s3.${process.env.NEXT_PUBLIC_WASABI_REGION || "eu-west-1"}.wasabisys.com/${process.env.NEXT_PUBLIC_WASABI_BUCKET_NAME || "voxd"}/organisationLogos/${partner.effectivePartnerOrganisationId}.${partner.effectivePartnerLogoFileExtension}`
+                ? `https://s3.${process.env.NEXT_PUBLIC_WASABI_REGION || "eu-west-1"}.wasabisys.com/${process.env.NEXT_PUBLIC_WASABI_BUCKET_NAME || "voxd"}/organisationLogos/${partner.effectivePartnerOrganisationId}.${partner.effectivePartnerLogoFileExtension}${brandingVersion ? `?v=${brandingVersion}` : ""}`
                 : undefined
             }
             showLogoOnColour={

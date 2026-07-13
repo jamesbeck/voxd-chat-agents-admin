@@ -4,6 +4,8 @@ import db from "../database/db";
 import { ServerActionResponse } from "@/types/types";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import { addLog } from "@/lib/addLog";
+import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
 
 // Helper to strip protocol from URL
 const stripProtocol = (url: string): string => {
@@ -78,6 +80,21 @@ const saUpdateOrganisation = async ({
 
   //update the organisation
   await db("organisation").where({ id: organisationId }).update(updateData);
+
+  if (
+    showLogoOnColour !== undefined ||
+    primaryColour !== undefined ||
+    partner !== undefined
+  ) {
+    revalidateTag("partners", { expire: 0 });
+    const cookieStore = await cookies();
+    cookieStore.set("partner-branding-version", Date.now().toString(), {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
 
   // Log organisation update
   await addLog({

@@ -12,6 +12,8 @@ import { addLog } from "@/lib/addLog";
 import sharp from "sharp";
 import { createQuoteOgWithLogo } from "@/lib/createQuoteOgWithLogo";
 import { extractProminentColour } from "@/lib/extractProminentColour";
+import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
 
 const saUploadOrganisationLogo = async ({
   organisationId,
@@ -87,7 +89,7 @@ const saUploadOrganisationLogo = async ({
     const buffer = Buffer.from(fileBase64, "base64");
 
     // Analyze image to determine if it needs a dark background
-    const needsDarkBackground = await analyzeLogoBackground(buffer, ext);
+    const needsDarkBackground = await analyzeLogoBackground(buffer);
 
     // Extract prominent colour for auto-setting primary colour
     const prominentColour = await extractProminentColour(buffer, ext);
@@ -132,6 +134,17 @@ const saUploadOrganisationLogo = async ({
     }
 
     await db("organisation").where("id", organisationId).update(updateData);
+
+    // Partner branding is cached for domain-based layout rendering. Expire it
+    // now so router.refresh() can update the current user's sidebar immediately.
+    revalidateTag("partners", { expire: 0 });
+    const cookieStore = await cookies();
+    cookieStore.set("partner-branding-version", Date.now().toString(), {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+    });
 
     // Regenerate OG images for all quotes belonging to this organisation
     const allQuotes = await db("quote")
@@ -244,16 +257,12 @@ function getContentType(ext: string): string {
  *    - If edges are very light, the logo content is probably dark (light bg OK)
  *    - If edges are dark or image has no clear background, analyze overall brightness
  */
-async function analyzeLogoBackground(
-  buffer: Buffer,
-  extension: string,
-): Promise<boolean> {
+async function analyzeLogoBackground(buffer: Buffer): Promise<boolean> {
   try {
     // SVGs are tricky - default to analyzing them as rasterized
     // Sharp can handle SVG but we need to be careful
 
     const image = sharp(buffer);
-    const metadata = await image.metadata();
 
     // Resize to a small size for faster analysis (50x50 is enough for color detection)
     const resized = image.resize(50, 50, { fit: "inside" });
