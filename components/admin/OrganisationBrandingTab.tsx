@@ -5,7 +5,9 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import saUploadOrganisationLogo from "@/actions/saUploadOrganisationLogo";
+import saUploadOrganisationLogo, {
+  saCreateOrganisationLogoUpload,
+} from "@/actions/saUploadOrganisationLogo";
 import { saUpdateOrganisation } from "@/actions/saUpdateOrganisation";
 import { useRouter } from "next/navigation";
 import { Upload, X } from "lucide-react";
@@ -40,7 +42,7 @@ const OrganisationBrandingTab = ({
   const [saving, setSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<{
-    base64: string;
+    file: File;
     extension: string;
   } | null>(null);
   const [bgColour, setBgColour] = useState(showLogoOnColour || "");
@@ -64,13 +66,7 @@ const OrganisationBrandingTab = ({
     const extension = file.name.split(".").pop()?.toLowerCase() || "";
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = (reader.result as string).split(",")[1];
-      setSelectedFile({ base64, extension });
-    };
-    reader.readAsDataURL(file);
+    setSelectedFile({ file, extension });
   }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,9 +117,30 @@ const OrganisationBrandingTab = ({
     setSaving(true);
     try {
       if (selectedFile) {
+        const prepareResult = await saCreateOrganisationLogoUpload({
+          organisationId,
+          fileExtension: selectedFile.extension,
+          contentType: selectedFile.file.type,
+          fileSize: selectedFile.file.size,
+        });
+        if (!prepareResult.success) {
+          toast.error(prepareResult.error || "Failed to prepare logo upload");
+          return;
+        }
+
+        const uploadResponse = await fetch(prepareResult.data.uploadUrl, {
+          method: "PUT",
+          headers: { "Content-Type": selectedFile.file.type },
+          body: selectedFile.file,
+        });
+        if (!uploadResponse.ok) {
+          toast.error("Failed to upload logo to storage");
+          return;
+        }
+
         const uploadResult = await saUploadOrganisationLogo({
           organisationId,
-          fileBase64: selectedFile.base64,
+          uploadKey: prepareResult.data.uploadKey,
           fileExtension: selectedFile.extension,
         });
         if (!uploadResult.success) {

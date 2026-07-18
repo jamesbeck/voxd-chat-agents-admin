@@ -4,7 +4,11 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { randomUUID } from "node:crypto";
 import db from "../database/db";
 import { ServerActionResponse } from "@/types/types";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
@@ -15,13 +19,121 @@ import { extractProminentColour } from "@/lib/extractProminentColour";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
+const MAX_LOGO_SIZE_BYTES = 5 * 1024 * 1024;
+const UPLOAD_URL_EXPIRES_IN_SECONDS = 5 * 60;
+const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "gif", "svg", "webp"];
+
+const getS3Client = () =>
+  new S3Client({
+    region: process.env.WASABI_REGION || "eu-west-1",
+    endpoint: `https://s3.${
+      process.env.WASABI_REGION || "eu-west-1"
+    }.wasabisys.com`,
+    credentials: {
+      accessKeyId: process.env.WASABI_ACCESS_KEY_ID!,
+      secretAccessKey: process.env.WASABI_SECRET_ACCESS_KEY!,
+    },
+    forcePathStyle: true,
+  });
+
+const getOrganisationForLogoUpload = async (organisationId: string) => {
+  const accessToken = await verifyAccessToken();
+  const organisation = await db("organisation")
+    .where("id", organisationId)
+    .first();
+
+  if (!organisation) {
+    return { error: "Organisation not found" } as const;
+  }
+
+  const isSuperAdmin = accessToken.superAdmin;
+  const isPartnerOfOrg =
+    accessToken.partnerId && organisation.partnerId === accessToken.partnerId;
+  const isMemberOfOrg = accessToken.organisationId === organisation.id;
+
+  if (!isSuperAdmin && !isPartnerOfOrg && !isMemberOfOrg) {
+    return {
+      error: "You do not have permission to upload logos for this organisation",
+    } as const;
+  }
+
+  return { accessToken, organisation } as const;
+};
+
+export const saCreateOrganisationLogoUpload = async ({
+  organisationId,
+  fileExtension,
+  contentType,
+  fileSize,
+}: {
+  organisationId: string;
+  fileExtension: string;
+  contentType: string;
+  fileSize: number;
+}): Promise<ServerActionResponse> => {
+  if (!organisationId) {
+    return { success: false, error: "Organisation ID is required" };
+  }
+
+  const ext = fileExtension.toLowerCase();
+  if (!ALLOWED_EXTENSIONS.includes(ext)) {
+    return {
+      success: false,
+      error: `Invalid file type. Allowed types: ${ALLOWED_EXTENSIONS.join(", ")}`,
+    };
+  }
+
+  if (contentType !== getContentType(ext)) {
+    return {
+      success: false,
+      error: "The file type does not match its extension",
+    };
+  }
+
+  if (!Number.isInteger(fileSize) || fileSize <= 0) {
+    return { success: false, error: "File size is invalid" };
+  }
+
+  if (fileSize > MAX_LOGO_SIZE_BYTES) {
+    return { success: false, error: "File is too large. Maximum size is 5MB." };
+  }
+
+  const access = await getOrganisationForLogoUpload(organisationId);
+  if ("error" in access) {
+    return { success: false, error: access.error };
+  }
+
+  try {
+    const bucketName = process.env.WASABI_BUCKET_NAME || "voxd";
+    const uploadKey = `pendingOrganisationLogos/${organisationId}/${randomUUID()}.${ext}`;
+    const uploadUrl = await getSignedUrl(
+      getS3Client(),
+      new PutObjectCommand({
+        Bucket: bucketName,
+        Key: uploadKey,
+        ContentType: contentType,
+        ContentLength: fileSize,
+      }),
+      { expiresIn: UPLOAD_URL_EXPIRES_IN_SECONDS },
+    );
+
+    return { success: true, data: { uploadUrl, uploadKey } };
+  } catch (error) {
+    console.error("Error creating organisation logo upload URL:", error);
+    return {
+      success: false,
+      error: "Failed to prepare the logo upload. Please try again.",
+    };
+  }
+};
+
 const saUploadOrganisationLogo = async ({
   organisationId,
-  fileBase64,
+  uploadKey,
   fileExtension,
 }: {
   organisationId: string;
-  fileBase64: string;
+  uploadKey: string;
   fileExtension: string;
 }): Promise<ServerActionResponse> => {
   if (!organisationId) {
@@ -31,10 +143,10 @@ const saUploadOrganisationLogo = async ({
     };
   }
 
-  if (!fileBase64) {
+  if (!uploadKey) {
     return {
       success: false,
-      error: "File data is required",
+      error: "Upload key is required",
     };
   }
 
@@ -45,48 +157,76 @@ const saUploadOrganisationLogo = async ({
     };
   }
 
-  const accessToken = await verifyAccessToken();
-
-  // Get the organisation
-  const organisation = await db("organisation")
-    .where("id", organisationId)
-    .first();
-
-  if (!organisation) {
-    return {
-      success: false,
-      error: "Organisation not found",
-    };
+  const access = await getOrganisationForLogoUpload(organisationId);
+  if ("error" in access) {
+    return { success: false, error: access.error };
   }
-
-  // Authorization check: must be super admin, partner of this org, or member
-  const isSuperAdmin = accessToken.superAdmin;
-  const isPartnerOfOrg =
-    accessToken.partnerId && organisation.partnerId === accessToken.partnerId;
-  const isMemberOfOrg = accessToken.organisationId === organisation.id;
-
-  if (!isSuperAdmin && !isPartnerOfOrg && !isMemberOfOrg) {
-    return {
-      success: false,
-      error: "You do not have permission to upload logos for this organisation",
-    };
-  }
+  const { accessToken, organisation } = access;
 
   // Validate file extension
-  const allowedExtensions = ["png", "jpg", "jpeg", "gif", "svg", "webp"];
   const ext = fileExtension.toLowerCase();
-  if (!allowedExtensions.includes(ext)) {
+  if (!ALLOWED_EXTENSIONS.includes(ext)) {
     return {
       success: false,
-      error: `Invalid file type. Allowed types: ${allowedExtensions.join(
+      error: `Invalid file type. Allowed types: ${ALLOWED_EXTENSIONS.join(
         ", ",
       )}`,
     };
   }
 
+  const expectedUploadKeyPrefix = `pendingOrganisationLogos/${organisationId}/`;
+  const uploadFileName = uploadKey.slice(expectedUploadKeyPrefix.length);
+  const uploadFileNamePattern = new RegExp(
+    `^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\\.${ext}$`,
+  );
+  if (
+    !uploadKey.startsWith(expectedUploadKeyPrefix) ||
+    !uploadFileNamePattern.test(uploadFileName)
+  ) {
+    return { success: false, error: "Invalid upload key" };
+  }
+
   try {
-    // Convert base64 to buffer
-    const buffer = Buffer.from(fileBase64, "base64");
+    const bucketName = process.env.WASABI_BUCKET_NAME || "voxd";
+    const s3Client = getS3Client();
+    const headResponse = await s3Client.send(
+      new HeadObjectCommand({ Bucket: bucketName, Key: uploadKey }),
+    );
+
+    if (
+      !headResponse.ContentLength ||
+      headResponse.ContentLength > MAX_LOGO_SIZE_BYTES
+    ) {
+      return {
+        success: false,
+        error: "Uploaded file is empty or larger than the 5MB limit",
+      };
+    }
+
+    if (headResponse.ContentType !== getContentType(ext)) {
+      return { success: false, error: "The uploaded file type is invalid" };
+    }
+
+    const uploadedObject = await s3Client.send(
+      new GetObjectCommand({ Bucket: bucketName, Key: uploadKey }),
+    );
+    if (!uploadedObject.Body) {
+      return { success: false, error: "Uploaded file could not be read" };
+    }
+
+    const buffer = Buffer.from(await uploadedObject.Body.transformToByteArray());
+    if (buffer.length > MAX_LOGO_SIZE_BYTES) {
+      return { success: false, error: "File is too large. Maximum size is 5MB." };
+    }
+
+    const metadata = await sharp(buffer).metadata();
+    const expectedFormat = ext === "jpg" ? "jpeg" : ext;
+    if (metadata.format !== expectedFormat) {
+      return {
+        success: false,
+        error: "The uploaded content does not match the selected image type",
+      };
+    }
 
     // Analyze image to determine if it needs a dark background
     const needsDarkBackground = await analyzeLogoBackground(buffer);
@@ -94,22 +234,7 @@ const saUploadOrganisationLogo = async ({
     // Extract prominent colour for auto-setting primary colour
     const prominentColour = await extractProminentColour(buffer, ext);
 
-    const bucketName = process.env.WASABI_BUCKET_NAME || "voxd";
-
-    // Initialize S3 client for Wasabi
-    const s3Client = new S3Client({
-      region: process.env.WASABI_REGION || "eu-west-1",
-      endpoint: `https://s3.${
-        process.env.WASABI_REGION || "eu-west-1"
-      }.wasabisys.com`,
-      credentials: {
-        accessKeyId: process.env.WASABI_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.WASABI_SECRET_ACCESS_KEY!,
-      },
-      forcePathStyle: true,
-    });
-
-    // Upload to Wasabi
+    // Publish the validated image to the permanent public key.
     const key = `organisationLogos/${organisationId}.${ext}`;
     await s3Client.send(
       new PutObjectCommand({
@@ -152,15 +277,7 @@ const saUploadOrganisationLogo = async ({
       .select("id", "heroImageFileExtension");
 
     if (allQuotes.length > 0) {
-      const s3ClientForOg = new S3Client({
-        region: process.env.WASABI_REGION || "eu-west-1",
-        endpoint: `https://s3.${process.env.WASABI_REGION || "eu-west-1"}.wasabisys.com`,
-        credentials: {
-          accessKeyId: process.env.WASABI_ACCESS_KEY_ID!,
-          secretAccessKey: process.env.WASABI_SECRET_ACCESS_KEY!,
-        },
-        forcePathStyle: true,
-      });
+      const s3ClientForOg = getS3Client();
 
       // Process in background - don't block the response
       Promise.all(
@@ -232,6 +349,17 @@ const saUploadOrganisationLogo = async ({
       success: false,
       error: "Failed to upload logo. Please try again.",
     };
+  } finally {
+    try {
+      await getS3Client().send(
+        new DeleteObjectCommand({
+          Bucket: process.env.WASABI_BUCKET_NAME || "voxd",
+          Key: uploadKey,
+        }),
+      );
+    } catch (error) {
+      console.error("Failed to clean up pending organisation logo:", error);
+    }
   }
 };
 
