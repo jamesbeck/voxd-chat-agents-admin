@@ -30,12 +30,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useWatch } from "react-hook-form";
-import { KNOWLEDGE_DOCUMENT_SOURCE_TYPES } from "@/lib/knowledgeDocumentSource";
+import {
+  KNOWLEDGE_DOCUMENT_PROMPT_MAX_LENGTH,
+  KNOWLEDGE_DOCUMENT_SOURCE_TYPES,
+} from "@/lib/knowledgeDocumentSource";
 
 const formSchema = z
   .object({
     title: z.string().nonempty("Title is required"),
     description: z.string().optional(),
+    prompt: z
+      .string()
+      .max(
+        KNOWLEDGE_DOCUMENT_PROMPT_MAX_LENGTH,
+        "Import instructions must be 4,000 characters or fewer",
+      )
+      .optional(),
     sourceUrl: z.string().optional(),
     sourceType: z.enum(KNOWLEDGE_DOCUMENT_SOURCE_TYPES),
   })
@@ -58,6 +68,7 @@ export default function NewDocumentForm({ agentId }: { agentId: string }) {
     defaultValues: {
       title: "",
       description: "",
+      prompt: "",
       sourceUrl: "",
       sourceType: "manual",
     },
@@ -71,6 +82,7 @@ export default function NewDocumentForm({ agentId }: { agentId: string }) {
       agentId,
       title: values.title,
       description: values.description,
+      prompt: values.prompt,
       sourceUrl: values.sourceUrl,
       sourceType: values.sourceType,
     });
@@ -144,6 +156,30 @@ export default function NewDocumentForm({ agentId }: { agentId: string }) {
               </FormControl>
               <FormDescription>
                 Optional description to help identify this document
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="prompt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>AI Import Instructions</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="For example: Ignore anything about accommodation and focus on the award categories, winners, and attendance information."
+                  className="min-h-28"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Optional guidance used when AI curates URL content or text
+                pasted into Smart Import. The AI will still produce
+                self-contained semantic knowledge blocks using only the source
+                material.
               </FormDescription>
               <FormMessage />
             </FormItem>

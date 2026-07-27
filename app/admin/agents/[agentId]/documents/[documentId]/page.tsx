@@ -179,6 +179,7 @@ export default async function Page({
               documentId={documentId}
               title={document.title}
               description={document.description}
+              prompt={document.prompt}
               sourceUrl={document.sourceUrl}
               sourceType={document.sourceType}
               enabled={document.enabled}
@@ -263,7 +264,7 @@ export default async function Page({
                 split it into semantic knowledge blocks with auto-generated
                 titles.
               </p>
-              <SmartImportForm documentId={documentId} agentId={agentId} />
+              <SmartImportForm documentId={documentId} />
             </Container>
           </TabsContent>
         )}

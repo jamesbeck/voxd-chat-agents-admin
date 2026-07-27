@@ -4,19 +4,24 @@ import db from "../database/db";
 import { ServerActionResponse } from "@/types/types";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import { addLog } from "@/lib/addLog";
-import { normalizeKnowledgeDocumentSourceInput } from "@/lib/knowledgeDocumentSource";
+import {
+  normalizeKnowledgeDocumentPrompt,
+  normalizeKnowledgeDocumentSourceInput,
+} from "@/lib/knowledgeDocumentSource";
 import { refreshKnowledgeDocumentFromUrl } from "@/lib/knowledgeDocumentImport";
 
 const saCreateDocument = async ({
   agentId,
   title,
   description,
+  prompt,
   sourceUrl,
   sourceType,
 }: {
   agentId: string;
   title: string;
   description?: string;
+  prompt?: string;
   sourceUrl?: string;
   sourceType?: string;
 }): Promise<ServerActionResponse> => {
@@ -25,9 +30,14 @@ const saCreateDocument = async ({
     sourceType,
     sourceUrl,
   });
+  const normalizedPrompt = normalizeKnowledgeDocumentPrompt(prompt);
 
   if (!normalizedSource.success) {
     return normalizedSource;
+  }
+
+  if (!normalizedPrompt.success) {
+    return normalizedPrompt;
   }
 
   // Check the agent exists
@@ -47,6 +57,7 @@ const saCreateDocument = async ({
             agentId,
             title,
             description,
+            prompt: normalizedPrompt.data,
             sourceUrl: normalizedSource.data.sourceUrl,
             sourceType: normalizedSource.data.sourceType,
             enabled: true,
@@ -80,6 +91,7 @@ const saCreateDocument = async ({
         documentId: newDocument.id,
         title,
         description,
+        prompt: normalizedPrompt.data,
         sourceUrl: normalizedSource.data.sourceUrl,
         sourceType: normalizedSource.data.sourceType,
         importedBlocks,

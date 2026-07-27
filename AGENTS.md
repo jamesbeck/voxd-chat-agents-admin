@@ -4,3 +4,8 @@ A website selling AI powered chat bots that work entirely via whatsapp. The site
 
 ##ShadCN
 Use ShadCN components where possible
+
+## Database schema
+
+Run `npm run dump-schema` and inspect `.copilot/schema.sql` before asking
+questions about the current database structure.

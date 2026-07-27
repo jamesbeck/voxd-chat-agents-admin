@@ -5,12 +5,16 @@ import { ServerActionResponse } from "@/types/types";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import userCanViewAgent from "@/lib/userCanViewAgent";
 import { addLog } from "@/lib/addLog";
-import { normalizeKnowledgeDocumentSourceInput } from "@/lib/knowledgeDocumentSource";
+import {
+  normalizeKnowledgeDocumentPrompt,
+  normalizeKnowledgeDocumentSourceInput,
+} from "@/lib/knowledgeDocumentSource";
 
 const saUpdateDocument = async ({
   documentId,
   title,
   description,
+  prompt,
   sourceUrl,
   sourceType,
   enabled,
@@ -18,6 +22,7 @@ const saUpdateDocument = async ({
   documentId: string;
   title?: string;
   description?: string;
+  prompt?: string;
   sourceUrl?: string;
   sourceType?: string;
   enabled?: boolean;
@@ -27,9 +32,14 @@ const saUpdateDocument = async ({
     sourceType,
     sourceUrl,
   });
+  const normalizedPrompt = normalizeKnowledgeDocumentPrompt(prompt);
 
   if (!normalizedSource.success) {
     return normalizedSource;
+  }
+
+  if (!normalizedPrompt.success) {
+    return normalizedPrompt;
   }
 
   if (!documentId) {
@@ -59,6 +69,7 @@ const saUpdateDocument = async ({
   await db("knowledgeDocument").where({ id: documentId }).update({
     title,
     description,
+    prompt: normalizedPrompt.data,
     sourceUrl: normalizedSource.data.sourceUrl,
     sourceType: normalizedSource.data.sourceType,
     enabled,
@@ -78,6 +89,7 @@ const saUpdateDocument = async ({
       before: {
         title: existingDocument.title,
         description: existingDocument.description,
+        prompt: existingDocument.prompt,
         sourceUrl: existingDocument.sourceUrl,
         sourceType: existingDocument.sourceType,
         enabled: existingDocument.enabled,
@@ -85,6 +97,7 @@ const saUpdateDocument = async ({
       after: {
         title,
         description,
+        prompt: normalizedPrompt.data,
         sourceUrl: normalizedSource.data.sourceUrl,
         sourceType: normalizedSource.data.sourceType,
         enabled,

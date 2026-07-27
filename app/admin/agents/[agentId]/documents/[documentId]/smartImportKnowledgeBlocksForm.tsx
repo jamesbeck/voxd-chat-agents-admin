@@ -2,7 +2,7 @@
 
 import { AlertCircleIcon, CheckCircle2, Sparkles } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -33,10 +33,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function SmartImportForm({
   documentId,
-  agentId,
 }: {
   documentId: string;
-  agentId: string;
 }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ blocksCreated: number } | null>(null);
@@ -83,7 +81,8 @@ export default function SmartImportForm({
     router.refresh();
   }
 
-  const textLength = form.watch("text")?.length || 0;
+  const textLength =
+    useWatch({ control: form.control, name: "text" })?.length || 0;
 
   return (
     <Form {...form}>
@@ -121,8 +120,8 @@ export default function SmartImportForm({
                 The agent&apos;s configured model will intelligently split your
                 text into self-contained knowledge blocks at logical topic
                 boundaries, and automatically generate descriptive titles for
-                each block. This produces higher quality results than rule-based
-                splitting.
+                each block. Any AI Import Instructions saved on this document
+                will also be applied.
               </FormDescription>
               <FormMessage />
             </FormItem>

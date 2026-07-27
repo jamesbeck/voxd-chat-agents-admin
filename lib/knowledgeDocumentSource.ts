@@ -1,4 +1,5 @@
 export const KNOWLEDGE_DOCUMENT_SOURCE_TYPES = ["manual", "url"] as const;
+export const KNOWLEDGE_DOCUMENT_PROMPT_MAX_LENGTH = 4000;
 
 export type KnowledgeDocumentSourceType =
   (typeof KNOWLEDGE_DOCUMENT_SOURCE_TYPES)[number];
@@ -10,6 +11,17 @@ type NormalizedKnowledgeDocumentSourceResult =
         sourceType: KnowledgeDocumentSourceType;
         sourceUrl: string | null;
       };
+    }
+  | {
+      success: false;
+      error: string;
+      fieldErrors: Record<string, string>;
+    };
+
+type NormalizedKnowledgeDocumentPromptResult =
+  | {
+      success: true;
+      data: string | null;
     }
   | {
       success: false;
@@ -103,6 +115,30 @@ export function normalizeKnowledgeDocumentSourceInput({
       },
     };
   }
+}
+
+export function normalizeKnowledgeDocumentPrompt(
+  prompt?: string | null,
+): NormalizedKnowledgeDocumentPromptResult {
+  const trimmedPrompt = prompt?.trim() || null;
+
+  if (
+    trimmedPrompt &&
+    trimmedPrompt.length > KNOWLEDGE_DOCUMENT_PROMPT_MAX_LENGTH
+  ) {
+    return {
+      success: false,
+      error: "AI import instructions are too long",
+      fieldErrors: {
+        prompt: `Import instructions must be ${KNOWLEDGE_DOCUMENT_PROMPT_MAX_LENGTH.toLocaleString()} characters or fewer`,
+      },
+    };
+  }
+
+  return {
+    success: true,
+    data: trimmedPrompt,
+  };
 }
 
 export function getKnowledgeDocumentSourceLabel(sourceType?: string | null) {

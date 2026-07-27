@@ -40,6 +40,7 @@ const saSmartImportKnowledgeBlocks = async ({
       text,
       providerApiKey: documentContext.providerApiKey,
       modelName: documentContext.modelName,
+      documentPrompt: documentContext.prompt,
     });
   } catch (error) {
     console.error("Error importing knowledge blocks:", error);
