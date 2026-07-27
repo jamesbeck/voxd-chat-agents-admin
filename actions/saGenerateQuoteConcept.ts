@@ -5,6 +5,7 @@ import { ServerActionResponse } from "@/types/types";
 import { generateText } from "ai";
 import { generateQuoteCostingInternal } from "./saGenerateQuoteCosting";
 import { getAdminAiLanguageModel } from "@/lib/adminAi";
+import { applyAiAgentTerminology } from "@/lib/aiAgentTerminology";
 
 const getPartnerContext = (partnerName: string) => `## What is ${partnerName}?
 
@@ -224,6 +225,7 @@ The introduction should:
 - Be conversational but professional
 
 IMPORTANT RULES:
+- Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material or existing content
 - Do NOT thank them for their time or for meeting with us - we have never met them
 - Do NOT assume we have had any prior conversations or meetings
 - Do NOT ask any questions - this is not a consultation or discovery session
@@ -252,6 +254,7 @@ Your task is to write a warm, engaging INTRODUCTION for a concept to a potential
 - Be conversational but professional
 
 IMPORTANT RULES:
+- Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material
 - Do NOT thank them for their time or for meeting with us - we have never met them
 - Do NOT assume we have had any prior conversations or meetings
 - Do NOT ask any questions - this is not a consultation or discovery session
@@ -297,6 +300,7 @@ The concept should cover themes like:
 - Summary / Conclusion
 
 IMPORTANT RULES:
+- Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material or existing content
 - Do NOT thank them for their time or for meeting with us - we have never met them
 - Do NOT assume we have had any prior conversations or meetings
 - Do NOT ask any questions - this is not a consultation or discovery session
@@ -305,7 +309,7 @@ IMPORTANT RULES:
 - This is a written concept document, not a live presentation
 - Avoid use of hyphens in the content
 - Do not use the Oxford comma before 'and' in a list
-- ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The chatbot will only have access to the listed knowledge sources and integrations.
+- ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The AI agent will only have access to the listed knowledge sources and integrations.
 
 FORMATTING RULES:
 - Structure the concept with clear Markdown headings (## for main sections and ### for subsections).
@@ -382,19 +386,20 @@ Your task is to write a compelling, persuasive concept that helps the client und
    - Combine with AI intelligence to provide personalised follow-up based on the customer's response
 
 10. **Future potential**
-   - Describe realistic but more advanced future capabilities that could be added to the chatbot over time
-   - Think about features that would be natural next steps once the initial chatbot is established
+   - Describe realistic but more advanced future capabilities that could be added to the AI agent over time
+   - Think about features that would be natural next steps once the initial AI agent is established
    - Consider industry-specific advanced use cases (e.g., predictive recommendations, voice integration, proactive outreach campaigns)
    - Keep suggestions grounded and achievable, but show the exciting growth potential
    - Frame this as a journey - starting with solid foundations and growing into more sophisticated capabilities
 
 11. **Summary / Conclusion**
-   - End with a sincere, heartfelt message about how genuinely excited we would be to work on building a chatbot for their business
+   - End with a sincere, heartfelt message about how genuinely excited we would be to work on building an AI agent for their business
    - Express enthusiasm for the potential partnership
    - Keep it warm and authentic, not salesy
    - Do NOT use "Closing" as a heading - use "Summary", "Conclusion", "In Summary", "Looking Forward", or similar
 
 IMPORTANT RULES:
+- Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material
 - Do NOT thank them for their time or for meeting with us - we have never met them
 - Do NOT assume we have had any prior conversations or meetings
 - Do NOT ask any questions - this is not a consultation or discovery session
@@ -403,7 +408,7 @@ IMPORTANT RULES:
 - This is a written concept document, not a live presentation
 - Avoid use of hyphens in the content
 - Do not use the Oxford comma before 'and' in a list
-- ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The chatbot will only have access to the listed knowledge sources and integrations.
+- ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The AI agent will only have access to the listed knowledge sources and integrations.
 
 FORMATTING RULES:
 - Structure the concept with clear Markdown headings (## for main sections and ### for subsections).
@@ -432,10 +437,13 @@ Make sure to tailor every section to their specific industry and needs based on 
       return { success: false, error: "Failed to generate concept content" };
     }
 
+    const normalisedConceptIntro = applyAiAgentTerminology(conceptIntro);
+    const normalisedConcept = applyAiAgentTerminology(concept);
+
     // Save the generated content to the database
     await db("quote").where({ id: quoteId }).update({
-      generatedConceptIntroduction: conceptIntro,
-      generatedConcept: concept,
+      generatedConceptIntroduction: normalisedConceptIntro,
+      generatedConcept: normalisedConcept,
     });
 
     // Auto-generate costing breakdown based on the concept
@@ -444,8 +452,8 @@ Make sure to tailor every section to their specific industry and needs based on 
     return {
       success: true,
       data: {
-        generatedConceptIntroduction: conceptIntro,
-        generatedConcept: concept,
+        generatedConceptIntroduction: normalisedConceptIntro,
+        generatedConcept: normalisedConcept,
       },
     };
   } catch (error) {

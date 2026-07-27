@@ -5,6 +5,7 @@ import { ServerActionResponse } from "@/types/types";
 import { generateText } from "ai";
 import { generateQuoteCostingInternal } from "./saGenerateQuoteCosting";
 import { getAdminAiLanguageModel } from "@/lib/adminAi";
+import { applyAiAgentTerminology } from "@/lib/aiAgentTerminology";
 
 const getPartnerContext = (partnerName: string) => `## About ${partnerName}
 
@@ -207,6 +208,8 @@ The introduction should:
 - Avoid use of hyphens in the content
 - Do not use the Oxford comma before 'and' in a list
 
+TERMINOLOGY: Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material or existing content.
+
 IMPORTANT: Only reference features and capabilities that the client has specifically mentioned or requested. The only default platform context you may mention without it being explicitly requested is that the AI agent can be deployed across WhatsApp, websites, web apps and mobile apps. Do not add optional features or suggest additional capabilities beyond what they've asked for. Outbound messaging, workers and other optional capabilities should only be mentioned when they are clearly relevant to the client's specification or the user explicitly asks for them. ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided.
 
 Write in Markdown format. Use **bold** for emphasis. Do not use headings in this section - it will be displayed under an "Introduction" heading.
@@ -231,6 +234,8 @@ Your task is to write a compelling, professional INTRODUCTION section for a clie
 - Be exactly 2 paragraphs
 - Avoid use of hyphens in the content
 - Do not use the Oxford comma before 'and' in a list
+
+TERMINOLOGY: Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material.
 
 IMPORTANT: Only reference features and capabilities that the client has specifically mentioned or requested. The only default platform context you may mention without it being explicitly requested is that the AI agent can be deployed across WhatsApp, websites, web apps and mobile apps. Do not add optional features or suggest additional capabilities beyond what they've asked for. Outbound messaging, workers and other optional capabilities should only be mentioned when they are clearly relevant to the client's specification or the user explicitly asks for them. ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided.
 
@@ -280,7 +285,9 @@ The specification MUST follow this structure:
 - Avoid use of hyphens in the content
 - Do not use the Oxford comma before 'and' in a list
 
-CRITICAL: Only include what the client has explicitly written in their specification. If they haven't mentioned workers, don't add workers. If they haven't mentioned CRM integration, don't add CRM integration. Do not add outbound messaging unless it is clearly relevant to what they have asked for or the user explicitly requests it. Stick strictly to their requirements. ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The chatbot will only have access to the listed knowledge sources and integrations.
+TERMINOLOGY: Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material or existing content.
+
+CRITICAL: Only include what the client has explicitly written in their specification. If they haven't mentioned workers, don't add workers. If they haven't mentioned CRM integration, don't add CRM integration. Do not add outbound messaging unless it is clearly relevant to what they have asked for or the user explicitly requests it. Stick strictly to their requirements. ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The AI agent will only have access to the listed knowledge sources and integrations.
 
 Write in Markdown format. Use ## for numbered section headings, ### for subsections within numbered sections, **bold** for emphasis, bullet points for feature lists with sub-bullets where needed.
 
@@ -312,7 +319,9 @@ The specification MUST follow this structure:
 - Avoid use of hyphens in the content
 - Do not use the Oxford comma before 'and' in a list
 
-CRITICAL: Only include what the client has explicitly written in their specification. If they haven't mentioned workers, don't add workers. If they haven't mentioned CRM integration, don't add CRM integration. Do not add outbound messaging unless it is clearly relevant to what they have asked for or the user explicitly requests it. Stick strictly to their requirements. ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The chatbot will only have access to the listed knowledge sources and integrations.
+TERMINOLOGY: Always refer to the solution as an "AI agent", "AI assistant" or "agent". Never use "chatbot" or "chat bot" in the generated content, even if those terms appear in the source material.
+
+CRITICAL: Only include what the client has explicitly written in their specification. If they haven't mentioned workers, don't add workers. If they haven't mentioned CRM integration, don't add CRM integration. Do not add outbound messaging unless it is clearly relevant to what they have asked for or the user explicitly requests it. Stick strictly to their requirements. ONLY reference knowledge sources and integrations that are explicitly listed in the specification. Do NOT invent, assume or suggest any additional data sources, integrations or system connections beyond what is provided. The AI agent will only have access to the listed knowledge sources and integrations.
 
 Write in Markdown format. Use ## for numbered section headings, ### for subsections within numbered sections, **bold** for emphasis, bullet points for feature lists with sub-bullets where needed.${
           extraPrompt
@@ -339,10 +348,13 @@ Write in Markdown format. Use ## for numbered section headings, ### for subsecti
       return { success: false, error: "Failed to generate proposal content" };
     }
 
+    const normalisedIntroduction = applyAiAgentTerminology(introduction);
+    const normalisedSpecification = applyAiAgentTerminology(specification);
+
     // Save the generated content to the database
     await db("quote").where({ id: quoteId }).update({
-      generatedProposalIntroduction: introduction,
-      generatedSpecification: specification,
+      generatedProposalIntroduction: normalisedIntroduction,
+      generatedSpecification: normalisedSpecification,
     });
 
     // Auto-generate costing breakdown based on the proposal
@@ -351,8 +363,8 @@ Write in Markdown format. Use ## for numbered section headings, ### for subsecti
     return {
       success: true,
       data: {
-        generatedProposalIntroduction: introduction,
-        generatedSpecification: specification,
+        generatedProposalIntroduction: normalisedIntroduction,
+        generatedSpecification: normalisedSpecification,
       },
     };
   } catch (error) {
