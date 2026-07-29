@@ -75,8 +75,6 @@ export type Quote = {
   proposalPersonalMessage: string | null;
   proposalHideSections: string[] | null;
   heroImageFileExtension: string | null; // Hero image file extension for quote
-  nextAction: string | null;
-  nextActionDate: string | null;
   shortLinkId: string;
   buildDays: number | null;
   freeMonthlyMinutes: number | null;

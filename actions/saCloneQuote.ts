@@ -317,7 +317,6 @@ ${rewriteContext}`,
         // setupFee, monthlyFee, setupFeeVoxdCost, monthlyFeeVoxdCost, buildDays,
         // freeMonthlyMinutes, contractLength - will take DB defaults
         // heroImageFileExtension - null
-        // nextAction, nextActionDate - null
         // signOff* fields - null
         // conceptPersonalMessage, proposalPersonalMessage - null
       })

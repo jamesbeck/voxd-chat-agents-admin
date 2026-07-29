@@ -9,6 +9,17 @@ import {
 import { applyQuoteReadScope } from "@/lib/quoteAccess";
 import { applyPartnerBranchScope } from "@/lib/organisationAccess";
 
+const SORT_COLUMNS: Record<string, string> = {
+  id: "quote.id",
+  organisationName: "organisation.name",
+  title: "quote.title",
+  archived: "quote.archived",
+  lastViewedAt: "lastViewed.lastViewedAt",
+  partnerName: "partnerOrganisation.name",
+  ownerName: "owner.name",
+  createdAt: "quote.createdAt",
+};
+
 const saGetQuoteTableData = async ({
   search,
   page = 1,
@@ -109,6 +120,9 @@ const saGetQuoteTableData = async ({
     .groupBy("quoteId")
     .as("lastViewed");
 
+  const resolvedSortField = SORT_COLUMNS[sortField] || SORT_COLUMNS.id;
+  const resolvedSortDirection = sortDirection === "desc" ? "desc" : "asc";
+
   const quotes = await base
     .clone()
     .leftJoin(lastViewedSubquery, "lastViewed.quoteId", "quote.id")
@@ -123,10 +137,10 @@ const saGetQuoteTableData = async ({
     )
 
     // .select([db.raw('COUNT("agent"."id")::int as "agentCount"')])
-    .orderByRaw(
-      sortField === "lastViewedAt"
-        ? `"lastViewed"."lastViewedAt" ${sortDirection} NULLS LAST`
-        : `"${sortField}" ${sortDirection}`,
+    .orderBy(
+      resolvedSortField,
+      resolvedSortDirection,
+      sortField === "lastViewedAt" ? "last" : undefined,
     )
     .limit(pageSize)
     .offset((page - 1) * pageSize);

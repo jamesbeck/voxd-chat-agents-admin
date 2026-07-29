@@ -82,24 +82,37 @@ export default function DataTable<TExtra extends object = object>({
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">(
     defaultSort?.direction || "asc",
   );
+  const sortableFields = columns
+    .filter((column) => column.sort)
+    .map((column) => column.name);
+  const sortableFieldsKey = sortableFields.join("\0");
 
   // Load sort preferences from localStorage after hydration
   useEffect(() => {
     if (tableId) {
       try {
-        const stored = localStorage.getItem(`table-sort-${tableId}`);
+        const storageKey = `table-sort-${tableId}`;
+        const stored = localStorage.getItem(storageKey);
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed?.field && parsed?.direction) {
+          const isValidField = sortableFieldsKey
+            .split("\0")
+            .includes(parsed?.field);
+          const isValidDirection =
+            parsed?.direction === "asc" || parsed?.direction === "desc";
+
+          if (isValidField && isValidDirection) {
             setSortField(parsed.field);
             setSortDirection(parsed.direction);
+          } else {
+            localStorage.removeItem(storageKey);
           }
         }
       } catch {
         // Ignore parse errors
       }
     }
-  }, [tableId]);
+  }, [sortableFieldsKey, tableId]);
   const [loading, setLoading] = useState(true);
   const currentRequestRef = useRef<symbol | null>(null);
 
