@@ -141,8 +141,14 @@ export default async function Page({
     });
     const canEdit = await canMutateBillingRecords({ accessToken });
     const pdfUrl = toPartnerId
-      ? getInvoicePdfUrl({ toPartnerId })
-      : getInvoicePdfUrl({ toOrganisationId: toOrganisationId! });
+      ? getInvoicePdfUrl({
+          toPartnerId,
+          requestedByAdminUserId: accessToken.adminUserId,
+        })
+      : getInvoicePdfUrl({
+          toOrganisationId: toOrganisationId!,
+          requestedByAdminUserId: accessToken.adminUserId,
+        });
 
     return (
       <Container>
@@ -272,7 +278,10 @@ export default async function Page({
   }
 
   const canEdit = await canMutateBillingRecords({ accessToken });
-  const pdfUrl = getInvoicePdfUrl({ invoiceId });
+  const pdfUrl = getInvoicePdfUrl({
+    invoiceId,
+    requestedByAdminUserId: accessToken.adminUserId,
+  });
 
   return (
     <Container>

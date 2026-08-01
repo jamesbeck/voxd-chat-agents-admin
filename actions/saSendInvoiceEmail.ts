@@ -179,7 +179,10 @@ const saSendInvoiceEmail = async ({
     };
   }
 
-  const pdfUrl = getInvoicePdfUrl({ invoiceId: invoice.id });
+  const pdfUrl = getInvoicePdfUrl({
+    invoiceId: invoice.id,
+    requestedByAdminUserId: accessToken.adminUserId,
+  });
 
   let pdfResponse: Response;
 

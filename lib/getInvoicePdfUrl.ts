@@ -1,4 +1,6 @@
-type InvoicePdfUrlParams =
+type InvoicePdfUrlParams = {
+  requestedByAdminUserId: string;
+} & (
   | {
       invoiceId: string;
       toOrganisationId?: never;
@@ -13,7 +15,8 @@ type InvoicePdfUrlParams =
       invoiceId?: never;
       toOrganisationId?: never;
       toPartnerId: string;
-    };
+    }
+);
 
 const coreBaseUrl =
   process.env.NODE_ENV === "development"
@@ -22,6 +25,7 @@ const coreBaseUrl =
 
 const getInvoicePdfUrl = (params: InvoicePdfUrlParams) => {
   const searchParams = new URLSearchParams();
+  searchParams.set("requestedByAdminUserId", params.requestedByAdminUserId);
 
   if (typeof params.invoiceId === "string") {
     searchParams.set("invoiceId", params.invoiceId);
