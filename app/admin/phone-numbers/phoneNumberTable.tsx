@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import TableActions from "@/components/admin/TableActions";
+import { getWhatsAppManagerUrl } from "@/lib/meta/getWhatsAppManagerUrl";
 
 const PhoneNumberTable = () => {
   return (
@@ -133,23 +134,36 @@ const PhoneNumberTable = () => {
           },
         },
       ]}
-      actions={(row: any) => (
-        <TableActions
-          buttons={[
-            { label: "View", href: `/admin/phone-numbers/${row.id}` },
-            {
-              label: "Register",
-              onClick: () =>
-                saRegisterPhoneNumber({ phoneNumberId: row.metaId }),
-            },
-            {
-              label: "Message",
-              href: `https://wa.me/${row.displayPhoneNumber.replace(/\D/g, "")}`,
-              target: "_blank",
-            },
-          ]}
-        />
-      )}
+      actions={(row: any) => {
+        const whatsappManagerUrl = getWhatsAppManagerUrl({
+          businessId: row.metaBusinessMetaId,
+          assetId: row.whatsappBusinessAccountMetaId,
+        });
+
+        return (
+          <TableActions
+            buttons={[
+              { label: "View", href: `/admin/phone-numbers/${row.id}` },
+              {
+                label: "Meta Manager",
+                href: whatsappManagerUrl ?? undefined,
+                target: "_blank",
+                hidden: !whatsappManagerUrl,
+              },
+              {
+                label: "Register",
+                onClick: () =>
+                  saRegisterPhoneNumber({ phoneNumberId: row.metaId }),
+              },
+              {
+                label: "Message",
+                href: `https://wa.me/${row.displayPhoneNumber.replace(/\D/g, "")}`,
+                target: "_blank",
+              },
+            ]}
+          />
+        );
+      }}
     />
   );
 };

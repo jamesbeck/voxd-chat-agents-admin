@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { getWhatsAppManagerUrl } from "@/lib/meta/getWhatsAppManagerUrl";
 
 const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
@@ -145,11 +146,21 @@ const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
     const whatsappUrl = row.phoneNumber
       ? `https://wa.me/${row.phoneNumber.replace(/\D/g, "")}`
       : "";
+    const whatsappManagerUrl = getWhatsAppManagerUrl({
+      businessId: row.metaBusinessMetaId,
+      assetId: row.whatsappBusinessAccountMetaId,
+    });
 
     return (
       <TableActions
         buttons={[
           { label: "View", href: `/admin/agents/${row.id}` },
+          {
+            label: "Meta Manager",
+            href: whatsappManagerUrl ?? undefined,
+            target: "_blank",
+            hidden: !whatsappManagerUrl,
+          },
           {
             label: "Link",
             href: whatsappUrl,

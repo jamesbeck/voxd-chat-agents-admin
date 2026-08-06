@@ -20,9 +20,8 @@ const saGetPhoneNumbersTableData = async ({
   // const accessToken = await verifyAccessToken();
 
   const base = db("phoneNumber")
-    // .leftJoin("phoneNumber", "waba.id", "phoneNumber.wabaId")
-    // .leftJoin("metaBusiness", "waba.metaBusinessId", "metaBusiness.id")
-    // .groupBy("waba.id", "metaBusiness.id")
+    .leftJoin("waba", "phoneNumber.wabaId", "waba.id")
+    .leftJoin("metaBusiness", "waba.metaBusinessId", "metaBusiness.id")
     .where((qb) => {
       if (search) {
         qb.where("phoneNumber.displayPhoneNumber", "ilike", `%${search}%`);
@@ -50,12 +49,14 @@ const saGetPhoneNumbersTableData = async ({
   const phoneNumbers = await base
     .clone()
     .select("phoneNumber.*")
+    .select("waba.metaId as whatsappBusinessAccountMetaId")
+    .select("metaBusiness.metaId as metaBusinessMetaId")
     // .select(
     //   db.raw('COUNT("userMessage"."id")::int as "messageCount"'),
     //   db.raw('MAX("userMessage"."createdAt") as "lastMessageAt"'),
     //   db.raw('COUNT(DISTINCT "session"."id")::int as "sessionCount"')
     // )
-    .orderBy(sortField, sortDirection)
+    .orderBy(`phoneNumber.${sortField}`, sortDirection)
     .limit(pageSize)
     .offset((page - 1) * pageSize);
 

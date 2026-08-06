@@ -113,7 +113,11 @@ function renderButton(btn: TableActionButton, key: number) {
         disabled={btn.disabled}
         asChild
       >
-        <Link href={btn.href} target={btn.target}>
+        <Link
+          href={btn.href}
+          target={btn.target}
+          rel={btn.target === "_blank" ? "noopener noreferrer" : undefined}
+        >
           {content}
         </Link>
       </Button>
@@ -173,7 +177,13 @@ export default function TableActions(props: TableActionsProps) {
   if ("href" in props && props.href) {
     return (
       <Button variant="outline" size="xs" asChild>
-        <Link href={props.href} target={props.target}>
+        <Link
+          href={props.href}
+          target={props.target}
+          rel={
+            props.target === "_blank" ? "noopener noreferrer" : undefined
+          }
+        >
           {props.label ?? "View"}
         </Link>
       </Button>

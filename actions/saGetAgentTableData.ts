@@ -24,6 +24,8 @@ const saGetAgentTableData = async ({
     .leftJoin("session", "chatUser.id", "session.userId")
     .leftJoin("userMessage", "session.id", "userMessage.sessionId")
     .leftJoin("phoneNumber", "agent.phoneNumberId", "phoneNumber.id")
+    .leftJoin("waba", "phoneNumber.wabaId", "waba.id")
+    .leftJoin("metaBusiness", "waba.metaBusinessId", "metaBusiness.id")
     .leftJoin("organisation", "agent.organisationId", "organisation.id")
     .leftJoin(
       "organisation as partnerOrganisation",
@@ -33,6 +35,8 @@ const saGetAgentTableData = async ({
     .groupBy(
       "agent.id",
       "phoneNumber.id",
+      "waba.id",
+      "metaBusiness.id",
       "organisation.name",
       "organisation.partnerId",
       "partnerOrganisation.name",
@@ -85,6 +89,8 @@ const saGetAgentTableData = async ({
     .clone()
     .select("agent.*")
     .select("phoneNumber.displayPhoneNumber as phoneNumber")
+    .select("waba.metaId as whatsappBusinessAccountMetaId")
+    .select("metaBusiness.metaId as metaBusinessMetaId")
     .select("organisation.name as organisationName")
     .select("organisation.partnerId as partnerId")
     .select("partnerOrganisation.name as partnerName")
