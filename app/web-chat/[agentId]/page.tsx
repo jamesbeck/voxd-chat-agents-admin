@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Image from "next/image";
 import saGetAgentDemoData from "@/actions/saGetAgentDemoData";
-import DemoWebsite from "@/components/DemoWebsite";
 import ChatEmbed from "@/components/ChatEmbed";
 
 export async function generateMetadata({
@@ -19,8 +19,8 @@ export async function generateMetadata({
   if (!data) return { title: "Agent Not Found" };
 
   return {
-    title: `${data.agentNiceName} – ${variant === "widget" ? "Chat Widget" : "Web Chat Testing"}`,
-    description: `${variant === "widget" ? "Chat widget" : "Web chat"} testing for ${data.agentNiceName}.`,
+    title: `${data.agentNiceName} – ${variant === "widget" ? "Chat Widget" : "Web Chat"}`,
+    description: `${variant === "widget" ? "Chat widget" : "Web chat"} for ${data.agentNiceName}.`,
   };
 }
 
@@ -53,18 +53,29 @@ export default async function WebChatPage({
     : null;
 
   return (
-    <DemoWebsite
-      orgName={orgName}
-      logoUrl={logoUrl}
-      logoBgColour={logoBgColour}
-      primaryColour={primaryColour}
+    <main
+      className="flex min-h-screen items-center justify-center p-8"
+      style={{ backgroundColor: logoBgColour }}
     >
+      {logoUrl ? (
+        <Image
+          src={logoUrl}
+          alt={orgName}
+          width={280}
+          height={120}
+          className="h-auto max-h-32 w-auto max-w-[min(280px,80vw)] object-contain"
+          priority
+          unoptimized
+        />
+      ) : (
+        <span className="text-center text-3xl font-semibold">{orgName}</span>
+      )}
       <ChatEmbed
         agentId={data.agentId}
         coreBaseUrl={coreBaseUrl}
         primaryColour={primaryColour}
         mode={variant}
       />
-    </DemoWebsite>
+    </main>
   );
 }
