@@ -13,7 +13,8 @@ import { Resend } from "resend";
 
 const TEST_RECIPIENT = "james@jamesbeck.co.uk";
 const REAL_SEND_BCC = "james.beck@voxd.ai";
-const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.voxd.ai";
+const appBaseUrl =
+  process.env.NEXT_PUBLIC_APP_URL || "https://chatagents.voxd.ai";
 
 type SendMode = "real" | "test";
 

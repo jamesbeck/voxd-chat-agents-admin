@@ -34,7 +34,10 @@ export default async function LoginPage({
   let devEmail: string | undefined;
   if (process.env.NODE_ENV === "development") {
     const partnerDomain = process.env.DEVELOPTMENT_PARTNER_DOMAIN;
-    if (partnerDomain === "voxd.ai") {
+    if (
+      partnerDomain === "voxd.ai" ||
+      partnerDomain === "chatagents.voxd.ai"
+    ) {
       devEmail = "james.beck@voxd.ai";
     } else if (partnerDomain === "portal.chatfox.ai") {
       devEmail = "james@chatfox.ai";

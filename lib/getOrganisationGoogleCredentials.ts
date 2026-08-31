@@ -3,7 +3,7 @@ import db from "@/database/db";
 // Fallback organisation for Google OAuth credentials when an org doesn't have its own
 const FALLBACK_GOOGLE_CREDENTIALS_ORG_ID =
   "019bbc67-4206-7902-9d37-491bd81f4eab";
-export const FALLBACK_CALLBACK_DOMAIN = "voxd.ai";
+export const FALLBACK_CALLBACK_DOMAIN = "chatagents.voxd.ai";
 
 export interface GoogleOAuthCredentials {
   clientId: string;
