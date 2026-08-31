@@ -5,15 +5,10 @@ export function proxy(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
   const domain = hostname.split(":")[0]; // Remove port if present
 
-  const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://chatagents.voxd.ai";
-  const voxdWebsiteDomains = ["voxd.ai", "www.voxd.ai"];
-
   // Create response
   let response: NextResponse;
 
-  // Allowed domains that don't redirect if someone tries to access the website (not portal)
-  const allowedDomains = [...voxdWebsiteDomains, "localhost"];
+  const allowedDomains = ["localhost"];
 
   // Paths that are always allowed (login and admin)
   const isLoginPath = request.nextUrl.pathname.startsWith("/login");
@@ -26,13 +21,6 @@ export function proxy(request: NextRequest) {
   const isGuidesPath = request.nextUrl.pathname.startsWith("/guides");
   const isPrototypesPath = request.nextUrl.pathname.startsWith("/prototypes");
   const isWebChatPath = request.nextUrl.pathname.startsWith("/web-chat");
-
-  // Keep the Voxd website live while moving admin/login traffic to the
-  // dedicated admin domain. Preserve the requested path and query string.
-  const shouldRedirectVoxdAdmin =
-    voxdWebsiteDomains.includes(domain) &&
-    request.method === "GET" &&
-    (isLoginPath || isAdminPath);
 
   // Only redirect GET requests for tenant domains
   const shouldRedirect =
@@ -49,11 +37,7 @@ export function proxy(request: NextRequest) {
     !isPrototypesPath && // Not on prototypes (public prototype pages)
     !isWebChatPath; // Not on web-chat (public agent demo pages)
 
-  if (shouldRedirectVoxdAdmin) {
-    const adminUrl = new URL(request.nextUrl.pathname, appUrl);
-    adminUrl.search = request.nextUrl.search;
-    response = NextResponse.redirect(adminUrl);
-  } else if (shouldRedirect) {
+  if (shouldRedirect) {
     const loginUrl = new URL("/login", request.url);
     response = NextResponse.redirect(loginUrl);
   } else {

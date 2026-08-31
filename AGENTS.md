@@ -1,6 +1,6 @@
 ## Project Overview
 
-A website selling AI powered chat bots that work entirely via whatsapp. The site also includes an admin area to help manage the bots.
+The Voxd chat-agent administration application. The public marketing website is maintained separately in `voxd-website`.
 
 ##ShadCN
 Use ShadCN components where possible
