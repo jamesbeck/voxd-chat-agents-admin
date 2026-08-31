@@ -222,8 +222,12 @@ async function loadNumbers(wabaMetaId: string, accessToken: string) {
   return { detailed, columns };
 }
 
-export default async function Page({ params }: { params: { wabaId: string } }) {
-  const { wabaId } = params;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ wabaId: string }>;
+}) {
+  const { wabaId } = await params;
 
   const accessToken = await getAccessTokenForWaba(wabaId);
   const wabaMetaId = await getWabaMetaId(wabaId);

@@ -31,8 +31,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { organisationId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ organisationId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const token = await verifyAccessToken();
   const canWriteUsers =

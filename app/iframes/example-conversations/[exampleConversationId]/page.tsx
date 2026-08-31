@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 export default async function ExampleConversationIframePage({
   params,
 }: {
-  params: { exampleConversationId: string };
+  params: Promise<{ exampleConversationId: string }>;
 }) {
   const { exampleConversationId } = await params;
 

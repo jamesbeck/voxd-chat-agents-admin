@@ -11,7 +11,7 @@ import SupportTicketsActions from "./supportTicketsActions";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { tab?: string };
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const activeTab = (await searchParams).tab || "open";
   const accessToken = await verifyAccessToken();

@@ -38,8 +38,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { agentId: string; documentId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ agentId: string; documentId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { agentId, documentId } = await params;
   const requestedTab = (await searchParams).tab || "info";

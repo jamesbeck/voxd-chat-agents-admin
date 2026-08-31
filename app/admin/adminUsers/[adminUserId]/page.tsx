@@ -19,8 +19,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { adminUserId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ adminUserId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const token = await verifyAccessToken();
   const canWriteUsers =

@@ -79,8 +79,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { agentId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ agentId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const agentId = (await params).agentId;
   const activeTab = (await searchParams).tab || "info";

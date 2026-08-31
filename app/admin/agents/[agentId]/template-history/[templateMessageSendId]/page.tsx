@@ -13,7 +13,7 @@ import TemplateSendAttemptsTable from "../../templateSendAttemptsTable";
 export default async function Page({
   params,
 }: {
-  params: { agentId: string; templateMessageSendId: string };
+  params: Promise<{ agentId: string; templateMessageSendId: string }>;
 }) {
   const agentId = (await params).agentId;
   const templateMessageSendId = (await params).templateMessageSendId;

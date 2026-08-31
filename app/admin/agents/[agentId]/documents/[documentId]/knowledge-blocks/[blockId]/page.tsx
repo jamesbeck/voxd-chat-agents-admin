@@ -25,8 +25,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { agentId: string; documentId: string; blockId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ agentId: string; documentId: string; blockId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { agentId, documentId, blockId } = await params;
   const requestedTab = (await searchParams).tab || "info";

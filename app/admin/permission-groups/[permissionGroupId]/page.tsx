@@ -15,8 +15,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { permissionGroupId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ permissionGroupId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const accessToken = await verifyAccessToken();
 

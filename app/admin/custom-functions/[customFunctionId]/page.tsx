@@ -26,8 +26,8 @@ export default async function CustomFunctionPage({
   params,
   searchParams,
 }: {
-  params: { customFunctionId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ customFunctionId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const accessToken = await verifyAccessToken();
 

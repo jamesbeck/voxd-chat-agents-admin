@@ -39,8 +39,8 @@ export default async function Page({
   searchParams,
   params,
 }: {
-  params: { sessionId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ sessionId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const activeTab = (await searchParams).tab || "conversation";
 

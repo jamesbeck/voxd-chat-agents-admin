@@ -16,8 +16,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { wabaId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ wabaId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { wabaId } = await params;
   const activeTab = (await searchParams).tab || "info";

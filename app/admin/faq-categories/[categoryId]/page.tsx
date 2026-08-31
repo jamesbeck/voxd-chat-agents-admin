@@ -13,7 +13,7 @@ import BreadcrumbSetter from "@/components/admin/BreadcrumbSetter";
 export default async function Page({
   params,
 }: {
-  params: { categoryId: string };
+  params: Promise<{ categoryId: string }>;
 }) {
   const { categoryId } = await params;
 

@@ -39,8 +39,8 @@ export default async function Page({
   searchParams,
   params,
 }: {
-  params: { messageId: string };
-  searchParams: { tab?: string; type?: string };
+  params: Promise<{ messageId: string }>;
+  searchParams: Promise<{ tab?: string; type?: string }>;
 }) {
   const awaitedSearchParams = await searchParams;
   const activeTab = awaitedSearchParams.tab || "details";

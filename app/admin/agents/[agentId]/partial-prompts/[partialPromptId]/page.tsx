@@ -18,8 +18,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { agentId: string; partialPromptId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ agentId: string; partialPromptId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { agentId, partialPromptId } = await params;
   const activeTab = (await searchParams).tab || "info";

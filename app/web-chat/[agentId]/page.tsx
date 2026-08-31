@@ -8,7 +8,7 @@ export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: { agentId: string };
+  params: Promise<{ agentId: string }>;
   searchParams: Promise<{ variant?: string }>;
 }): Promise<Metadata> {
   const agentId = (await params).agentId;
@@ -28,7 +28,7 @@ export default async function WebChatPage({
   params,
   searchParams,
 }: {
-  params: { agentId: string };
+  params: Promise<{ agentId: string }>;
   searchParams: Promise<{ variant?: string }>;
 }) {
   const agentId = (await params).agentId;

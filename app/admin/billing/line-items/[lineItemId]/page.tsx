@@ -19,8 +19,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { lineItemId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ lineItemId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const accessToken = await verifyAccessToken();
 

@@ -47,7 +47,7 @@ import WhatsAppQRCode from "@/components/WhatsAppQRCode";
 export async function generateMetadata({
   params,
 }: {
-  params: { quoteId: string };
+  params: Promise<{ quoteId: string }>;
 }): Promise<Metadata> {
   const quoteId = (await params).quoteId;
   const quote = await getQuoteForPublic({ quoteId });
@@ -112,7 +112,7 @@ export async function generateMetadata({
 export default async function PublicQuotePage({
   params,
 }: {
-  params: { quoteId: string };
+  params: Promise<{ quoteId: string }>;
 }) {
   const quoteId = (await params).quoteId;
   const quote = await getQuoteForPublic({ quoteId });

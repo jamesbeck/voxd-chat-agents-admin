@@ -12,7 +12,11 @@ import BreadcrumbSetter from "@/components/admin/BreadcrumbSetter";
 import saGetFaqCategories from "@/actions/saGetFaqCategories";
 import { MarkdownContent } from "@/components/MarkdownContent";
 
-export default async function Page({ params }: { params: { faqId: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ faqId: string }>;
+}) {
   const { faqId } = await params;
 
   const accessToken = await verifyAccessToken();

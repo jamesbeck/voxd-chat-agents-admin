@@ -26,8 +26,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { tab?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const phoneNumberId = (await params).id;
   const activeTab = (await searchParams).tab || "info";

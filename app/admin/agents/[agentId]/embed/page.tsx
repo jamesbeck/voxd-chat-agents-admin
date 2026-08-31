@@ -98,7 +98,7 @@ const widgetMethodCards = [
 export default async function Page({
   params,
 }: {
-  params: { agentId: string };
+  params: Promise<{ agentId: string }>;
 }) {
   const agentId = (await params).agentId;
   const accessToken = await verifyAccessToken();

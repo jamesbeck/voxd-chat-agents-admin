@@ -48,8 +48,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { quoteId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ quoteId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const quoteId = (await params).quoteId;
   const activeTab = (await searchParams).tab || "info";

@@ -7,7 +7,7 @@ import ChatEmbed from "@/components/ChatEmbed";
 export async function generateMetadata({
   params,
 }: {
-  params: { shortLinkId: string };
+  params: Promise<{ shortLinkId: string }>;
 }): Promise<Metadata> {
   const shortLinkId = (await params).shortLinkId;
   const data = await saGetPrototypeData({ shortLinkId });
@@ -25,7 +25,7 @@ export async function generateMetadata({
 export default async function PrototypePage({
   params,
 }: {
-  params: { shortLinkId: string };
+  params: Promise<{ shortLinkId: string }>;
 }) {
   const shortLinkId = (await params).shortLinkId;
   const data = await saGetPrototypeData({ shortLinkId });

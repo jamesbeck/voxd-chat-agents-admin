@@ -44,7 +44,7 @@ import DataFlowDiagram from "@/components/websiteui/DataFlowDiagram";
 export async function generateMetadata({
   params,
 }: {
-  params: { quoteId: string };
+  params: Promise<{ quoteId: string }>;
 }): Promise<Metadata> {
   const quoteId = (await params).quoteId;
   const concept = await getConceptForPublic({ quoteId });
@@ -109,7 +109,7 @@ export async function generateMetadata({
 export default async function PublicConceptPage({
   params,
 }: {
-  params: { quoteId: string };
+  params: Promise<{ quoteId: string }>;
 }) {
   const quoteId = (await params).quoteId;
   const concept = await getConceptForPublic({ quoteId });

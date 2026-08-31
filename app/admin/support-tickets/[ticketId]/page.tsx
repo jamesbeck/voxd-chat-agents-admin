@@ -30,8 +30,8 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { ticketId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ ticketId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const ticketId = (await params).ticketId;
   const activeTab = (await searchParams).tab || "info";

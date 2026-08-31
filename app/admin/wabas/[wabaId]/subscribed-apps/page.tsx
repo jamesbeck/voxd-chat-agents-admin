@@ -39,7 +39,11 @@ async function getWabaMetaId(wabaDbId: string): Promise<string | null> {
   return waba?.metaId || null;
 }
 
-export default async function Page({ params }: { params: { wabaId: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ wabaId: string }>;
+}) {
   const { wabaId } = await params;
 
   const accessToken = await getAccessTokenForWaba(wabaId);

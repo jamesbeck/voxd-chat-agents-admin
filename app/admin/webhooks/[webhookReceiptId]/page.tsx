@@ -85,8 +85,8 @@ export default async function WebhookReceiptPage({
   params,
   searchParams,
 }: {
-  params: { webhookReceiptId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ webhookReceiptId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const accessToken = await verifyAccessToken();
   const activeTab = (await searchParams).tab || "details";

@@ -43,12 +43,12 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { invoiceId: string };
-  searchParams: {
+  params: Promise<{ invoiceId: string }>;
+  searchParams: Promise<{
     tab?: string;
     toOrganisationId?: string;
     toPartnerId?: string;
-  };
+  }>;
 }) {
   const accessToken = await verifyAccessToken();
 

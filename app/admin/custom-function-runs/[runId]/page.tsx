@@ -31,8 +31,8 @@ export default async function CustomFunctionRunPage({
   params,
   searchParams,
 }: {
-  params: { runId: string };
-  searchParams: { tab?: string };
+  params: Promise<{ runId: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const accessToken = await verifyAccessToken();
   const activeTab = (await searchParams).tab || "details";
