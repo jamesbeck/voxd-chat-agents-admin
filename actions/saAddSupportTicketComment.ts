@@ -147,7 +147,7 @@ const saAddSupportTicketComment = async ({
       const partnerDomain = ticket.partnerDomain || "voxd.ai";
       const partnerName = ticket.partnerName || "Voxd";
       const emailFromDomain = ticket.sendEmailFromDomain || "voxd.ai";
-      const ticketUrl = `https://${partnerDomain}/admin/support-tickets/${ticket.id}`;
+      const ticketUrl = `https://${partnerDomain}/support-tickets/${ticket.id}`;
 
       // Build recipient list
       const recipients: string[] = ["james.beck@voxd.ai"];

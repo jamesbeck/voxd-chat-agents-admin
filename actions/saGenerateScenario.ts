@@ -6,23 +6,15 @@ import { ServerActionResponse } from "@/types/types";
 import { verifyAccessToken } from "@/lib/auth/verifyToken";
 import { getAdminAiLanguageModel } from "@/lib/adminAi";
 
-type GenerateScenarioParams = (
-  | {
-      exampleId: string;
-      quoteId?: never;
-    }
-  | {
-      quoteId: string;
-      exampleId?: never;
-    }
-) & {
+type GenerateScenarioParams = {
+  quoteId: string;
   count?: number;
 };
 
 const saGenerateScenario = async (
   params: GenerateScenarioParams,
 ): Promise<ServerActionResponse> => {
-  const { exampleId, quoteId, count = 1 } = params;
+  const { quoteId, count = 1 } = params;
 
   if (count < 1 || count > 5) {
     return {
@@ -31,12 +23,7 @@ const saGenerateScenario = async (
     };
   }
 
-  if (!exampleId && !quoteId) {
-    return {
-      success: false,
-      error: "Either exampleId or quoteId must be provided",
-    };
-  }
+  if (!quoteId) return { success: false, error: "Quote ID is required" };
 
   const accessToken = await verifyAccessToken();
 
@@ -54,59 +41,8 @@ const saGenerateScenario = async (
   let providerName: string | null = null;
   let existingScenarios: string[] = [];
 
-  if (exampleId) {
-    // Get the example
-    const example = await db("example").where("id", exampleId).first();
-
-    if (!example) {
-      return {
-        success: false,
-        error: "Example not found",
-      };
-    }
-
-    // Partners can only generate scenarios for their own examples
-    if (accessToken.partner && !accessToken.superAdmin) {
-      if (example.organisationId !== accessToken.partnerId) {
-        return {
-          success: false,
-          error: "You can only generate scenarios for your own examples",
-        };
-      }
-    }
-
-    // Get the example organisation's provider API key and provider.
-    const partner = await db("organisation")
-      .leftJoin(
-        "providerApiKey",
-        "organisation.providerApiKeyId",
-        "providerApiKey.id",
-      )
-      .leftJoin("provider", "providerApiKey.providerId", "provider.id")
-      .where("organisation.id", example.organisationId)
-      .select(
-        db.raw('"providerApiKey"."key" as "providerApiKey"'),
-        "provider.name as providerName",
-      )
-      .first();
-
-    providerApiKey = partner?.providerApiKey || null;
-    providerName = partner?.providerName || null;
-
-    context = example.body || "No specification provided";
-    businessName = example.businessName || "the business";
-
-    // Get existing conversation scenarios
-    const existingConversations = await db("exampleConversation")
-      .where("exampleId", exampleId)
-      .select("prompt");
-
-    existingScenarios = existingConversations
-      .map((c) => c.prompt)
-      .filter((p) => p);
-  } else if (quoteId) {
-    // Get the quote with organisation and partner data
-    const quote = await db("quote")
+  // Get the quote with organisation and partner data
+  const quote = await db("quote")
       .leftJoin("organisation", "quote.organisationId", "organisation.id")
       .leftJoin(
         "organisation as partnerOrganisation",
@@ -129,38 +65,38 @@ const saGenerateScenario = async (
       )
       .first();
 
-    if (!quote) {
-      return {
-        success: false,
-        error: "Quote not found",
-      };
-    }
+  if (!quote) {
+    return {
+      success: false,
+      error: "Quote not found",
+    };
+  }
 
-    // Check if user is super admin or the partner that owns this quote
-    const isSuperAdmin = accessToken.superAdmin;
-    const isOwnerPartner =
-      accessToken.partner && accessToken.partnerId === quote.partnerId;
+  // Check if user is super admin or the partner that owns this quote
+  const isSuperAdmin = accessToken.superAdmin;
+  const isOwnerPartner =
+    accessToken.partner && accessToken.partnerId === quote.partnerId;
 
-    if (!isSuperAdmin && !isOwnerPartner) {
-      return {
-        success: false,
-        error: "You don't have permission to generate scenarios for this quote",
-      };
-    }
+  if (!isSuperAdmin && !isOwnerPartner) {
+    return {
+      success: false,
+      error: "You don't have permission to generate scenarios for this quote",
+    };
+  }
 
-    // Check if partner has a provider API key
-    if (!quote.providerApiKey || !quote.providerName) {
-      return {
-        success: false,
-        error: "Partner does not have a provider API key configured",
-      };
-    }
+  // Check if partner has a provider API key
+  if (!quote.providerApiKey || !quote.providerName) {
+    return {
+      success: false,
+      error: "Partner does not have a provider API key configured",
+    };
+  }
 
-    providerApiKey = quote.providerApiKey;
-    providerName = quote.providerName;
+  providerApiKey = quote.providerApiKey;
+  providerName = quote.providerName;
 
-    // Get knowledge sources linked to this quote
-    const quoteKnowledgeSources = await db("quoteKnowledgeSource")
+  // Get knowledge sources linked to this quote
+  const quoteKnowledgeSources = await db("quoteKnowledgeSource")
       .leftJoin(
         "knowledgeSource",
         "quoteKnowledgeSource.knowledgeSourceId",
@@ -174,8 +110,8 @@ const saGenerateScenario = async (
       )
       .orderBy("quoteKnowledgeSource.createdAt", "asc");
 
-    // Get integrations linked to this quote
-    const quoteIntegrations = await db("quoteIntegration")
+  // Get integrations linked to this quote
+  const quoteIntegrations = await db("quoteIntegration")
       .leftJoin(
         "integration",
         "quoteIntegration.integrationId",
@@ -189,28 +125,28 @@ const saGenerateScenario = async (
       )
       .orderBy("quoteIntegration.createdAt", "asc");
 
-    // Build the specification context
-    const knowledgeSourcesList =
-      quoteKnowledgeSources.length > 0
-        ? quoteKnowledgeSources
-            .map((ks: any) => {
-              const name = ks.itemName || ks.otherName;
-              return ks.note ? `- ${name}: ${ks.note}` : `- ${name}`;
-            })
-            .join("\n")
-        : "None specified";
+  // Build the specification context
+  const knowledgeSourcesList =
+    quoteKnowledgeSources.length > 0
+      ? quoteKnowledgeSources
+          .map((ks: any) => {
+            const name = ks.itemName || ks.otherName;
+            return ks.note ? `- ${name}: ${ks.note}` : `- ${name}`;
+          })
+          .join("\n")
+      : "None specified";
 
-    const integrationsList =
-      quoteIntegrations.length > 0
-        ? quoteIntegrations
-            .map((i: any) => {
-              const name = i.itemName || i.otherName;
-              return i.note ? `- ${name}: ${i.note}` : `- ${name}`;
-            })
-            .join("\n")
-        : "None specified";
+  const integrationsList =
+    quoteIntegrations.length > 0
+      ? quoteIntegrations
+          .map((i: any) => {
+            const name = i.itemName || i.otherName;
+            return i.note ? `- ${name}: ${i.note}` : `- ${name}`;
+          })
+          .join("\n")
+      : "None specified";
 
-    context = `
+  context = `
 Background:
 ${quote.background || "Not specified"}
 
@@ -225,19 +161,18 @@ ${integrationsList}
 
 Other Notes:
 ${quote.otherNotes || "Not specified"}
-    `.trim();
+  `.trim();
 
-    businessName = quote.organisationName || "the organisation";
+  businessName = quote.organisationName || "the organisation";
 
-    // Get existing conversation scenarios
-    const existingConversations = await db("exampleConversation")
-      .where("quoteId", quoteId)
-      .select("prompt");
+  // Get existing conversation scenarios
+  const existingConversations = await db("exampleConversation")
+    .where("quoteId", quoteId)
+    .select("prompt");
 
-    existingScenarios = existingConversations
-      .map((c) => c.prompt)
-      .filter((p) => p);
-  }
+  existingScenarios = existingConversations
+    .map((c) => c.prompt)
+    .filter((p) => p);
 
   if (!providerApiKey || !providerName) {
     return {

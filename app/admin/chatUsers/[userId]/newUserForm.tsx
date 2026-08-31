@@ -93,7 +93,7 @@ export default function NewUserForm({
 
     if (response.success) {
       toast.success(`User ${values.name} created`);
-      router.push(`/admin/users/${response.data.id}`);
+      router.push(`/users/${response.data.id}`);
     }
 
     setLoading(false);

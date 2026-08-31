@@ -25,7 +25,7 @@ export default async function LoginPage({
 
   // If already logged in, redirect to admin (or the requested redirect destination)
   if (accessToken) {
-    redirect(typeof redirectTo === "string" ? redirectTo : "/admin");
+    redirect(typeof redirectTo === "string" ? redirectTo : "/");
   }
 
   const partner = await getPartnerFromHeaders();

@@ -48,8 +48,8 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Admin Users", href: "/admin/adminUsers" },
+          { label: "Admin", href: "/" },
+          { label: "Admin Users", href: "/adminUsers" },
           { label: user?.name || "New Admin User" },
         ]}
       />
@@ -63,19 +63,19 @@ export default async function Page({
                 {
                   value: "edit",
                   label: "Edit User",
-                  href: `/admin/adminUsers/${user.id}?tab=edit`,
+                  href: `/adminUsers/${user.id}?tab=edit`,
                 },
                 {
                   value: "permissions",
                   label: "Permissions",
-                  href: `/admin/adminUsers/${user.id}?tab=permissions`,
+                  href: `/adminUsers/${user.id}?tab=permissions`,
                 },
                 ...(token.superAdmin
                   ? [
                       {
                         value: "log",
                         label: "Activity Log",
-                        href: `/admin/adminUsers/${user.id}?tab=log`,
+                        href: `/adminUsers/${user.id}?tab=log`,
                       },
                     ]
                   : []),

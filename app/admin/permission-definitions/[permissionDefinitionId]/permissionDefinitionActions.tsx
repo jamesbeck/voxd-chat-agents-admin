@@ -28,7 +28,7 @@ export default function PermissionDefinitionActions({
     }
 
     toast.success("Permission definition deleted");
-    router.push("/admin/permission-definitions");
+    router.push("/permission-definitions");
   };
 
   return (

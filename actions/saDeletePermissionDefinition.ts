@@ -58,9 +58,9 @@ const saDeletePermissionDefinition = async ({
     },
   });
 
-  revalidatePath("/admin/permission-definitions");
+  revalidatePath("/permission-definitions");
   revalidatePath(
-    `/admin/permission-groups/${permissionDefinition.permissionGroupId}`,
+    `/permission-groups/${permissionDefinition.permissionGroupId}`,
   );
 
   return { success: true };

@@ -33,7 +33,7 @@ export default function FaqCategoryActions({
 
     toast.success(`Successfully deleted ${categoryName}`);
     setIsDeleting(false);
-    router.push("/admin/faq-categories");
+    router.push("/faq-categories");
   };
 
   return (

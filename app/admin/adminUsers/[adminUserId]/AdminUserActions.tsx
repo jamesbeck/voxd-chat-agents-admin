@@ -35,7 +35,7 @@ export default function UserActions({
     // If successful
     toast.success(`Successfully deleted ${user.name}`);
     setIsDeletingUser(false);
-    router.push("/admin/adminUsers");
+    router.push("/adminUsers");
   };
 
   if (!canWriteUsers) return null;

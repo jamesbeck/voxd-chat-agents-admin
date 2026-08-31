@@ -80,7 +80,7 @@ const KnowledgeBlocksTable = ({
       columns={columns}
       actions={(row: any) => (
         <TableActions
-          href={`/admin/agents/${agentId}/documents/${documentId}/knowledge-blocks/${row.id}`}
+          href={`/agents/${agentId}/documents/${documentId}/knowledge-blocks/${row.id}`}
         />
       )}
     />

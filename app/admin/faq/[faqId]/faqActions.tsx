@@ -27,7 +27,7 @@ export default function FaqActions({ faqId }: { faqId: string }) {
 
     toast.success("Successfully deleted FAQ");
     setIsDeleting(false);
-    router.push("/admin/faq");
+    router.push("/faq");
   };
 
   return (

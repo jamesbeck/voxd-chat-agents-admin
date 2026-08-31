@@ -62,19 +62,19 @@ export default async function CustomFunctionRunPage({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           ...(accessToken.superAdmin
             ? [
                 {
                   label: "Custom Function Logs",
-                  href: "/admin/custom-function-runs",
+                  href: "/custom-function-runs",
                 },
               ]
             : [
-                { label: "Agents", href: "/admin/agents" },
+                { label: "Agents", href: "/agents" },
                 {
                   label: run.agentName,
-                  href: `/admin/agents/${run.agentId}`,
+                  href: `/agents/${run.agentId}`,
                 },
               ]),
           { label: run.customFunctionName },
@@ -89,12 +89,12 @@ export default async function CustomFunctionRunPage({
           {
             value: "details",
             label: "Details",
-            href: `/admin/custom-function-runs/${runId}?tab=details`,
+            href: `/custom-function-runs/${runId}?tab=details`,
           },
           {
             value: "logs",
             label: `Logs (${run.logs.length})`,
-            href: `/admin/custom-function-runs/${runId}?tab=logs`,
+            href: `/custom-function-runs/${runId}?tab=logs`,
           },
         ]}
       >
@@ -112,7 +112,7 @@ export default async function CustomFunctionRunPage({
                   label: "Agent",
                   value: (
                     <Link
-                      href={`/admin/agents/${run.agentId}`}
+                      href={`/agents/${run.agentId}`}
                       className="text-blue-500 hover:underline"
                     >
                       {run.agentName}

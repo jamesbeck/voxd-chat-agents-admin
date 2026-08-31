@@ -18,7 +18,7 @@ export default async function Page() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Permission Groups" },
         ]}
       />
@@ -26,7 +26,7 @@ export default async function Page() {
 
       <div className="flex justify-end">
         <Button asChild>
-          <Link href="/admin/permission-groups/new">New Group</Link>
+          <Link href="/permission-groups/new">New Group</Link>
         </Button>
       </div>
 

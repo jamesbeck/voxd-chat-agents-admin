@@ -71,7 +71,7 @@ const SessionsTable = ({ superAdmin }: { superAdmin: boolean }) => {
       name: "agentName",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/agents/${row.agentId}`}>
+        <TableLink href={`/agents/${row.agentId}`}>
           {row.agentName}
         </TableLink>
       ),
@@ -82,7 +82,7 @@ const SessionsTable = ({ superAdmin }: { superAdmin: boolean }) => {
       sort: true,
       format: (row: any) =>
         row.name ? (
-          <TableLink href={`/admin/chatUsers/${row.userId}`}>
+          <TableLink href={`/chatUsers/${row.userId}`}>
             {row.name}
           </TableLink>
         ) : (
@@ -165,7 +165,7 @@ const SessionsTable = ({ superAdmin }: { superAdmin: boolean }) => {
           buttons={[
             {
               label: "View",
-              href: `/admin/sessions/${row.id}`,
+              href: `/sessions/${row.id}`,
               hidden: row.sessionType === "development" && !superAdmin,
             },
           ]}

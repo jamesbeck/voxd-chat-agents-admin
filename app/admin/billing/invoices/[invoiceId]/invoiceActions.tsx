@@ -37,7 +37,7 @@ export default function InvoiceActions({
     }
 
     toast.success(`Invoice #${invoiceNumber} deleted`);
-    router.push("/admin/billing/invoices");
+    router.push("/billing/invoices");
   };
 
   return (

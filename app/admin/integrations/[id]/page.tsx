@@ -17,7 +17,7 @@ export default async function IntegrationPage({
   const accessToken = await verifyAccessToken();
 
   if (!accessToken.superAdmin) {
-    redirect("/admin");
+    redirect("/");
   }
 
   const integration = await db("integration").where("id", id).first();
@@ -28,8 +28,8 @@ export default async function IntegrationPage({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Integrations", href: "/admin/integrations" },
+          { label: "Admin", href: "/" },
+          { label: "Integrations", href: "/integrations" },
           { label: integration.name },
         ]}
       />

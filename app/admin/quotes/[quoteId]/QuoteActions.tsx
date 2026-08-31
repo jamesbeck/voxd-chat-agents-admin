@@ -103,7 +103,7 @@ export default function QuoteActions({
     }
 
     toast.success(`Successfully deleted ${name}`);
-    router.push("/admin/quotes");
+    router.push("/quotes");
   };
 
   const dropdownGroups: DropdownGroup[] = [

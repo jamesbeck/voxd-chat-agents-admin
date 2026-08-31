@@ -145,7 +145,7 @@ const WorkerRunsTable = ({ sessionId }: { sessionId: string }) => {
       actions={(row: any) => (
         <TableActions
           buttons={[
-            { label: "View", href: `/admin/workerRuns/${row.id}` },
+            { label: "View", href: `/workerRuns/${row.id}` },
             {
               label: runningNowId === row.id ? "Running..." : "Run Now",
               hidden: row.runStatus !== "queued",

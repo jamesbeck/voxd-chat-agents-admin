@@ -186,7 +186,7 @@ export default function EditKnowledgeBlockForm({
             variant="outline"
             onClick={() =>
               router.push(
-                `/admin/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`
+                `/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`
               )
             }
           >

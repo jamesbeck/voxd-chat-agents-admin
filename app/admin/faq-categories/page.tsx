@@ -20,7 +20,7 @@ export default async function Page() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "FAQ Categories" },
         ]}
       />
@@ -28,7 +28,7 @@ export default async function Page() {
 
       <div className="flex justify-end">
         <Button asChild>
-          <Link href="/admin/faq-categories/new">
+          <Link href="/faq-categories/new">
             <Plus className="h-4 w-4 mr-2" />
             New Category
           </Link>

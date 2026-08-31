@@ -23,7 +23,7 @@ export default function IntegrationActions({
 
     if (result.success) {
       toast.success("Integration deleted");
-      router.push("/admin/integrations");
+      router.push("/integrations");
     } else {
       toast.error(result.error || "Failed to delete");
       setIsDeleting(false);

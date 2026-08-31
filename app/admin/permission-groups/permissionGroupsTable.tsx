@@ -14,7 +14,7 @@ export default function PermissionGroupsTable() {
           label: "Name",
           name: "name",
           sort: true,
-          linkTo: (row) => `/admin/permission-groups/${row.id}`,
+          linkTo: (row) => `/permission-groups/${row.id}`,
         },
         {
           label: "Key",
@@ -43,7 +43,7 @@ export default function PermissionGroupsTable() {
       ]}
       getData={saGetPermissionGroupTableData}
       actions={(row) => (
-        <TableActions href={`/admin/permission-groups/${row.id}`} />
+        <TableActions href={`/permission-groups/${row.id}`} />
       )}
     />
   );

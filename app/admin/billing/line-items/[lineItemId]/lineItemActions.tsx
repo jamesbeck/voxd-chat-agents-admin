@@ -31,7 +31,7 @@ export default function LineItemActions({
     }
 
     toast.success("Line item deleted");
-    router.push("/admin/billing/line-items");
+    router.push("/billing/line-items");
   };
 
   return (

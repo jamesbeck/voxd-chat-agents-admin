@@ -39,7 +39,7 @@ export default function DocumentActions({
     // If successful
     toast.success(`Successfully deleted ${documentTitle}`);
     setIsDeleting(false);
-    router.push(`/admin/agents/${agentId}?tab=knowledge`);
+    router.push(`/agents/${agentId}?tab=knowledge`);
   };
 
   return (

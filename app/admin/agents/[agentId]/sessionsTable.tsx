@@ -147,7 +147,7 @@ const SessionsTable = ({
       name: "name",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/chatUsers/${row.userId}`}>
+        <TableLink href={`/chatUsers/${row.userId}`}>
           {row.name}
         </TableLink>
       ),
@@ -229,7 +229,7 @@ const SessionsTable = ({
           buttons={[
             {
               label: "View",
-              href: `/admin/sessions/${row.id}`,
+              href: `/sessions/${row.id}`,
               hidden: row.sessionType === "development" && !superAdmin,
             },
           ]}

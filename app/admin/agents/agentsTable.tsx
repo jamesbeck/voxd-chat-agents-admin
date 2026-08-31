@@ -60,7 +60,7 @@ const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
       name: "niceName",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/agents/${row.id}`}>{row.niceName}</TableLink>
+        <TableLink href={`/agents/${row.id}`}>{row.niceName}</TableLink>
       ),
     },
     {
@@ -71,7 +71,7 @@ const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
           return <span className="text-muted-foreground">None</span>;
         }
         return (
-          <TableLink href={`/admin/organisations/${row.organisationId}`}>
+          <TableLink href={`/organisations/${row.organisationId}`}>
             {row.organisationName}
           </TableLink>
         );
@@ -87,7 +87,7 @@ const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
                 return <span className="text-muted-foreground">None</span>;
               }
               return (
-                <TableLink href={`/admin/organisations/${row.partnerId}`}>
+                <TableLink href={`/organisations/${row.partnerId}`}>
                   {row.partnerName}
                 </TableLink>
               );
@@ -105,7 +105,7 @@ const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
         }
         if (isSuperAdmin) {
           return (
-            <TableLink href={`/admin/phone-numbers/${row.phoneNumberId}`}>
+            <TableLink href={`/phone-numbers/${row.phoneNumberId}`}>
               {row.phoneNumber}
             </TableLink>
           );
@@ -154,7 +154,7 @@ const AgentsTable = ({ isSuperAdmin }: { isSuperAdmin: boolean }) => {
     return (
       <TableActions
         buttons={[
-          { label: "View", href: `/admin/agents/${row.id}` },
+          { label: "View", href: `/agents/${row.id}` },
           {
             label: "Meta Manager",
             href: whatsappManagerUrl ?? undefined,

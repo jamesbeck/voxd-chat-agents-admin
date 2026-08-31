@@ -68,8 +68,8 @@ const saUpdateCustomFunctionSchedule = async ({
     },
   });
 
-  revalidatePath("/admin/custom-functions");
-  revalidatePath(`/admin/custom-functions/${customFunctionId}`);
+  revalidatePath("/custom-functions");
+  revalidatePath(`/custom-functions/${customFunctionId}`);
 
   return { success: true };
 };

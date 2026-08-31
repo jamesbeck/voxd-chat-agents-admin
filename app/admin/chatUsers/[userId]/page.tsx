@@ -50,21 +50,21 @@ export default async function Page({
         breadcrumbs={
           agent
             ? [
-                { label: "Admin", href: "/admin" },
-                { label: "Agents", href: "/admin/agents" },
+                { label: "Admin", href: "/" },
+                { label: "Agents", href: "/agents" },
                 {
                   label: agent.niceName,
-                  href: `/admin/agents/${agent.id}`,
+                  href: `/agents/${agent.id}`,
                 },
                 {
                   label: "Users",
-                  href: `/admin/agents/${agent.id}?tab=users`,
+                  href: `/agents/${agent.id}?tab=users`,
                 },
                 { label: user?.name || "New User" },
               ]
             : [
-                { label: "Admin", href: "/admin" },
-                { label: "Users", href: "/admin/chatUsers" },
+                { label: "Admin", href: "/" },
+                { label: "Users", href: "/chatUsers" },
                 { label: user?.name || "New User" },
               ]
         }
@@ -78,27 +78,27 @@ export default async function Page({
               {
                 value: "edit",
                 label: "Edit User",
-                href: `/admin/chatUsers/${userId}?tab=edit`,
+                href: `/chatUsers/${userId}?tab=edit`,
               },
               {
                 value: "sessions",
                 label: "Sessions",
-                href: `/admin/chatUsers/${userId}?tab=sessions`,
+                href: `/chatUsers/${userId}?tab=sessions`,
               },
               {
                 value: "send-template",
                 label: "Send Template",
-                href: `/admin/chatUsers/${userId}?tab=send-template`,
+                href: `/chatUsers/${userId}?tab=send-template`,
               },
               {
                 value: "template-history",
                 label: "Template History",
-                href: `/admin/chatUsers/${userId}?tab=template-history`,
+                href: `/chatUsers/${userId}?tab=template-history`,
               },
               {
                 value: "data",
                 label: "Data",
-                href: `/admin/chatUsers/${userId}?tab=data`,
+                href: `/chatUsers/${userId}?tab=data`,
               },
             ]}
             actions={<UserActions user={user} />}

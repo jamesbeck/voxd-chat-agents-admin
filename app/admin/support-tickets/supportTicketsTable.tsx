@@ -58,7 +58,7 @@ const SupportTicketsTable = ({
       sort: true,
       format: (row: any) =>
         row.agentId && row.agentName ? (
-          <TableLink href={`/admin/agents/${row.agentId}`}>
+          <TableLink href={`/agents/${row.agentId}`}>
             {row.agentName}
           </TableLink>
         ) : (
@@ -96,7 +96,7 @@ const SupportTicketsTable = ({
       getDataParams={{ statusFilter }}
       columns={columns}
       actions={(row: any) => (
-        <TableActions href={`/admin/support-tickets/${row.id}`} />
+        <TableActions href={`/support-tickets/${row.id}`} />
       )}
     />
   );

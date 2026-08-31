@@ -40,9 +40,7 @@ import {
 } from "lucide-react";
 import saGenerateScenario from "@/actions/saGenerateScenario";
 import saDeleteQuoteExampleConversation from "@/actions/saDeleteQuoteExampleConversation";
-import saDeleteExampleConversation from "@/actions/saDeleteExampleConversation";
 import saUpdateQuoteExampleConversation from "@/actions/saUpdateQuoteExampleConversation";
-import saUpdateExampleConversation from "@/actions/saUpdateExampleConversation";
 import saReorderExampleConversations from "@/actions/saReorderExampleConversations";
 import saCreatePendingExampleConversations from "@/actions/saCreatePendingExampleConversations";
 import saPollExampleConversations from "@/actions/saPollExampleConversations";
@@ -285,14 +283,11 @@ function SortableConversationItem({
 type ExampleConversationsTabProps = {
   conversations: ExampleConversation[];
   businessName: string;
-} & (
-  | { quoteId: string; exampleId?: never }
-  | { exampleId: string; quoteId?: never }
-);
+  quoteId: string;
+};
 
 export default function ExampleConversationsTab({
   quoteId,
-  exampleId,
   conversations: initialConversations,
   businessName,
 }: ExampleConversationsTabProps) {
@@ -430,7 +425,6 @@ export default function ExampleConversationsTab({
       // Save the new order to the database
       const response = await saReorderExampleConversations({
         quoteId,
-        exampleId,
         conversationIds: newConversations.map((c) => c.id),
       });
 
@@ -449,11 +443,10 @@ export default function ExampleConversationsTab({
   const handleGenerateScenarios = async () => {
     setGeneratingScenarios(true);
 
-    const response = await saGenerateScenario(
-      quoteId
-        ? { quoteId, count: prompts.length }
-        : { exampleId: exampleId!, count: prompts.length },
-    );
+    const response = await saGenerateScenario({
+      quoteId,
+      count: prompts.length,
+    });
 
     if (!response.success) {
       toast.error(response.error || "Failed to generate scenarios");
@@ -504,11 +497,10 @@ export default function ExampleConversationsTab({
     setLoading(true);
 
     // Create pending conversation records
-    const response = await saCreatePendingExampleConversations(
-      quoteId
-        ? { quoteId, prompts: validPrompts }
-        : { exampleId: exampleId!, prompts: validPrompts },
-    );
+    const response = await saCreatePendingExampleConversations({
+      quoteId,
+      prompts: validPrompts,
+    });
 
     if (!response.success) {
       toast.error(response.error || "Failed to create conversations");
@@ -671,9 +663,9 @@ export default function ExampleConversationsTab({
 
     setDeleting(true);
 
-    const response = quoteId
-      ? await saDeleteQuoteExampleConversation({ conversationId: deleteId })
-      : await saDeleteExampleConversation({ conversationId: deleteId });
+    const response = await saDeleteQuoteExampleConversation({
+      conversationId: deleteId,
+    });
 
     if (!response.success) {
       toast.error(response.error || "Failed to delete conversation");
@@ -715,19 +707,12 @@ export default function ExampleConversationsTab({
 
     setSaving(true);
 
-    const response = quoteId
-      ? await saUpdateQuoteExampleConversation({
-          conversationId: editConversation.id,
-          messages: editMessages,
-          description: editDescription,
-          startTime: editStartTime,
-        })
-      : await saUpdateExampleConversation({
-          conversationId: editConversation.id,
-          messages: editMessages,
-          description: editDescription,
-          startTime: editStartTime,
-        });
+    const response = await saUpdateQuoteExampleConversation({
+      conversationId: editConversation.id,
+      messages: editMessages,
+      description: editDescription,
+      startTime: editStartTime,
+    });
 
     if (!response.success) {
       toast.error(response.error || "Failed to save conversation");

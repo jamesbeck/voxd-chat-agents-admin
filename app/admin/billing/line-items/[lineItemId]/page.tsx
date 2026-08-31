@@ -72,9 +72,9 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Billing" },
-          { label: "Line Items", href: "/admin/billing/line-items" },
+          { label: "Line Items", href: "/billing/line-items" },
           { label: lineItem.description },
         ]}
       />
@@ -86,7 +86,7 @@ export default async function Page({
           {
             value: "details",
             label: "Details",
-            href: `/admin/billing/line-items/${lineItemId}?tab=details`,
+            href: `/billing/line-items/${lineItemId}?tab=details`,
           },
         ]}
         actions={

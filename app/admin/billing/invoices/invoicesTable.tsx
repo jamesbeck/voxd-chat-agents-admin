@@ -12,7 +12,7 @@ import SendInvoiceEmailButton from "./sendInvoiceEmailButton";
 
 const getInvoiceHref = (row: any) => {
   if (!row.isPlaceholder) {
-    return `/admin/billing/invoices/${row.id}`;
+    return `/billing/invoices/${row.id}`;
   }
 
   const params = getPendingInvoiceSearchParams({
@@ -20,7 +20,7 @@ const getInvoiceHref = (row: any) => {
     toPartnerId: row.toPartnerId,
   });
 
-  return `/admin/billing/invoices/pending?${params.toString()}`;
+  return `/billing/invoices/pending?${params.toString()}`;
 };
 
 const formatDate = (value: string | Date | null | undefined) => {
@@ -92,7 +92,7 @@ export default function InvoicesTable() {
       sort: true,
       format: (row: any) =>
         row.toOrganisationId ? (
-          <TableLink href={`/admin/organisations/${row.toOrganisationId}`}>
+          <TableLink href={`/organisations/${row.toOrganisationId}`}>
             {row.toOrganisationName || row.toOrganisationId}
           </TableLink>
         ) : (
@@ -105,7 +105,7 @@ export default function InvoicesTable() {
       sort: true,
       format: (row: any) =>
         row.toPartnerId ? (
-          <TableLink href={`/admin/organisations/${row.toPartnerId}`}>
+          <TableLink href={`/organisations/${row.toPartnerId}`}>
             {row.toPartnerName || row.toPartnerId}
           </TableLink>
         ) : (

@@ -17,7 +17,7 @@ export default async function LogPage() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Activity Log" },
         ]}
       />

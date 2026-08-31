@@ -116,7 +116,7 @@ export default function NewOrganisationButton() {
 
     // Redirect to the new organisation
     if (organisationId) {
-      router.push(`/admin/organisations/${organisationId}`);
+      router.push(`/organisations/${organisationId}`);
     }
   }
 

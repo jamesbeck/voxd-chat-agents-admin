@@ -140,7 +140,7 @@ export default function NewAgentForm({ models }: { models: ModelOption[] }) {
 
     if (response.success) {
       toast.success(`Agent ${values.name} created`);
-      router.push(`/admin/agents/${response.data.id}`);
+      router.push(`/agents/${response.data.id}`);
     }
 
     setLoading(false);

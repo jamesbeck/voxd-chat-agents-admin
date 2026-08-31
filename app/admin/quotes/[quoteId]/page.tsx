@@ -178,12 +178,12 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Quotes", href: "/admin/quotes" },
+          { label: "Admin", href: "/" },
+          { label: "Quotes", href: "/quotes" },
           quote
             ? {
                 label: quote.organisationName,
-                href: `/admin/organisations/${quote.organisationId}`,
+                href: `/organisations/${quote.organisationId}`,
               }
             : null,
           { label: quote ? quote.title : "New Quote" },
@@ -214,47 +214,47 @@ export default async function Page({
                 {
                   value: "info",
                   label: "Info",
-                  href: `/admin/quotes/${quote.id}?tab=info`,
+                  href: `/quotes/${quote.id}?tab=info`,
                 },
                 {
                   value: "background",
                   label: "Background",
-                  href: `/admin/quotes/${quote.id}?tab=background`,
+                  href: `/quotes/${quote.id}?tab=background`,
                 },
                 {
                   value: "specification",
                   label: "Specification",
-                  href: `/admin/quotes/${quote.id}?tab=specification`,
+                  href: `/quotes/${quote.id}?tab=specification`,
                 },
                 {
                   value: "concept",
                   label: "Concept",
-                  href: `/admin/quotes/${quote.id}?tab=concept`,
+                  href: `/quotes/${quote.id}?tab=concept`,
                 },
                 {
                   value: "proposal",
                   label: "Proposal",
-                  href: `/admin/quotes/${quote.id}?tab=proposal`,
+                  href: `/quotes/${quote.id}?tab=proposal`,
                 },
                 {
                   value: "pricing",
                   label: "Pricing",
-                  href: `/admin/quotes/${quote.id}?tab=pricing`,
+                  href: `/quotes/${quote.id}?tab=pricing`,
                 },
                 {
                   value: "exampleConversations",
                   label: "Example Conversations",
-                  href: `/admin/quotes/${quote.id}?tab=exampleConversations`,
+                  href: `/quotes/${quote.id}?tab=exampleConversations`,
                 },
                 {
                   value: "heroImage",
                   label: "Hero Image",
-                  href: `/admin/quotes/${quote.id}?tab=heroImage`,
+                  href: `/quotes/${quote.id}?tab=heroImage`,
                 },
                 {
                   value: "views",
                   label: "Views",
-                  href: `/admin/quotes/${quote.id}?tab=views`,
+                  href: `/quotes/${quote.id}?tab=views`,
                 },
               ] satisfies RecordTab[]
             }
@@ -297,7 +297,7 @@ export default async function Page({
                     label: "Organisation",
                     value: (
                       <Link
-                        href={`/admin/organisations/${quote.organisationId}`}
+                        href={`/organisations/${quote.organisationId}`}
                         className="text-primary hover:underline"
                       >
                         {quote.organisationName}

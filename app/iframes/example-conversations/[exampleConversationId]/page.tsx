@@ -19,11 +19,7 @@ export default async function ExampleConversationIframePage({
 
   const conversation = response.data;
 
-  // Determine business name and logo info
-  const businessName =
-    conversation.businessName || conversation.organizationName || "Business";
-  const exampleId = conversation.exampleId || undefined;
-  const logoFileExtension = conversation.logoFileExtension || undefined;
+  const businessName = conversation.organizationName || "Business";
   const organizationId = conversation.organizationId || undefined;
   const organizationLogoFileExtension =
     conversation.organizationLogoFileExtension || undefined;
@@ -46,8 +42,6 @@ export default async function ExampleConversationIframePage({
           }))}
           businessName={businessName}
           startTime={conversation.startTime}
-          exampleId={exampleId}
-          logoFileExtension={logoFileExtension}
           organizationId={organizationId}
           organizationLogoFileExtension={organizationLogoFileExtension}
           organizationShowLogoOnColour={organizationShowLogoOnColour}

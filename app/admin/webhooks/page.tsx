@@ -16,7 +16,7 @@ export default async function WebhooksPage() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Webhooks" },
         ]}
       />

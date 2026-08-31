@@ -148,7 +148,7 @@ export default function WebhooksTable({ agentId }: { agentId?: string }) {
       getDataParams={{ agentId }}
       columns={columns}
       actions={(row: any) => (
-        <TableActions href={`/admin/webhooks/${row.id}`} label="View" />
+        <TableActions href={`/webhooks/${row.id}`} label="View" />
       )}
     />
   );

@@ -20,7 +20,7 @@ const TemplateSendAttemptsTable = ({
       sort: true,
       format: (row: any) =>
         row.chatUserId && row.chatUserName ? (
-          <TableLink href={`/admin/chatUsers/${row.chatUserId}`}>
+          <TableLink href={`/chatUsers/${row.chatUserId}`}>
             {row.chatUserName}
           </TableLink>
         ) : (

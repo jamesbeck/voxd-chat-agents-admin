@@ -47,8 +47,8 @@ export default async function CustomFunctionPage({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Custom Functions", href: "/admin/custom-functions" },
+          { label: "Admin", href: "/" },
+          { label: "Custom Functions", href: "/custom-functions" },
           { label: customFunction.niceName },
         ]}
       />
@@ -70,12 +70,12 @@ export default async function CustomFunctionPage({
           {
             value: "schedule",
             label: "Schedule",
-            href: `/admin/custom-functions/${customFunctionId}?tab=schedule`,
+            href: `/custom-functions/${customFunctionId}?tab=schedule`,
           },
           {
             value: "runs",
             label: "Runs Logs",
-            href: `/admin/custom-functions/${customFunctionId}?tab=runs`,
+            href: `/custom-functions/${customFunctionId}?tab=runs`,
           },
         ]}
         actions={
@@ -100,7 +100,7 @@ export default async function CustomFunctionPage({
                     label: "Agent",
                     value: (
                       <Link
-                        href={`/admin/agents/${customFunction.agentId}`}
+                        href={`/agents/${customFunction.agentId}`}
                         className="text-primary hover:underline"
                       >
                         {customFunction.agentName}

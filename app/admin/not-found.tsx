@@ -14,7 +14,7 @@ export default function NotFound() {
       <p>The admin page you requested could not be found.</p>
       <div>
         <Button asChild>
-          <Link href="/admin">Back to Admin</Link>
+          <Link href="/">Back to Admin</Link>
         </Button>
       </div>
     </Container>

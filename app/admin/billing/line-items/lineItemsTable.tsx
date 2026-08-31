@@ -60,14 +60,14 @@ export default function LineItemsTable({
       label: "Description",
       name: "description",
       sort: true,
-      linkTo: (row: any) => `/admin/billing/line-items/${row.id}`,
+      linkTo: (row: any) => `/billing/line-items/${row.id}`,
     },
     {
       label: "To Organisation",
       name: "toOrganisationName",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/organisations/${row.toOrganisationId}`}>
+        <TableLink href={`/organisations/${row.toOrganisationId}`}>
           {row.toOrganisationName || row.toOrganisationId}
         </TableLink>
       ),
@@ -78,7 +78,7 @@ export default function LineItemsTable({
       sort: true,
       format: (row: any) =>
         row.toPartnerId ? (
-          <TableLink href={`/admin/organisations/${row.toPartnerId}`}>
+          <TableLink href={`/organisations/${row.toPartnerId}`}>
             {row.toPartnerName || row.toPartnerId}
           </TableLink>
         ) : (
@@ -90,7 +90,7 @@ export default function LineItemsTable({
       name: "agentName",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/agents/${row.agentId}`}>
+        <TableLink href={`/agents/${row.agentId}`}>
           {row.agentNiceName || row.agentName}
         </TableLink>
       ),
@@ -101,7 +101,7 @@ export default function LineItemsTable({
       sort: true,
       format: (row: any) =>
         row.invoiceId ? (
-          <TableLink href={`/admin/billing/invoices/${row.invoiceId}`}>
+          <TableLink href={`/billing/invoices/${row.invoiceId}`}>
             #{row.invoiceNumber}
           </TableLink>
         ) : (
@@ -164,7 +164,7 @@ export default function LineItemsTable({
         }}
         columns={columns}
         actions={(row: any) => (
-          <TableActions href={`/admin/billing/line-items/${row.id}`} />
+          <TableActions href={`/billing/line-items/${row.id}`} />
         )}
       />
 

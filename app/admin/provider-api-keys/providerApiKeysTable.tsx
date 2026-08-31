@@ -101,7 +101,7 @@ export default function ProviderApiKeysTable({
       sort: true,
       format: (row: any) =>
         row.organisationId && row.organisationName ? (
-          <TableLink href={`/admin/organisations/${row.organisationId}`}>
+          <TableLink href={`/organisations/${row.organisationId}`}>
             {row.organisationName}
           </TableLink>
         ) : null,
@@ -117,7 +117,7 @@ export default function ProviderApiKeysTable({
             {agents.map((a: any, i: number) => (
               <span key={a.id}>
                 {i > 0 && ", "}
-                <TableLink href={`/admin/agents/${a.id}`}>{a.name}</TableLink>
+                <TableLink href={`/agents/${a.id}`}>{a.name}</TableLink>
               </span>
             ))}
           </span>
@@ -135,7 +135,7 @@ export default function ProviderApiKeysTable({
             {partners.map((p: any, i: number) => (
               <span key={p.id}>
                 {i > 0 && ", "}
-                <TableLink href={`/admin/organisations/${p.id}`}>
+                <TableLink href={`/organisations/${p.id}`}>
                   {p.name}
                 </TableLink>
               </span>

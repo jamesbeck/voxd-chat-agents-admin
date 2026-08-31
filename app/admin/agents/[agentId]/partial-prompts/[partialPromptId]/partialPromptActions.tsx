@@ -35,7 +35,7 @@ export default function PartialPromptActions({
     // If successful
     toast.success(`Successfully deleted ${partialPromptName}`);
     setIsDeleting(false);
-    router.push(`/admin/agents/${agentId}?tab=partial-prompts`);
+    router.push(`/agents/${agentId}?tab=partial-prompts`);
   };
 
   return (

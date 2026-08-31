@@ -79,7 +79,7 @@ export default function NewOrganisationForm() {
 
     if (response.success) {
       toast.success(`Organisation ${values.name} created`);
-      router.push(`/admin/organisations/${response.data.id}`);
+      router.push(`/organisations/${response.data.id}`);
     }
 
     setLoading(false);

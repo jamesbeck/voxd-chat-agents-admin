@@ -62,7 +62,7 @@ const ToolCallsTable = () => {
       columns={columns}
       actions={(row: any) => (
         <TableActions
-          href={`/admin/messages/${row.assistantMessageId}?type=assistant&tab=tool-calls`}
+          href={`/messages/${row.assistantMessageId}?type=assistant&tab=tool-calls`}
           label="View Message"
         />
       )}

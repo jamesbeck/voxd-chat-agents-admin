@@ -45,10 +45,10 @@ export default async function Page({
       <Container>
         <BreadcrumbSetter
           breadcrumbs={[
-            { label: "Admin", href: "/admin" },
+            { label: "Admin", href: "/" },
             {
               label: "Permission Definitions",
-              href: "/admin/permission-definitions",
+              href: "/permission-definitions",
             },
             { label: "New Definition" },
           ]}
@@ -71,10 +71,10 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           {
             label: "Permission Definitions",
-            href: "/admin/permission-definitions",
+            href: "/permission-definitions",
           },
           { label: permissionDefinition.name },
         ]}
@@ -91,12 +91,12 @@ export default async function Page({
           {
             value: "edit",
             label: "Edit Definition",
-            href: `/admin/permission-definitions/${permissionDefinition.id}?tab=edit`,
+            href: `/permission-definitions/${permissionDefinition.id}?tab=edit`,
           },
           {
             value: "adminUsers",
             label: "Admin Users",
-            href: `/admin/permission-definitions/${permissionDefinition.id}?tab=adminUsers`,
+            href: `/permission-definitions/${permissionDefinition.id}?tab=adminUsers`,
           },
         ]}
         actions={

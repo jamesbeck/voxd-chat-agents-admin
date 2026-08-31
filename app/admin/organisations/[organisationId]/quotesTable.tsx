@@ -20,7 +20,7 @@ const QuotesTable = ({ organisationId }: { organisationId: string }) => {
       label: "Title",
       name: "title",
       sort: true,
-      linkTo: (row: any) => `/admin/quotes/${row.id}`,
+      linkTo: (row: any) => `/quotes/${row.id}`,
       format: (row: any) => row.title || "",
     },
     {
@@ -39,13 +39,13 @@ const QuotesTable = ({ organisationId }: { organisationId: string }) => {
       label: "Organisation",
       name: "organisationName",
       sort: true,
-      linkTo: (row: any) => `/admin/organisations/${row.organisationId}`,
+      linkTo: (row: any) => `/organisations/${row.organisationId}`,
       // format: (value: string) => value || "",}
     },
   ];
 
   const actions = (row: any) => (
-    <TableActions href={`/admin/quotes/${row.id}`} />
+    <TableActions href={`/quotes/${row.id}`} />
   );
 
   return (

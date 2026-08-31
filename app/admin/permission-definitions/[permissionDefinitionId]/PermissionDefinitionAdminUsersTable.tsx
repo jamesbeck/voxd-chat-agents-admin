@@ -22,7 +22,7 @@ export default function PermissionDefinitionAdminUsersTable({
           name: "name",
           sort: true,
           format: (row) => (
-            <TableLink href={`/admin/adminUsers/${row.id}`}>
+            <TableLink href={`/adminUsers/${row.id}`}>
               {row.name || row.email || "Unnamed user"}
             </TableLink>
           ),

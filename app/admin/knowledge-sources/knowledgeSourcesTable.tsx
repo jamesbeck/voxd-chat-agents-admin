@@ -39,7 +39,7 @@ const KnowledgeSourcesTable = () => {
         },
       ]}
       actions={(row: any) => (
-        <TableActions href={`/admin/knowledge-sources/${row.id}`} />
+        <TableActions href={`/knowledge-sources/${row.id}`} />
       )}
     />
   );

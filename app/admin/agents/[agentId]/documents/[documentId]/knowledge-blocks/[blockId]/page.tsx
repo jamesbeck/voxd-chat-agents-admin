@@ -57,23 +57,23 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
           {
             label: block.agentNiceName || "Agent",
-            href: `/admin/agents/${agentId}`,
+            href: `/agents/${agentId}`,
           },
           {
             label: "Knowledge",
-            href: `/admin/agents/${agentId}?tab=knowledge`,
+            href: `/agents/${agentId}?tab=knowledge`,
           },
           {
             label: block.documentTitle || "Document",
-            href: `/admin/agents/${agentId}/documents/${documentId}`,
+            href: `/agents/${agentId}/documents/${documentId}`,
           },
           {
             label: "Knowledge Blocks",
-            href: `/admin/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`,
+            href: `/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`,
           },
           { label: `Block ${block.blockIndex}` },
         ]}
@@ -86,14 +86,14 @@ export default async function Page({
           {
             value: "info",
             label: "Info",
-            href: `/admin/agents/${agentId}/documents/${documentId}/knowledge-blocks/${blockId}?tab=info`,
+            href: `/agents/${agentId}/documents/${documentId}/knowledge-blocks/${blockId}?tab=info`,
           },
           ...(blocksAreEditable
             ? [
                 {
                   value: "edit",
                   label: "Edit",
-                  href: `/admin/agents/${agentId}/documents/${documentId}/knowledge-blocks/${blockId}?tab=edit`,
+                  href: `/agents/${agentId}/documents/${documentId}/knowledge-blocks/${blockId}?tab=edit`,
                 },
               ]
             : []),

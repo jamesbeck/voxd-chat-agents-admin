@@ -85,7 +85,7 @@ const OrganisationsTable = ({
       name: "logoFileExtension",
       format: (row: any) =>
         row.logoFileExtension || row.primaryColour ? (
-          <TableLink href={`/admin/organisations/${row.id}`} showIcon={false}>
+          <TableLink href={`/organisations/${row.id}`} showIcon={false}>
             <div className="flex items-center gap-3">
               {row.logoFileExtension ? (
                 <div
@@ -125,7 +125,7 @@ const OrganisationsTable = ({
       label: "Name",
       name: "name",
       sort: true,
-      linkTo: (row: any) => `/admin/organisations/${row.id}`,
+      linkTo: (row: any) => `/organisations/${row.id}`,
       format: (row: any) => row.name || "",
     },
     {
@@ -191,7 +191,7 @@ const OrganisationsTable = ({
   ];
 
   const actions = (row: any) => (
-    <TableActions href={`/admin/organisations/${row.id}`} />
+    <TableActions href={`/organisations/${row.id}`} />
   );
 
   const getDataParams = {

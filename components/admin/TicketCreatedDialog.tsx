@@ -68,7 +68,7 @@ export default function TicketCreatedDialog({
               onClick={() => onOpenChange(false)}
             >
               <Link
-                href={`/admin/support-tickets/${ticket.id}`}
+                href={`/support-tickets/${ticket.id}`}
                 className="flex items-center gap-2"
               >
                 View Ticket

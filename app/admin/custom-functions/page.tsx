@@ -16,7 +16,7 @@ export default async function CustomFunctionsPage() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Custom Functions" },
         ]}
       />

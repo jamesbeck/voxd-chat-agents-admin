@@ -13,7 +13,7 @@ const AgentsTable = ({ organisationId }: { organisationId: string }) => {
       name: "niceName",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/agents/${row.id}`}>{row.niceName}</TableLink>
+        <TableLink href={`/agents/${row.id}`}>{row.niceName}</TableLink>
       ),
     },
     {
@@ -46,7 +46,7 @@ const AgentsTable = ({ organisationId }: { organisationId: string }) => {
   ];
 
   const actions = (row: any) => (
-    <TableActions href={`/admin/agents/${row.id}`} />
+    <TableActions href={`/agents/${row.id}`} />
   );
 
   return (

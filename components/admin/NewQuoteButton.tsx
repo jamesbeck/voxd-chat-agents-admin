@@ -93,7 +93,7 @@ export default function NewQuoteButton({
 
     // Redirect to the new quote
     if (response.data?.id) {
-      router.push(`/admin/quotes/${response.data.id}`);
+      router.push(`/quotes/${response.data.id}`);
     }
   }
 

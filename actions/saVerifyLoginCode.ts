@@ -161,7 +161,7 @@ const saVerifyLoginCode = async ({
     organisationPartnerId: adminUser.organisationPartnerId,
   });
 
-  redirect(redirectTo || "/admin");
+  redirect(redirectTo || "/");
 };
 
 export default saVerifyLoginCode;

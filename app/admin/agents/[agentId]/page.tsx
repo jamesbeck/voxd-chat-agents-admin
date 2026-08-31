@@ -165,8 +165,8 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
           { label: agent?.niceName || "New Agent" },
         ]}
       />
@@ -180,86 +180,86 @@ export default async function Page({
                 {
                   value: "info",
                   label: "Info",
-                  href: `/admin/agents/${agentId}?tab=info`,
+                  href: `/agents/${agentId}?tab=info`,
                 },
                 {
                   value: "dashboard",
                   label: "Dashboard",
-                  href: `/admin/agents/${agentId}?tab=dashboard`,
+                  href: `/agents/${agentId}?tab=dashboard`,
                 },
                 ...(token.superAdmin
                   ? [
                       {
                         value: "edit",
                         label: "Edit Agent",
-                        href: `/admin/agents/${agentId}?tab=edit`,
+                        href: `/agents/${agentId}?tab=edit`,
                       },
                     ]
                   : []),
                 {
                   value: "model",
                   label: "Model",
-                  href: `/admin/agents/${agentId}?tab=model`,
+                  href: `/agents/${agentId}?tab=model`,
                 },
                 {
                   value: "billing",
                   label: "Billing",
-                  href: `/admin/agents/${agentId}?tab=billing`,
+                  href: `/agents/${agentId}?tab=billing`,
                 },
                 ...(isSuperAdmin
                   ? [
                       {
                         value: "domains",
                         label: "Domains",
-                        href: `/admin/agents/${agentId}?tab=domains`,
+                        href: `/agents/${agentId}?tab=domains`,
                       },
                     ]
                   : []),
                 {
                   value: "sessions",
                   label: "Sessions",
-                  href: `/admin/agents/${agentId}?tab=sessions`,
+                  href: `/agents/${agentId}?tab=sessions`,
                 },
                 ...(isSuperAdmin
                   ? [
                       {
                         value: "webhooks",
                         label: "Webhooks",
-                        href: `/admin/agents/${agentId}?tab=webhooks`,
+                        href: `/agents/${agentId}?tab=webhooks`,
                       },
                     ]
                   : []),
                 {
                   value: "users",
                   label: "Users",
-                  href: `/admin/agents/${agentId}?tab=users`,
+                  href: `/agents/${agentId}?tab=users`,
                 },
                 {
                   value: "send-template",
                   label: "Queue Template",
-                  href: `/admin/agents/${agentId}?tab=send-template`,
+                  href: `/agents/${agentId}?tab=send-template`,
                 },
                 {
                   value: "template-history",
                   label: "Template History",
-                  href: `/admin/agents/${agentId}?tab=template-history`,
+                  href: `/agents/${agentId}?tab=template-history`,
                 },
                 {
                   value: "knowledge",
                   label: "Knowledge",
-                  href: `/admin/agents/${agentId}?tab=knowledge`,
+                  href: `/agents/${agentId}?tab=knowledge`,
                 },
                 {
                   value: "partial-prompts",
                   label: "Partial Prompts",
-                  href: `/admin/agents/${agentId}?tab=partial-prompts`,
+                  href: `/agents/${agentId}?tab=partial-prompts`,
                 },
                 ...(canReadAgentConfig
                   ? [
                       {
                         value: "config",
                         label: "Config",
-                        href: `/admin/agents/${agentId}?tab=config`,
+                        href: `/agents/${agentId}?tab=config`,
                       },
                     ]
                   : []),
@@ -480,7 +480,7 @@ export default async function Page({
                     </p>
                   </div>
                   <Button asChild>
-                    <Link href={`/admin/agents/${agentId}?tab=new-document`}>
+                    <Link href={`/agents/${agentId}?tab=new-document`}>
                       <BookOpen className="h-4 w-4 mr-2" />
                       New Document
                     </Link>
@@ -512,7 +512,7 @@ export default async function Page({
                   {!!token.superAdmin && (
                     <Button asChild>
                       <Link
-                        href={`/admin/agents/${agentId}?tab=new-partial-prompt`}
+                        href={`/agents/${agentId}?tab=new-partial-prompt`}
                       >
                         <FileText className="h-4 w-4 mr-2" />
                         New Partial Prompt

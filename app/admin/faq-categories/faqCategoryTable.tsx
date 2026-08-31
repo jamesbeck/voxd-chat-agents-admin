@@ -31,7 +31,7 @@ const FaqCategoryTable = () => {
         },
       ]}
       actions={(row: any) => (
-        <TableActions href={`/admin/faq-categories/${row.id}`} label="Edit" />
+        <TableActions href={`/faq-categories/${row.id}`} label="Edit" />
       )}
     />
   );

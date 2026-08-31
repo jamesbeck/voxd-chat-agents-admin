@@ -65,7 +65,7 @@ const TemplateHistoryTable = ({ agentId }: { agentId: string }) => {
       columns={columns}
       actions={(row: any) => (
         <TableActions
-          href={`/admin/agents/${agentId}/template-history/${row.id}`}
+          href={`/agents/${agentId}/template-history/${row.id}`}
           label="View Sends"
         />
       )}

@@ -189,7 +189,7 @@ const saCreateSupportTicket = async (
     try {
       sendgrid.setApiKey(process.env.SENDGRID_API_KEY!);
 
-      const ticketUrl = `https://${partnerDomain}/admin/support-tickets/${newTicket.id}`;
+      const ticketUrl = `https://${partnerDomain}/support-tickets/${newTicket.id}`;
 
       const agentRow = agent
         ? `<tr>

@@ -73,7 +73,7 @@ export default function NewPartialPromptForm({ agentId }: { agentId: string }) {
 
     if (response.success) {
       toast.success(`Partial prompt "${values.name}" created`);
-      router.push(`/admin/agents/${agentId}?tab=partial-prompts`);
+      router.push(`/agents/${agentId}?tab=partial-prompts`);
       return;
     }
 

@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { verifyIdToken } from "@/lib/auth/verifyToken";
-import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import {
   Building,
   User,
   Lightbulb,
-  BookOpen,
   LayoutDashboard,
   Wrench,
   Smartphone,
@@ -33,11 +31,9 @@ import {
   CheckCircle,
   Mail,
   ArrowRight,
-  Briefcase,
   Gift,
 } from "lucide-react";
 import { getConceptForPublic } from "@/lib/getConceptForPublic";
-import { getCaseStudiesByPartnerId } from "@/lib/getCaseStudiesByPartnerId";
 import FloatingTableOfContents from "./FloatingTableOfContents";
 import { MarkdownContent } from "@/components/MarkdownContent";
 import WhatsAppQRCode from "@/components/WhatsAppQRCode";
@@ -122,14 +118,6 @@ export default async function PublicConceptPage({
     return notFound();
   }
 
-  // Fetch case studies for the partner (only if section is not hidden)
-  const showCaseStudies =
-    !concept.conceptHideSections?.includes("case-studies");
-  const caseStudies =
-    showCaseStudies && concept.partnerId
-      ? await getCaseStudiesByPartnerId(concept.partnerId)
-      : [];
-
   // Record the view
   const headersList = await headers();
   const ipAddress =
@@ -167,15 +155,6 @@ export default async function PublicConceptPage({
       ? [{ id: "examples", label: "Examples", icon: "MessageSquare" as const }]
       : []),
     { id: "concept", label: "The Concept", icon: "Lightbulb" as const },
-    ...(caseStudies.length > 0
-      ? [
-          {
-            id: "case-studies",
-            label: "Case Studies",
-            icon: "Briefcase" as const,
-          },
-        ]
-      : []),
     { id: "how-it-works", label: "How It Works", icon: "Zap" as const },
     {
       id: "portal",
@@ -445,109 +424,6 @@ export default async function PublicConceptPage({
               )}
             </div>
           </section>
-
-          {/* Case Studies Section */}
-          {caseStudies.length > 0 &&
-            !concept.conceptHideSections?.includes("case-studies") && (
-              <section
-                id="case-studies"
-                className="bg-white rounded-xl shadow-sm p-4 md:p-6 space-y-6 scroll-mt-8"
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className="p-2 rounded-lg"
-                    style={{ backgroundColor: `${brandColor}15` }}
-                  >
-                    <Briefcase
-                      className="h-6 w-6"
-                      style={{ color: brandColor }}
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900">
-                      Case Studies
-                    </h2>
-                    <p className="text-gray-500 text-sm mt-1">
-                      Real-world examples from other industries
-                    </p>
-                  </div>
-                </div>
-
-                <p className="text-gray-600">
-                  These case studies showcase the broad range of use cases for
-                  AI chatbots across different industries. While each business
-                  is unique, they demonstrate the versatility and value that{" "}
-                  {concept.partner.name}-powered chatbots can bring to your
-                  organisation.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {caseStudies.map((caseStudy) => (
-                    <Link
-                      key={caseStudy.id}
-                      href={`/examples/${caseStudy.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-start gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200"
-                    >
-                      {/* Logo */}
-                      <div className="flex-shrink-0 flex items-center justify-center">
-                        {caseStudy.logoFileExtension ? (
-                          <Image
-                            src={`https://${process.env.NEXT_PUBLIC_WASABI_ENDPOINT}/voxd/exampleLogos/${caseStudy.id}.${caseStudy.logoFileExtension}`}
-                            alt={`${caseStudy.businessName} logo`}
-                            width={56}
-                            height={40}
-                            className="object-contain max-h-10"
-                            unoptimized
-                          />
-                        ) : caseStudy.heroImageFileExtension ? (
-                          <Image
-                            src={`https://${process.env.NEXT_PUBLIC_WASABI_ENDPOINT}/voxd/exampleImages/${caseStudy.id}.${caseStudy.heroImageFileExtension}`}
-                            alt={caseStudy.businessName}
-                            width={56}
-                            height={40}
-                            className="object-cover max-h-10"
-                            unoptimized
-                          />
-                        ) : null}
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
-                            {caseStudy.businessName}
-                          </h3>
-                          <ArrowRight
-                            className="h-4 w-4 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0"
-                            style={{ color: brandColor }}
-                          />
-                        </div>
-                        <p className="text-sm text-gray-600 line-clamp-2">
-                          {caseStudy.short}
-                        </p>
-                        {caseStudy.industries &&
-                          caseStudy.industries.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {caseStudy.industries
-                                .slice(0, 2)
-                                .map((industry) => (
-                                  <span
-                                    key={industry.id}
-                                    className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600"
-                                  >
-                                    {industry.name}
-                                  </span>
-                                ))}
-                            </div>
-                          )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
 
           {/* How It Works Section */}
           {!concept.conceptHideSections?.includes("how-it-works") && (

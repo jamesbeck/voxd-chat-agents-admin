@@ -97,7 +97,7 @@ export default function CloneAgentDialog({
     toast.success("Agent cloned successfully");
     onOpenChange(false);
     setIsCloning(false);
-    router.push(`/admin/agents/${response.data.id}`);
+    router.push(`/agents/${response.data.id}`);
   }
 
   return (

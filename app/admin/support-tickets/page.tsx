@@ -28,7 +28,7 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Support Tickets" },
         ]}
       />
@@ -41,22 +41,22 @@ export default async function Page({
           {
             value: "open",
             label: "Open Tickets",
-            href: "/admin/support-tickets?tab=open",
+            href: "/support-tickets?tab=open",
           },
           {
             value: "awaiting",
             label: awaitingLabel,
-            href: "/admin/support-tickets?tab=awaiting",
+            href: "/support-tickets?tab=awaiting",
           },
           {
             value: "closed",
             label: "Closed Tickets",
-            href: "/admin/support-tickets?tab=closed",
+            href: "/support-tickets?tab=closed",
           },
           {
             value: "backlog",
             label: "Back Log",
-            href: "/admin/support-tickets?tab=backlog",
+            href: "/support-tickets?tab=backlog",
           },
         ]}
         actions={<SupportTicketsActions />}

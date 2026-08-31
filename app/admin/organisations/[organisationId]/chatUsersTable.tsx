@@ -140,7 +140,7 @@ const ChatUsersTable = ({ organisationId }: { organisationId: string }) => {
         </Button>
       }
       actions={(row: any) => (
-        <TableActions href={`/admin/chatUsers/${row.id}`} />
+        <TableActions href={`/chatUsers/${row.id}`} />
       )}
     />
   );

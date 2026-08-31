@@ -48,7 +48,7 @@ export default function NewFaqCategoryForm() {
 
     toast.success("FAQ category created successfully");
     setLoading(false);
-    router.push("/admin/faq-categories");
+    router.push("/faq-categories");
   }
 
   return (

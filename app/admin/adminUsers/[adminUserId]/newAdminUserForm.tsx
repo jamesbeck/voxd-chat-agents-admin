@@ -115,7 +115,7 @@ export default function NewAdminUserForm({
 
     if (response.success) {
       toast.success(`User ${values.name} created`);
-      router.push(`/admin/adminUsers/${response.data.id}`);
+      router.push(`/adminUsers/${response.data.id}`);
     }
 
     setLoading(false);

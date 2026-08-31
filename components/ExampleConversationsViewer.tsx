@@ -24,8 +24,6 @@ export default function ExampleConversationsViewer({
   conversations,
   businessName,
   brandColor,
-  exampleId,
-  logoFileExtension,
   organizationId,
   organizationLogoFileExtension,
   organizationShowLogoOnColour,
@@ -33,8 +31,6 @@ export default function ExampleConversationsViewer({
   conversations: Conversation[];
   businessName: string;
   brandColor: string;
-  exampleId?: string;
-  logoFileExtension?: string | null;
   organizationId?: string;
   organizationLogoFileExtension?: string | null;
   organizationShowLogoOnColour?: string | null;
@@ -78,8 +74,6 @@ export default function ExampleConversationsViewer({
     })),
     businessName,
     startTime: conversation.startTime,
-    exampleId,
-    logoFileExtension,
     organizationId,
     organizationLogoFileExtension,
     organizationShowLogoOnColour,

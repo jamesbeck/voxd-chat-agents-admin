@@ -144,7 +144,7 @@ const WabasTable = () => {
         direction: "asc",
       }}
       getData={saGetWabaTableData}
-      actions={(row: any) => <TableActions href={`/admin/wabas/${row.id}`} />}
+      actions={(row: any) => <TableActions href={`/wabas/${row.id}`} />}
     />
   );
 };

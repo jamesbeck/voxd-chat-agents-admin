@@ -64,8 +64,8 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Support Tickets", href: "/admin/support-tickets" },
+          { label: "Admin", href: "/" },
+          { label: "Support Tickets", href: "/support-tickets" },
           { label: `#${ticket.ticketNumber}` },
         ]}
       />
@@ -84,12 +84,12 @@ export default async function Page({
           {
             value: "info",
             label: "Info",
-            href: `/admin/support-tickets/${ticketId}?tab=info`,
+            href: `/support-tickets/${ticketId}?tab=info`,
           },
           {
             value: "comments",
             label: "Comments",
-            href: `/admin/support-tickets/${ticketId}?tab=comments`,
+            href: `/support-tickets/${ticketId}?tab=comments`,
           },
         ]}
         actions={
@@ -105,7 +105,7 @@ export default async function Page({
               partnerDomain={ticket.partnerDomain}
             />
             <Button asChild variant="outline" size="sm">
-              <Link href="/admin/support-tickets">
+              <Link href="/support-tickets">
                 <ChevronLeft className="h-4 w-4" />
                 Back to Tickets
               </Link>
@@ -161,7 +161,7 @@ export default async function Page({
                         label: "Agent",
                         value: (
                           <Link
-                            href={`/admin/agents/${ticket.agentId}`}
+                            href={`/agents/${ticket.agentId}`}
                             className="text-primary hover:underline"
                           >
                             {ticket.agentName}
@@ -174,7 +174,7 @@ export default async function Page({
                     label: "Organisation",
                     value: (
                       <Link
-                        href={`/admin/organisations/${ticket.organisationId}`}
+                        href={`/organisations/${ticket.organisationId}`}
                         className="text-primary hover:underline"
                       >
                         {ticket.organisationName}
@@ -209,7 +209,7 @@ export default async function Page({
                       : "Related Session"}
                   </h3>
                   <Link
-                    href={`/admin/sessions/${ticket.sessionId}`}
+                    href={`/sessions/${ticket.sessionId}`}
                     className="text-xs text-primary hover:underline"
                   >
                     View Session →

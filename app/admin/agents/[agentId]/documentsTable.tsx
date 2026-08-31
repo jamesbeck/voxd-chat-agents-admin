@@ -67,7 +67,7 @@ const DocumentsTable = ({ agentId }: { agentId: string }) => {
       getDataParams={{ agentId }}
       columns={columns}
       actions={(row: any) => (
-        <TableActions href={`/admin/agents/${agentId}/documents/${row.id}`} />
+        <TableActions href={`/agents/${agentId}/documents/${row.id}`} />
       )}
     />
   );

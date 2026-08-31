@@ -409,7 +409,7 @@ export default function RunCustomFunctionDialog({
           ? {
               label: "View run",
               onClick: () =>
-                router.push(`/admin/custom-function-runs/${runId}`),
+                router.push(`/custom-function-runs/${runId}`),
             }
           : undefined,
       });
@@ -665,7 +665,7 @@ export default function RunCustomFunctionDialog({
                 {runState.runId && (
                   <Button asChild variant="outline" size="sm">
                     <Link
-                      href={`/admin/custom-function-runs/${runState.runId}`}
+                      href={`/custom-function-runs/${runState.runId}`}
                     >
                       View run record
                     </Link>

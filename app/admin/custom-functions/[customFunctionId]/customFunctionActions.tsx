@@ -45,11 +45,11 @@ export default function CustomFunctionActions({
       buttons={[
         {
           label: "View Agent",
-          href: `/admin/agents/${agentId}`,
+          href: `/agents/${agentId}`,
         },
         {
           label: "Back to Functions",
-          href: "/admin/custom-functions",
+          href: "/custom-functions",
         },
       ]}
       dropdown={{

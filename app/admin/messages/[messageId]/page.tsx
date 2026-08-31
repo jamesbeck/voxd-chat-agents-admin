@@ -96,12 +96,12 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
-          { label: agent.niceName, href: `/admin/agents/${agent.id}` },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
+          { label: agent.niceName, href: `/agents/${agent.id}` },
           {
             label: session.id,
-            href: `/admin/sessions/${session.id}?tab=conversation`,
+            href: `/sessions/${session.id}?tab=conversation`,
           },
           { label: "Message" },
         ]}
@@ -115,19 +115,19 @@ export default async function Page({
           {
             value: "details",
             label: "Details",
-            href: `/admin/messages/${messageId}?type=${messageType}&tab=details`,
+            href: `/messages/${messageId}?type=${messageType}&tab=details`,
           },
           {
             value: "text",
             label: "Text",
-            href: `/admin/messages/${messageId}?type=${messageType}&tab=text`,
+            href: `/messages/${messageId}?type=${messageType}&tab=text`,
           },
           ...(messageType === "assistant"
             ? ([
                 {
                   value: "system-prompt",
                   label: "System Prompt",
-                  href: `/admin/messages/${messageId}?type=${messageType}&tab=system-prompt`,
+                  href: `/messages/${messageId}?type=${messageType}&tab=system-prompt`,
                 },
                 {
                   value: "tool-calls",
@@ -141,12 +141,12 @@ export default async function Page({
                       </Badge>
                     </>
                   ),
-                  href: `/admin/messages/${messageId}?type=${messageType}&tab=tool-calls`,
+                  href: `/messages/${messageId}?type=${messageType}&tab=tool-calls`,
                 },
                 {
                   value: "output-data",
                   label: "Output Data",
-                  href: `/admin/messages/${messageId}?type=${messageType}&tab=output-data`,
+                  href: `/messages/${messageId}?type=${messageType}&tab=output-data`,
                 },
               ] satisfies RecordTab[])
             : []),
@@ -154,7 +154,7 @@ export default async function Page({
         actions={
           <>
             <Button asChild variant="outline" size="sm">
-              <Link href={`/admin/sessions/${session.id}?tab=conversation`}>
+              <Link href={`/sessions/${session.id}?tab=conversation`}>
                 <ChevronLeft className="h-4 w-4" />
                 Back to Session
               </Link>
@@ -164,7 +164,7 @@ export default async function Page({
               {previousMessage ? (
                 <Button asChild variant="outline" size="sm">
                   <Link
-                    href={`/admin/messages/${previousMessage.id}?type=${previousMessage.role}`}
+                    href={`/messages/${previousMessage.id}?type=${previousMessage.role}`}
                   >
                     <ChevronLeft className="h-4 w-4" />
                     Previous
@@ -179,7 +179,7 @@ export default async function Page({
               {nextMessage ? (
                 <Button asChild variant="outline" size="sm">
                   <Link
-                    href={`/admin/messages/${nextMessage.id}?type=${nextMessage.role}`}
+                    href={`/messages/${nextMessage.id}?type=${nextMessage.role}`}
                   >
                     Next
                     <ChevronRight className="h-4 w-4" />
@@ -238,7 +238,7 @@ export default async function Page({
                   label: "Session",
                   value: (
                     <Link
-                      href={`/admin/sessions/${session.id}`}
+                      href={`/sessions/${session.id}`}
                       className="text-blue-500 hover:underline"
                     >
                       {session.id}
@@ -280,7 +280,7 @@ export default async function Page({
                               label: "Assistant Response",
                               value: (
                                 <Link
-                                  href={`/admin/messages/${message.assistantResponseId}?type=assistant`}
+                                  href={`/messages/${message.assistantResponseId}?type=assistant`}
                                   className="text-blue-500 hover:underline"
                                 >
                                   View Response

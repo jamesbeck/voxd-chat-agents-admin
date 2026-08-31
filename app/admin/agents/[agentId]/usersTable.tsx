@@ -163,7 +163,7 @@ const usersTable = ({
           </Button>
         }
         actions={(row: any) => (
-          <TableActions href={`/admin/chatUsers/${row.id}`} />
+          <TableActions href={`/chatUsers/${row.id}`} />
         )}
       />
     </div>

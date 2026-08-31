@@ -10,64 +10,37 @@ const saRegenerateExampleConversation = async ({
   conversationId: string;
 }): Promise<ServerActionResponse> => {
   if (!conversationId) {
-    return {
-      success: false,
-      error: "Conversation ID is required",
-    };
+    return { success: false, error: "Conversation ID is required" };
   }
 
   const accessToken = await verifyAccessToken();
-
   if (!accessToken.superAdmin && !accessToken.partner) {
-    return {
-      success: false,
-      error:
-        "Only partners and super admins can regenerate example conversations",
-    };
+    return { success: false, error: "Permission denied" };
   }
 
   const conversation = await db("exampleConversation")
-    .leftJoin("example", "example.id", "exampleConversation.exampleId")
     .leftJoin("quote", "exampleConversation.quoteId", "quote.id")
     .leftJoin("organisation", "quote.organisationId", "organisation.id")
     .where("exampleConversation.id", conversationId)
     .select(
       "exampleConversation.id",
-      "exampleConversation.exampleId",
       "exampleConversation.quoteId",
       "exampleConversation.generationStatus",
-      "example.organisationId as examplePartnerId",
-      "organisation.partnerId as quotePartnerId",
+      "quote.archived",
+      "organisation.partnerId",
     )
     .first();
 
-  if (!conversation) {
-    return {
-      success: false,
-      error: "Conversation not found",
-    };
-  }
-
+  if (!conversation) return { success: false, error: "Conversation not found" };
   if (conversation.archived) {
-    return {
-      success: false,
-      error: "Archived quotes cannot be edited",
-    };
+    return { success: false, error: "Archived quotes cannot be edited" };
   }
-
-  const ownerPartnerId =
-    conversation.examplePartnerId || conversation.quotePartnerId;
-  const isSuperAdmin = accessToken.superAdmin;
-  const isOwnerPartner =
-    accessToken.partner && accessToken.partnerId === ownerPartnerId;
-
-  if (!isSuperAdmin && !isOwnerPartner) {
-    return {
-      success: false,
-      error: "You don't have permission to regenerate this conversation",
-    };
+  if (
+    !accessToken.superAdmin &&
+    (!accessToken.partner || accessToken.partnerId !== conversation.partnerId)
+  ) {
+    return { success: false, error: "Permission denied" };
   }
-
   if (conversation.generationStatus !== "error") {
     return {
       success: false,
@@ -75,21 +48,16 @@ const saRegenerateExampleConversation = async ({
     };
   }
 
-  await db("exampleConversation")
-    .where("id", conversationId)
-    .update({
-      description: "Generating...",
-      startTime: "--:--",
-      messages: JSON.stringify([]),
-      generationStatus: "pending",
-      generationErrorSummary: null,
-      generationErrorDetail: null,
-    });
+  await db("exampleConversation").where("id", conversationId).update({
+    description: "Generating...",
+    startTime: "--:--",
+    messages: JSON.stringify([]),
+    generationStatus: "pending",
+    generationErrorSummary: null,
+    generationErrorDetail: null,
+  });
 
-  return {
-    success: true,
-    data: { conversationId },
-  };
+  return { success: true, data: { conversationId } };
 };
 
 export default saRegenerateExampleConversation;

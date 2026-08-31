@@ -56,7 +56,7 @@ export default function NewPermissionGroupForm() {
     }
 
     toast.success("Permission group created");
-    router.push(`/admin/permission-groups/${response.data.id}`);
+    router.push(`/permission-groups/${response.data.id}`);
   };
 
   return (

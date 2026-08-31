@@ -86,8 +86,8 @@ const saUpdatePermissionGroup = async ({
     },
   });
 
-  revalidatePath("/admin/permission-groups");
-  revalidatePath(`/admin/permission-groups/${permissionGroupId}`);
+  revalidatePath("/permission-groups");
+  revalidatePath(`/permission-groups/${permissionGroupId}`);
 
   return { success: true };
 };

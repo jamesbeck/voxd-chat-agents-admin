@@ -88,10 +88,10 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
-          { label: agent.niceName, href: `/admin/agents/${agent.id}` },
-          { label: "Sessions", href: `/admin/agents/${agent.id}?tab=sessions` },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
+          { label: agent.niceName, href: `/agents/${agent.id}` },
+          { label: "Sessions", href: `/agents/${agent.id}?tab=sessions` },
           { label: session.id },
         ]}
       />
@@ -106,35 +106,35 @@ export default async function Page({
           {
             value: "conversation",
             label: "Conversation",
-            href: `/admin/sessions/${sessionId}?tab=conversation`,
+            href: `/sessions/${sessionId}?tab=conversation`,
           },
           {
             value: "info",
             label: "Info",
-            href: `/admin/sessions/${sessionId}?tab=info`,
+            href: `/sessions/${sessionId}?tab=info`,
           },
           {
             value: "workers",
             label: "Workers",
-            href: `/admin/sessions/${sessionId}?tab=workers`,
+            href: `/sessions/${sessionId}?tab=workers`,
           },
           {
             value: "data",
             label: "Data",
-            href: `/admin/sessions/${sessionId}?tab=data`,
+            href: `/sessions/${sessionId}?tab=data`,
           },
         ]}
         actions={
           <>
             <Button asChild variant="outline" size="sm">
-              <Link href={`/admin/agents/${agent.id}?tab=sessions`}>
+              <Link href={`/agents/${agent.id}?tab=sessions`}>
                 <ChevronLeft className="h-4 w-4" />
                 Back to Agent
               </Link>
             </Button>
 
             <Button asChild variant="outline" size="sm">
-              <Link href={`/admin/chatUsers/${user.id}`}>View User</Link>
+              <Link href={`/chatUsers/${user.id}`}>View User</Link>
             </Button>
 
             <SessionActions

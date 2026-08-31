@@ -150,33 +150,3 @@ export type CostingBreakdown = {
   totalMonthly: number;
   costingCalculatedFrom: "concept" | "proposal";
 };
-
-export interface Example {
-  id: string;
-  partnerId: string;
-  title: string;
-  slug: string;
-  short: string;
-  body: string;
-  businessName: string;
-  prompt: string;
-  chatScenarioPrompts: string[];
-  imageGenerationPrompt: string;
-  logoFileExtension: string | null;
-  heroImageFileExtension: string | null;
-  industries: { id: string; name: string; slug: string }[];
-  functions: { id: string; name: string; slug: string }[];
-  exampleConversations: {
-    messages: {
-      role: string;
-      content: string;
-      time: number;
-      annotation: string;
-      imageUrl?: string;
-      fileName?: string;
-      fileSize?: string;
-    }[];
-    description: string;
-    startTime: string;
-  }[];
-}

@@ -61,8 +61,8 @@ export default async function Page({ params }: { params: { faqId: string } }) {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "FAQ", href: "/admin/faq" },
+          { label: "Admin", href: "/" },
+          { label: "FAQ", href: "/faq" },
           {
             label:
               faq.question.substring(0, 50) +

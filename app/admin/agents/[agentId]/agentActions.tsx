@@ -147,7 +147,7 @@ export default function AgentActions({
     // If successful
     toast.success(`Successfully deleted ${name}`);
     setIsDeletingAgent(false);
-    router.push("/admin/agents");
+    router.push("/agents");
   };
 
   return (
@@ -240,7 +240,7 @@ export default function AgentActions({
                 {
                   label: "Embed Agent",
                   icon: <Code2 />,
-                  href: `/admin/agents/${agentId}/embed`,
+                  href: `/agents/${agentId}/embed`,
                 },
                 ...(isLoadingCustomFunctions
                   ? [

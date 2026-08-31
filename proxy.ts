@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isAdminRoute } from "@/lib/adminRoutes";
 
 export function proxy(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
@@ -12,11 +13,13 @@ export function proxy(request: NextRequest) {
 
   // Paths that are always allowed (login and admin)
   const isLoginPath = request.nextUrl.pathname.startsWith("/login");
-  const isAdminPath = request.nextUrl.pathname.startsWith("/admin");
+  const isAdminPath =
+    request.nextUrl.pathname === "/" ||
+    request.nextUrl.pathname.startsWith("/admin") ||
+    isAdminRoute(request.nextUrl.pathname);
   const isProposalsPath = request.nextUrl.pathname.startsWith("/proposals");
   const isConceptsPath = request.nextUrl.pathname.startsWith("/concepts");
   const isPitchesPath = request.nextUrl.pathname.startsWith("/pitches"); // Legacy redirect to /concepts
-  const isExamplesPath = request.nextUrl.pathname.startsWith("/examples");
   const isIFramesPath = request.nextUrl.pathname.startsWith("/iframes");
   const isGuidesPath = request.nextUrl.pathname.startsWith("/guides");
   const isPrototypesPath = request.nextUrl.pathname.startsWith("/prototypes");
@@ -31,7 +34,6 @@ export function proxy(request: NextRequest) {
     !isProposalsPath && // Not on proposals (public proposal pages)
     !isConceptsPath && // Not on concepts (public concept pages)
     !isPitchesPath && // Not on pitches (legacy redirect to concepts)
-    !isExamplesPath && // Not on examples (public example pages)
     !isIFramesPath && // Not on iframes (public iframe pages)
     !isGuidesPath && // Not on guides (public guide pages)
     !isPrototypesPath && // Not on prototypes (public prototype pages)

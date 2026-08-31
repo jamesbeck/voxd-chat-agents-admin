@@ -106,7 +106,7 @@ const QuotesTable = ({
                 name.length > 40 ? `${name.slice(0, 40)}...` : name;
               const link = (
                 <Link
-                  href={`/admin/organisations/${row.organisationId}`}
+                  href={`/organisations/${row.organisationId}`}
                   className="hover:underline"
                 >
                   {displayName}
@@ -131,7 +131,7 @@ const QuotesTable = ({
       label: "Title",
       name: "title",
       sort: true,
-      linkTo: (row: any) => `/admin/quotes/${row.id}`,
+      linkTo: (row: any) => `/quotes/${row.id}`,
       format: (row: any) => {
         const title = row.title || "";
         if (title.length <= 40) return title;
@@ -177,7 +177,7 @@ const QuotesTable = ({
 
               return (
                 <Link
-                  href={`/admin/organisations/${row.partnerId}`}
+                  href={`/organisations/${row.partnerId}`}
                   className="hover:underline"
                 >
                   {row.partnerName || "-"}
@@ -207,7 +207,7 @@ const QuotesTable = ({
   ];
 
   const actions = (row: any) => (
-    <TableActions href={`/admin/quotes/${row.id}`} />
+    <TableActions href={`/quotes/${row.id}`} />
   );
 
   const getDataParams = {

@@ -30,8 +30,8 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Wabas", href: "/admin/wabas" },
+          { label: "Admin", href: "/" },
+          { label: "Wabas", href: "/wabas" },
           { label: waba?.name || "WABA Details" },
         ]}
       />
@@ -43,17 +43,17 @@ export default async function Page({
           {
             value: "info",
             label: "Info",
-            href: `/admin/wabas/${wabaId}?tab=info`,
+            href: `/wabas/${wabaId}?tab=info`,
           },
           {
             value: "phone-numbers",
             label: "Phone Numbers",
-            href: `/admin/wabas/${wabaId}?tab=phone-numbers`,
+            href: `/wabas/${wabaId}?tab=phone-numbers`,
           },
           {
             value: "templates",
             label: "Templates",
-            href: `/admin/wabas/${wabaId}?tab=templates`,
+            href: `/wabas/${wabaId}?tab=templates`,
           },
         ]}
         actions={<WabaActions wabaId={wabaId} />}

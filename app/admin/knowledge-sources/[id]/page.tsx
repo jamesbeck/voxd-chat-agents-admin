@@ -17,7 +17,7 @@ export default async function KnowledgeSourcePage({
   const accessToken = await verifyAccessToken();
 
   if (!accessToken.superAdmin) {
-    redirect("/admin");
+    redirect("/");
   }
 
   const knowledgeSource = await db("knowledgeSource").where("id", id).first();
@@ -28,8 +28,8 @@ export default async function KnowledgeSourcePage({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Knowledge Sources", href: "/admin/knowledge-sources" },
+          { label: "Admin", href: "/" },
+          { label: "Knowledge Sources", href: "/knowledge-sources" },
           { label: knowledgeSource.name },
         ]}
       />

@@ -21,7 +21,7 @@ export default function CopyTicketLinkButton({
     const protocol = partnerDomain ? "https" : window.location.protocol;
     const url = `${protocol}${
       partnerDomain ? "://" : "//"
-    }${domain}/admin/support-tickets/${ticketId}`;
+    }${domain}/support-tickets/${ticketId}`;
 
     navigator.clipboard.writeText(url).then(
       () => {

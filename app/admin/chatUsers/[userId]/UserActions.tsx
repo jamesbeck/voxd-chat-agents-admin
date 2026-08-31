@@ -45,7 +45,7 @@ export default function UserActions({ user }: { user: ChatUser }) {
     // If successful
     toast.success(`Successfully deleted ${user.name}`);
     setIsDeletingUser(false);
-    router.push("/admin/chatUsers");
+    router.push("/chatUsers");
   };
 
   const deleteUserSessions = async () => {

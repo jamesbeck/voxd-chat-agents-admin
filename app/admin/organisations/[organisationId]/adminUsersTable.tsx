@@ -188,7 +188,7 @@ const AdminUsersTable = ({
         getData={saGetAdminUserTableData}
         getDataParams={{ organisationId, refreshKey }}
         actions={(row: any) => (
-          <TableActions href={`/admin/adminUsers/${row.id}`} />
+          <TableActions href={`/adminUsers/${row.id}`} />
         )}
       />
     </div>

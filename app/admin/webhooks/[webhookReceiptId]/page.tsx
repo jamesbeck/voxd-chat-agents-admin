@@ -108,8 +108,8 @@ export default async function WebhookReceiptPage({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Webhooks", href: "/admin/webhooks" },
+          { label: "Admin", href: "/" },
+          { label: "Webhooks", href: "/webhooks" },
           { label: receipt.webhookKey },
         ]}
       />
@@ -122,17 +122,17 @@ export default async function WebhookReceiptPage({
           {
             value: "details",
             label: "Details",
-            href: `/admin/webhooks/${webhookReceiptId}?tab=details`,
+            href: `/webhooks/${webhookReceiptId}?tab=details`,
           },
           {
             value: "request",
             label: "Request",
-            href: `/admin/webhooks/${webhookReceiptId}?tab=request`,
+            href: `/webhooks/${webhookReceiptId}?tab=request`,
           },
           {
             value: "response",
             label: "Response",
-            href: `/admin/webhooks/${webhookReceiptId}?tab=response`,
+            href: `/webhooks/${webhookReceiptId}?tab=response`,
           },
         ]}
       >
@@ -150,7 +150,7 @@ export default async function WebhookReceiptPage({
                   label: "Agent",
                   value: receipt.agentId ? (
                     <Link
-                      href={`/admin/agents/${receipt.agentId}`}
+                      href={`/agents/${receipt.agentId}`}
                       className="text-blue-500 hover:underline"
                     >
                       {receipt.agentName}

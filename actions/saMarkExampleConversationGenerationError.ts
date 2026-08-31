@@ -14,61 +14,34 @@ const saMarkExampleConversationGenerationError = async ({
   detail?: string;
 }): Promise<ServerActionResponse> => {
   if (!conversationId) {
-    return {
-      success: false,
-      error: "Conversation ID is required",
-    };
+    return { success: false, error: "Conversation ID is required" };
   }
 
   const accessToken = await verifyAccessToken();
-
   if (!accessToken.superAdmin && !accessToken.partner) {
-    return {
-      success: false,
-      error:
-        "Only partners and super admins can update example conversation generation errors",
-    };
+    return { success: false, error: "Permission denied" };
   }
 
   const conversation = await db("exampleConversation")
-    .leftJoin("example", "example.id", "exampleConversation.exampleId")
     .leftJoin("quote", "exampleConversation.quoteId", "quote.id")
     .leftJoin("organisation", "quote.organisationId", "organisation.id")
     .where("exampleConversation.id", conversationId)
-    .select(
-      "exampleConversation.id",
-      "example.organisationId as examplePartnerId",
-      "organisation.partnerId as quotePartnerId",
-    )
+    .select("exampleConversation.id", "organisation.partnerId")
     .first();
 
-  if (!conversation) {
-    return {
-      success: false,
-      error: "Conversation not found",
-    };
+  if (!conversation) return { success: false, error: "Conversation not found" };
+  if (
+    !accessToken.superAdmin &&
+    (!accessToken.partner || accessToken.partnerId !== conversation.partnerId)
+  ) {
+    return { success: false, error: "Permission denied" };
   }
 
-  const ownerPartnerId =
-    conversation.examplePartnerId || conversation.quotePartnerId;
-  const isSuperAdmin = accessToken.superAdmin;
-  const isOwnerPartner =
-    accessToken.partner && accessToken.partnerId === ownerPartnerId;
-
-  if (!isSuperAdmin && !isOwnerPartner) {
-    return {
-      success: false,
-      error: "You don't have permission to update this conversation",
-    };
-  }
-
-  await db("exampleConversation")
-    .where("id", conversationId)
-    .update({
-      generationStatus: "error",
-      generationErrorSummary: summary,
-      generationErrorDetail: detail || summary,
-    });
+  await db("exampleConversation").where("id", conversationId).update({
+    generationStatus: "error",
+    generationErrorSummary: summary,
+    generationErrorDetail: detail || summary,
+  });
 
   return { success: true };
 };

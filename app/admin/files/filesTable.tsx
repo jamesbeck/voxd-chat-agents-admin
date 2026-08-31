@@ -91,7 +91,7 @@ const FilesTable = () => {
       sort: true,
       format: (row: any) =>
         row.agentId ? (
-          <TableLink href={`/admin/agents/${row.agentId}`}>
+          <TableLink href={`/agents/${row.agentId}`}>
             {row.agentName}
           </TableLink>
         ) : (
@@ -104,7 +104,7 @@ const FilesTable = () => {
       sort: true,
       format: (row: any) =>
         row.chatUserName ? (
-          <TableLink href={`/admin/chatUsers/${row.chatUserId}`}>
+          <TableLink href={`/chatUsers/${row.chatUserId}`}>
             {row.chatUserName}
           </TableLink>
         ) : (
@@ -132,7 +132,7 @@ const FilesTable = () => {
             },
             {
               label: "View Session",
-              href: `/admin/sessions/${row.sessionId}`,
+              href: `/sessions/${row.sessionId}`,
               hidden: !row.sessionId,
             },
           ]}

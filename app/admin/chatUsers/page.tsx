@@ -9,14 +9,14 @@ export default async function Page() {
   return (
     <Container>
       <BreadcrumbSetter
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Users" }]}
+        breadcrumbs={[{ label: "Admin", href: "/" }, { label: "Users" }]}
       />
       <H1>Chat Users</H1>
       <p>These are users that have engaged with any of your agents.</p>
 
       <div className="flex justify-end">
         <Button asChild>
-          <Link href="/admin/chatUsers/new">New User</Link>
+          <Link href="/chatUsers/new">New User</Link>
         </Button>
       </div>
 

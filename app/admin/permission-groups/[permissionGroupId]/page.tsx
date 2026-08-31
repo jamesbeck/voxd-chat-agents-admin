@@ -32,8 +32,8 @@ export default async function Page({
       <Container>
         <BreadcrumbSetter
           breadcrumbs={[
-            { label: "Admin", href: "/admin" },
-            { label: "Permission Groups", href: "/admin/permission-groups" },
+            { label: "Admin", href: "/" },
+            { label: "Permission Groups", href: "/permission-groups" },
             { label: "New Group" },
           ]}
         />
@@ -53,8 +53,8 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Permission Groups", href: "/admin/permission-groups" },
+          { label: "Admin", href: "/" },
+          { label: "Permission Groups", href: "/permission-groups" },
           { label: permissionGroup.name },
         ]}
       />
@@ -65,12 +65,12 @@ export default async function Page({
           {
             value: "edit",
             label: "Edit Group",
-            href: `/admin/permission-groups/${permissionGroup.id}?tab=edit`,
+            href: `/permission-groups/${permissionGroup.id}?tab=edit`,
           },
           {
             value: "definitions",
             label: `Definitions (${permissionGroup.definitionCount ?? 0})`,
-            href: `/admin/permission-groups/${permissionGroup.id}?tab=definitions`,
+            href: `/permission-groups/${permissionGroup.id}?tab=definitions`,
           },
         ]}
         actions={

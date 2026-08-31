@@ -99,7 +99,7 @@ const SessionsTable = ({
       name: "agentName",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/agents/${row.agentId}`}>
+        <TableLink href={`/agents/${row.agentId}`}>
           {row.agentName}
         </TableLink>
       ),
@@ -165,7 +165,7 @@ const SessionsTable = ({
           buttons={[
             {
               label: "View",
-              href: `/admin/sessions/${row.id}`,
+              href: `/sessions/${row.id}`,
               hidden: row.sessionType === "development" && !superAdmin,
             },
             {

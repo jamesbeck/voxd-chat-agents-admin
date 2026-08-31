@@ -109,7 +109,7 @@ const CustomFunctionRunsTable = () => {
         },
       ]}
       actions={(row: any) => (
-        <TableActions href={`/admin/custom-function-runs/${row.id}`} />
+        <TableActions href={`/custom-function-runs/${row.id}`} />
       )}
     />
   );

@@ -78,7 +78,7 @@ export default function NewPermissionDefinitionForm({
     }
 
     toast.success("Permission definition created");
-    router.push(`/admin/permission-definitions/${response.data.id}`);
+    router.push(`/permission-definitions/${response.data.id}`);
   };
 
   return (

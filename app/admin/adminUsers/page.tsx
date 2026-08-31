@@ -19,7 +19,7 @@ export default async function Page() {
   return (
     <Container>
       <BreadcrumbSetter
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Users" }]}
+        breadcrumbs={[{ label: "Admin", href: "/" }, { label: "Users" }]}
       />
       <H1>Admin Users</H1>
       <p>These are users that can log in and manage your agents.</p>
@@ -27,7 +27,7 @@ export default async function Page() {
       {canWriteUsers && (
         <div className="flex justify-end">
           <Button asChild>
-            <Link href="/admin/adminUsers/new">New User</Link>
+            <Link href="/adminUsers/new">New User</Link>
           </Button>
         </div>
       )}

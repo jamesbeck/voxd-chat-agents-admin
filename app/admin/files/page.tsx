@@ -9,13 +9,13 @@ export default async function Page() {
   const token = await verifyAccessToken();
 
   if (!token.superAdmin) {
-    redirect("/admin");
+    redirect("/");
   }
 
   return (
     <Container>
       <BreadcrumbSetter
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Files" }]}
+        breadcrumbs={[{ label: "Admin", href: "/" }, { label: "Files" }]}
       />
       <H1>Files</H1>
 

@@ -45,7 +45,7 @@ const PartialPromptsTable = ({ agentId }: { agentId: string }) => {
       columns={columns}
       actions={(row: any) => (
         <TableActions
-          href={`/admin/agents/${agentId}/partial-prompts/${row.id}`}
+          href={`/agents/${agentId}/partial-prompts/${row.id}`}
         />
       )}
     />

@@ -60,7 +60,7 @@ const FaqTable = ({ isSuperAdmin }: { isSuperAdmin?: boolean }) => {
       ]}
       actions={(row: any) => (
         <TableActions
-          href={`/admin/faq/${row.id}`}
+          href={`/faq/${row.id}`}
           label={isSuperAdmin ? "Edit" : "View"}
         />
       )}

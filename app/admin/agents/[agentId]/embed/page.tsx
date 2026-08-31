@@ -217,9 +217,9 @@ async function switchCustomer(nextCustomer) {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
-          { label: embedData.agentName, href: `/admin/agents/${agentId}` },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
+          { label: embedData.agentName, href: `/agents/${agentId}` },
           { label: "Embed Agent" },
         ]}
       />

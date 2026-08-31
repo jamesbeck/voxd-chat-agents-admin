@@ -52,12 +52,12 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
-          { label: agent.niceName, href: `/admin/agents/${agent.id}` },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
+          { label: agent.niceName, href: `/agents/${agent.id}` },
           {
             label: session.id,
-            href: `/admin/sessions/${session.id}?tab=workers`,
+            href: `/sessions/${session.id}?tab=workers`,
           },
           { label: workerRun.workerName },
         ]}
@@ -73,7 +73,7 @@ export default async function Page({
           {
             value: "details",
             label: "Details",
-            href: `/admin/workerRuns/${workerRunId}?tab=details`,
+            href: `/workerRuns/${workerRunId}?tab=details`,
           },
         ]}
       >
@@ -173,7 +173,7 @@ export default async function Page({
                     label: "Session",
                     value: (
                       <Link
-                        href={`/admin/sessions/${session.id}`}
+                        href={`/sessions/${session.id}`}
                         className="text-blue-500 hover:underline"
                       >
                         {session.id}

@@ -125,7 +125,7 @@ export default function MessageTicketBadge({
                   </p>
                 </div>
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/admin/support-tickets/${ticket.id}`}>
+                  <Link href={`/support-tickets/${ticket.id}`}>
                     <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
                     View
                   </Link>

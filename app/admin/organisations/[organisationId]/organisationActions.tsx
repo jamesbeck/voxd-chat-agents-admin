@@ -137,7 +137,7 @@ export default function OrganisationActions({
     // If successful
     toast.success(`Successfully deleted ${name}`);
     setIsDeleting(false);
-    router.push("/admin/organisations");
+    router.push("/organisations");
   };
 
   const syncFromWebsite = async () => {

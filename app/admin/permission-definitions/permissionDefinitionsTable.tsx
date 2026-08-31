@@ -46,7 +46,7 @@ export default function PermissionDefinitionsTable({
           label: "Name",
           name: "name",
           sort: true,
-          linkTo: (row) => `/admin/permission-definitions/${row.id}`,
+          linkTo: (row) => `/permission-definitions/${row.id}`,
         },
         {
           label: "Key",
@@ -59,7 +59,7 @@ export default function PermissionDefinitionsTable({
           sort: true,
           format: (row) => (
             <TableLink
-              href={`/admin/permission-groups/${row.permissionGroupId}`}
+              href={`/permission-groups/${row.permissionGroupId}`}
             >
               {row.permissionGroupName}
             </TableLink>
@@ -101,7 +101,7 @@ export default function PermissionDefinitionsTable({
       getData={saGetPermissionDefinitionTableData}
       getDataParams={{ permissionGroupId }}
       actions={(row) => (
-        <TableActions href={`/admin/permission-definitions/${row.id}`} />
+        <TableActions href={`/permission-definitions/${row.id}`} />
       )}
     />
   );

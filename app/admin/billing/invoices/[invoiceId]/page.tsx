@@ -154,9 +154,9 @@ export default async function Page({
       <Container>
         <BreadcrumbSetter
           breadcrumbs={[
-            { label: "Admin", href: "/admin" },
+            { label: "Admin", href: "/" },
             { label: "Billing" },
-            { label: "Invoices", href: "/admin/billing/invoices" },
+            { label: "Invoices", href: "/billing/invoices" },
             { label: "Pending Invoice" },
           ]}
         />
@@ -168,17 +168,17 @@ export default async function Page({
             {
               value: "details",
               label: "Details",
-              href: `/admin/billing/invoices/pending?${pendingQueryString}&tab=details`,
+              href: `/billing/invoices/pending?${pendingQueryString}&tab=details`,
             },
             {
               value: "lineItems",
               label: "Line Items",
-              href: `/admin/billing/invoices/pending?${pendingQueryString}&tab=lineItems`,
+              href: `/billing/invoices/pending?${pendingQueryString}&tab=lineItems`,
             },
             {
               value: "pdf",
               label: "PDF",
-              href: `/admin/billing/invoices/pending?${pendingQueryString}&tab=pdf`,
+              href: `/billing/invoices/pending?${pendingQueryString}&tab=pdf`,
             },
           ]}
           actions={
@@ -287,9 +287,9 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Billing" },
-          { label: "Invoices", href: "/admin/billing/invoices" },
+          { label: "Invoices", href: "/billing/invoices" },
           { label: `#${invoice.number}` },
         ]}
       />
@@ -301,17 +301,17 @@ export default async function Page({
           {
             value: "details",
             label: "Details",
-            href: `/admin/billing/invoices/${invoiceId}?tab=details`,
+            href: `/billing/invoices/${invoiceId}?tab=details`,
           },
           {
             value: "lineItems",
             label: "Line Items",
-            href: `/admin/billing/invoices/${invoiceId}?tab=lineItems`,
+            href: `/billing/invoices/${invoiceId}?tab=lineItems`,
           },
           {
             value: "pdf",
             label: "PDF",
-            href: `/admin/billing/invoices/${invoiceId}?tab=pdf`,
+            href: `/billing/invoices/${invoiceId}?tab=pdf`,
           },
         ]}
         actions={

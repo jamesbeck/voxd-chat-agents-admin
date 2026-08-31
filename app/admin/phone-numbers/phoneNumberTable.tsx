@@ -143,7 +143,7 @@ const PhoneNumberTable = () => {
         return (
           <TableActions
             buttons={[
-              { label: "View", href: `/admin/phone-numbers/${row.id}` },
+              { label: "View", href: `/phone-numbers/${row.id}` },
               {
                 label: "Meta Manager",
                 href: whatsappManagerUrl ?? undefined,

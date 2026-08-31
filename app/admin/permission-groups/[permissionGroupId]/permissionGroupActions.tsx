@@ -26,7 +26,7 @@ export default function PermissionGroupActions({
     }
 
     toast.success("Permission group deleted");
-    router.push("/admin/permission-groups");
+    router.push("/permission-groups");
   };
 
   return (

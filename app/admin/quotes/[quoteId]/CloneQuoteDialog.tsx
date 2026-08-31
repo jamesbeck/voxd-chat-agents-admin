@@ -84,7 +84,7 @@ export default function CloneQuoteDialog({
     );
     onOpenChange(false);
     setIsCloning(false);
-    router.push(`/admin/quotes/${response.data.id}`);
+    router.push(`/quotes/${response.data.id}`);
 
     // Fire off background generation for cloned conversations via API route
     const pendingIds = response.data.pendingConversationIds as

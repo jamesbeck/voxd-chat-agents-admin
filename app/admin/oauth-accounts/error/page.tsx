@@ -60,8 +60,8 @@ export default async function OAuthErrorPage({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Connected Accounts", href: "/admin/oauth-accounts" },
+          { label: "Admin", href: "/" },
+          { label: "Connected Accounts", href: "/oauth-accounts" },
           { label: "Error" },
         ]}
       />
@@ -76,7 +76,7 @@ export default async function OAuthErrorPage({
 
         <div className="flex gap-4">
           <Button asChild>
-            <Link href="/admin/oauth-accounts">Back to Connected Accounts</Link>
+            <Link href="/oauth-accounts">Back to Connected Accounts</Link>
           </Button>
         </div>
 

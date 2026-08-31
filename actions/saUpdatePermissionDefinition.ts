@@ -116,9 +116,9 @@ const saUpdatePermissionDefinition = async ({
     },
   });
 
-  revalidatePath("/admin/permission-definitions");
-  revalidatePath(`/admin/permission-definitions/${permissionDefinitionId}`);
-  revalidatePath(`/admin/permission-groups/${permissionGroupId}`);
+  revalidatePath("/permission-definitions");
+  revalidatePath(`/permission-definitions/${permissionDefinitionId}`);
+  revalidatePath(`/permission-groups/${permissionGroupId}`);
 
   return { success: true };
 };

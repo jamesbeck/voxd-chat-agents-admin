@@ -45,7 +45,7 @@ export default function OAuthAccountsTable({
     if (showConnectedToast) {
       toast.success("Google account connected successfully");
       // Remove the query param from URL without refresh
-      router.replace("/admin/oauth-accounts", { scroll: false });
+      router.replace("/oauth-accounts", { scroll: false });
     }
   }, [showConnectedToast, router]);
 

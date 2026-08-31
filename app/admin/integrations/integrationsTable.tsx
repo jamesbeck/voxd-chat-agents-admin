@@ -39,7 +39,7 @@ const IntegrationsTable = () => {
         },
       ]}
       actions={(row: any) => (
-        <TableActions href={`/admin/integrations/${row.id}`} />
+        <TableActions href={`/integrations/${row.id}`} />
       )}
     />
   );

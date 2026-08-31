@@ -54,7 +54,7 @@ export default function MessageActions({
           variant={variant}
           className="h-6 text-[11px] px-2"
         >
-          <Link href={`/admin/messages/${messageId}?type=${messageType}`}>
+          <Link href={`/messages/${messageId}?type=${messageType}`}>
             View
           </Link>
         </Button>

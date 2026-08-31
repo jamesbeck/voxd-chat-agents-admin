@@ -71,7 +71,7 @@ const saCreatePermissionGroup = async ({
     },
   });
 
-  revalidatePath("/admin/permission-groups");
+  revalidatePath("/permission-groups");
 
   return { success: true, data: permissionGroup };
 };

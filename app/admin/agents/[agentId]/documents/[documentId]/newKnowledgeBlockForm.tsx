@@ -89,7 +89,7 @@ export default function NewKnowledgeBlockForm({
     if (response.success) {
       toast.success("Knowledge block created with embedding");
       router.push(
-        `/admin/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`
+        `/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`
       );
       return;
     }
@@ -184,7 +184,7 @@ export default function NewKnowledgeBlockForm({
             variant="outline"
             onClick={() =>
               router.push(
-                `/admin/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`
+                `/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`
               )
             }
           >

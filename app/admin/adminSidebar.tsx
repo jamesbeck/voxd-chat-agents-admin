@@ -2,7 +2,6 @@
 
 import {
   Home,
-  Inbox,
   Smartphone,
   FileText,
   Phone,
@@ -70,93 +69,93 @@ const menuItems: MenuItem[] = [
   {
     roles: ["admin"],
     title: "Admin Home",
-    url: "/admin",
+    url: "/",
     icon: Home,
   },
   {
     roles: ["admin", "partner"],
     title: "Organisations",
-    url: "/admin/organisations",
+    url: "/organisations",
     icon: Building,
   },
   {
     roles: ["partner", "admin"],
     title: "Quotes",
-    url: "/admin/quotes",
+    url: "/quotes",
     icon: FileText,
   },
   {
     roles: ["partner"],
     title: "Partner Profile",
-    url: "/admin/partner-profile",
+    url: "/partner-profile",
     icon: Settings,
   },
   {
     title: "Agents",
-    url: "/admin/agents",
+    url: "/agents",
     icon: BotMessageSquare,
   },
   {
     title: "Sessions",
-    url: "/admin/sessions",
+    url: "/sessions",
     icon: MessageCircle,
   },
   {
     title: "Chat Users",
-    url: "/admin/chatUsers",
+    url: "/chatUsers",
     icon: User,
   },
   {
     roles: ["admin", "partner", "organisation"],
     title: "Admin Users",
-    url: "/admin/adminUsers",
+    url: "/adminUsers",
     icon: UserCog,
   },
   {
     title: "Connected Accounts",
-    url: "/admin/oauth-accounts",
+    url: "/oauth-accounts",
     icon: Link2,
   },
   {
     roles: ["admin"],
     title: "Provider API Keys",
-    url: "/admin/provider-api-keys",
+    url: "/provider-api-keys",
     icon: KeyRound,
   },
   {
     roles: ["admin"],
     title: "Activity Log",
-    url: "/admin/log",
+    url: "/log",
     icon: ScrollText,
   },
   {
     roles: ["admin"],
     title: "Tool Calls",
-    url: "/admin/tool-calls",
+    url: "/tool-calls",
     icon: Wrench,
   },
   {
     roles: ["admin"],
     title: "Webhooks",
-    url: "/admin/webhooks",
+    url: "/webhooks",
     icon: Webhook,
   },
   {
     roles: ["admin"],
     title: "Files",
-    url: "/admin/files",
+    url: "/files",
     icon: Paperclip,
   },
   {
     roles: ["admin"],
     title: "Custom Functions",
-    url: "/admin/custom-functions",
+    url: "/custom-functions",
     icon: ListTree,
   },
   {
     roles: ["admin"],
     title: "Custom Function Logs",
-    url: "/admin/custom-function-runs",
+    url: "/custom-function-runs",
     icon: Wrench,
   },
 ];
@@ -228,7 +227,7 @@ export default function AdminSidebar({
                         {agents.map((agent) => (
                           <SidebarMenuSubItem key={agent.id}>
                             <SidebarMenuSubButton asChild>
-                              <Link href={`/admin/agents/${agent.id}`}>
+                              <Link href={`/agents/${agent.id}`}>
                                 <span>{agent.niceName || agent.name}</span>
                               </Link>
                             </SidebarMenuSubButton>
@@ -250,7 +249,7 @@ export default function AdminSidebar({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/permission-groups">
+                    <Link href="/permission-groups">
                       <ShieldEllipsis />
                       <span>Permission Groups</span>
                     </Link>
@@ -258,7 +257,7 @@ export default function AdminSidebar({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/permission-definitions">
+                    <Link href="/permission-definitions">
                       <ShieldCheck />
                       <span>Permission Definitions</span>
                     </Link>
@@ -276,7 +275,7 @@ export default function AdminSidebar({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/wabas">
+                    <Link href="/wabas">
                       <Smartphone />
                       <span>WABAs</span>
                     </Link>
@@ -284,7 +283,7 @@ export default function AdminSidebar({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/phone-numbers">
+                    <Link href="/phone-numbers">
                       <Phone />
                       <span>Phone Numbers</span>
                     </Link>
@@ -302,15 +301,7 @@ export default function AdminSidebar({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/examples">
-                      <Inbox />
-                      <span>Examples</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link href="/admin/faq">
+                    <Link href="/faq">
                       <HelpCircle />
                       <span>FAQ</span>
                     </Link>
@@ -318,7 +309,7 @@ export default function AdminSidebar({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/faq-categories">
+                    <Link href="/faq-categories">
                       <FolderOpen />
                       <span>FAQ Categories</span>
                     </Link>
@@ -326,31 +317,7 @@ export default function AdminSidebar({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/industries">
-                      <Inbox />
-                      <span>Industries</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link href="/admin/functions">
-                      <Inbox />
-                      <span>Functions</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link href="/admin/features">
-                      <Inbox />
-                      <span>Features</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild>
-                    <Link href="/admin/knowledge-sources">
+                    <Link href="/knowledge-sources">
                       <BookOpen />
                       <span>Knowledge Sources</span>
                     </Link>
@@ -358,7 +325,7 @@ export default function AdminSidebar({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/integrations">
+                    <Link href="/integrations">
                       <Plug />
                       <span>Integrations</span>
                     </Link>
@@ -375,7 +342,7 @@ export default function AdminSidebar({
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin/support-tickets">
+                  <Link href="/support-tickets">
                     <Ticket />
                     <span>Support Tickets</span>
                   </Link>
@@ -392,7 +359,7 @@ export default function AdminSidebar({
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/billing/invoices">
+                    <Link href="/billing/invoices">
                       <ReceiptText />
                       <span>Invoices</span>
                     </Link>
@@ -400,7 +367,7 @@ export default function AdminSidebar({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/billing/line-items">
+                    <Link href="/billing/line-items">
                       <ListTree />
                       <span>Line Items</span>
                     </Link>

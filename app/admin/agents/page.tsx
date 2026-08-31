@@ -13,13 +13,13 @@ export default async function Page() {
   return (
     <Container>
       <BreadcrumbSetter
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "Agents" }]}
+        breadcrumbs={[{ label: "Admin", href: "/" }, { label: "Agents" }]}
       />
       <H1>Agents</H1>
 
       <div className="flex justify-end">
         <Button asChild>
-          <Link href="/admin/agents/new">New Agent</Link>
+          <Link href="/agents/new">New Agent</Link>
         </Button>
       </div>
 

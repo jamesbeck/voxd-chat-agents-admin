@@ -38,7 +38,7 @@ export default function CreateInvoiceFromPendingButton({
     }
 
     toast.success(`Invoice #${response.data.number} created`);
-    router.push(`/admin/billing/invoices/${response.data.id}`);
+    router.push(`/billing/invoices/${response.data.id}`);
     router.refresh();
   };
 

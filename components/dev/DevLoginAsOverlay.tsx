@@ -175,7 +175,7 @@ export default function DevLoginAsOverlay({
     }
 
     const currentQueryString = searchParams.toString();
-    const fallbackTargetPath = pathname || "/admin";
+    const fallbackTargetPath = pathname || "/";
     const targetPath = redirectTo || fallbackTargetPath;
     const targetUrl =
       !redirectTo && currentQueryString

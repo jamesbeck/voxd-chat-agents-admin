@@ -23,7 +23,7 @@ export default function KnowledgeSourceActions({
 
     if (result.success) {
       toast.success("Knowledge source deleted");
-      router.push("/admin/knowledge-sources");
+      router.push("/knowledge-sources");
     } else {
       toast.error(result.error || "Failed to delete");
       setIsDeleting(false);

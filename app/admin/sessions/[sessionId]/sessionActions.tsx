@@ -94,7 +94,7 @@ export default function SessionActions({
     // If successful
     toast.success(`Successfully deleted ${name}`);
     setIsDeleteingSession(false);
-    router.push(`/admin/agents/${agentId}?tab=sessions`);
+    router.push(`/agents/${agentId}?tab=sessions`);
   };
 
   const pauseSession = async () => {

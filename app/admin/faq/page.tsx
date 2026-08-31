@@ -20,14 +20,14 @@ export default async function Page() {
   return (
     <Container>
       <BreadcrumbSetter
-        breadcrumbs={[{ label: "Admin", href: "/admin" }, { label: "FAQ" }]}
+        breadcrumbs={[{ label: "Admin", href: "/" }, { label: "FAQ" }]}
       />
       <H1>FAQ</H1>
 
       {isSuperAdmin && (
         <div className="flex justify-end">
           <Button asChild>
-            <Link href="/admin/faq/new">
+            <Link href="/faq/new">
               <Plus className="h-4 w-4 mr-2" />
               New FAQ
             </Link>

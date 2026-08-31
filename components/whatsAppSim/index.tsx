@@ -20,8 +20,6 @@ export default function WhatsAppSim({
   messages,
   businessName,
   startTime,
-  exampleId,
-  logoFileExtension,
   organizationId,
   organizationLogoFileExtension,
   organizationShowLogoOnColour,
@@ -37,8 +35,6 @@ export default function WhatsAppSim({
   }[];
   businessName: string;
   startTime: string;
-  exampleId?: string;
-  logoFileExtension?: string | null;
   organizationId?: string;
   organizationLogoFileExtension?: string | null;
   organizationShowLogoOnColour?: string | null;
@@ -179,15 +175,6 @@ export default function WhatsAppSim({
                     backgroundColor: organizationShowLogoOnColour || "#fff",
                   }}
                   className="rounded-full"
-                />
-              ) : exampleId && logoFileExtension ? (
-                <Image
-                  src={`https://${process.env.NEXT_PUBLIC_WASABI_ENDPOINT}/voxd/exampleLogos/${exampleId}.${logoFileExtension}`}
-                  alt="Logo"
-                  fill
-                  unoptimized
-                  style={{ objectFit: "contain" }}
-                  className="rounded-full bg-white"
                 />
               ) : (
                 <div className="w-full h-full rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">

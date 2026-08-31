@@ -28,7 +28,7 @@ const adminUsersTable = () => {
           return <span className="text-muted-foreground">None</span>;
         }
         return (
-          <TableLink href={`/admin/organisations/${row.organisationId}`}>
+          <TableLink href={`/organisations/${row.organisationId}`}>
             {row.organisationName}
           </TableLink>
         );
@@ -42,7 +42,7 @@ const adminUsersTable = () => {
           return <span className="text-muted-foreground">None</span>;
         }
         return (
-          <TableLink href={`/admin/organisations/${row.partnerId}`}>
+          <TableLink href={`/organisations/${row.partnerId}`}>
             {row.partnerName}
           </TableLink>
         );
@@ -68,7 +68,7 @@ const adminUsersTable = () => {
       columns={columns}
       getData={saGetAdminUserTableData}
       actions={(row: any) => (
-        <TableActions href={`/admin/adminUsers/${row.id}`} />
+        <TableActions href={`/adminUsers/${row.id}`} />
       )}
     />
   );

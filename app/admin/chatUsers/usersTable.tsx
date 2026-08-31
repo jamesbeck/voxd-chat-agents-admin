@@ -14,7 +14,7 @@ const usersTable = () => {
       name: "name",
       sort: true,
       format: (row: any) => (
-        <TableLink href={`/admin/chatUsers/${row.id}`}>{row.name}</TableLink>
+        <TableLink href={`/chatUsers/${row.id}`}>{row.name}</TableLink>
       ),
     },
     {
@@ -48,7 +48,7 @@ const usersTable = () => {
       format: (row: any) => {
         if (!row.agentId) return null;
         return (
-          <TableLink href={`/admin/agents/${row.agentId}`}>
+          <TableLink href={`/agents/${row.agentId}`}>
             {row.agentNiceName}
           </TableLink>
         );
@@ -89,7 +89,7 @@ const usersTable = () => {
       columns={columns}
       getData={saGetUserTableData}
       actions={(row: any) => (
-        <TableActions href={`/admin/chatUsers/${row.id}`} />
+        <TableActions href={`/chatUsers/${row.id}`} />
       )}
     />
   );

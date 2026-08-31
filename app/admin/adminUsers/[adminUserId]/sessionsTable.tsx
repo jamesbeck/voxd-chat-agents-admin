@@ -12,7 +12,7 @@ const SessionsTable = ({ userId }: { userId: string }) => {
       label: "Agent",
       name: "agentName",
       sort: true,
-      linkTo: (row: any) => `/admin/agents/${row.agentId}`,
+      linkTo: (row: any) => `/agents/${row.agentId}`,
     },
     {
       label: "Platform",
@@ -79,7 +79,7 @@ const SessionsTable = ({ userId }: { userId: string }) => {
       getDataParams={{ userId }}
       columns={columns}
       actions={(row: any) => (
-        <TableActions href={`/admin/sessions/${row.id}`} label="View Chat" />
+        <TableActions href={`/sessions/${row.id}`} label="View Chat" />
       )}
     />
   );

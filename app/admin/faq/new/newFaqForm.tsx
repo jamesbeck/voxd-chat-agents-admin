@@ -85,7 +85,7 @@ export default function NewFaqForm({
 
     toast.success("FAQ created successfully");
     setLoading(false);
-    router.push("/admin/faq");
+    router.push("/faq");
   }
 
   async function generateAnswer() {

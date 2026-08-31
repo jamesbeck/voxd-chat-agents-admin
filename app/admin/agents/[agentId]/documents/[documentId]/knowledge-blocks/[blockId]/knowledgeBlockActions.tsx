@@ -44,7 +44,7 @@ export default function KnowledgeBlockActions({
     toast.success(`Successfully deleted Knowledge Block ${blockIndex}`);
     setIsDeleting(false);
     router.push(
-      `/admin/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`,
+      `/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`,
     );
   };
 

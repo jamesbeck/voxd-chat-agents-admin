@@ -103,8 +103,8 @@ const saCreatePermissionDefinition = async ({
     },
   });
 
-  revalidatePath("/admin/permission-definitions");
-  revalidatePath(`/admin/permission-groups/${permissionGroupId}`);
+  revalidatePath("/permission-definitions");
+  revalidatePath(`/permission-groups/${permissionGroupId}`);
 
   return { success: true, data: permissionDefinition };
 };

@@ -263,40 +263,7 @@ export async function generateExampleConversation({
   let context: string = "";
   let businessName: string = "";
 
-  if (conversation.exampleId) {
-    const example = await db("example")
-      .where("id", conversation.exampleId)
-      .first();
-    if (!example) {
-      await markError({
-        conversationId,
-        summary: "Example not found",
-      });
-      throw new Error("Example not found");
-    }
-
-    // Get partner organisation API key via example
-    if (example.organisationId) {
-      const partner = await db("organisation")
-        .leftJoin(
-          "providerApiKey",
-          "organisation.providerApiKeyId",
-          "providerApiKey.id",
-        )
-        .leftJoin("provider", "providerApiKey.providerId", "provider.id")
-        .where("organisation.id", example.organisationId)
-        .select(
-          db.raw('"providerApiKey"."key" as "providerApiKey"'),
-          "provider.name as providerName",
-        )
-        .first();
-      providerApiKey = partner?.providerApiKey || null;
-      providerName = partner?.providerName || null;
-    }
-
-    context = example.body || "No specification provided";
-    businessName = example.businessName || "the business";
-  } else if (conversation.quoteId) {
+  if (conversation.quoteId) {
     const quote = await db("quote")
       .leftJoin("organisation", "quote.organisationId", "organisation.id")
       .leftJoin(
@@ -396,6 +363,12 @@ Other Notes:
 ${quote.otherNotes || "Not specified"}
     `.trim();
     businessName = quote.organisationName || "the organisation";
+  } else {
+    await markError({
+      conversationId,
+      summary: "Quote not found",
+    });
+    throw new Error("Conversation is not associated with a quote");
   }
 
   if (!providerApiKey || !providerName) {

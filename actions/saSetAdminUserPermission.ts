@@ -229,7 +229,7 @@ const saSetAdminUserPermission = async ({
     },
   });
 
-  revalidatePath(`/admin/adminUsers/${adminUserId}`);
+  revalidatePath(`/adminUsers/${adminUserId}`);
 
   return {
     success: true,

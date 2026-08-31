@@ -17,7 +17,7 @@ export default async function ToolCallsPage() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Tool Calls" },
         ]}
       />

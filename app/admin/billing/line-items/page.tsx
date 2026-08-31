@@ -21,7 +21,7 @@ export default async function Page() {
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
+          { label: "Admin", href: "/" },
           { label: "Billing" },
           { label: "Line Items" },
         ]}

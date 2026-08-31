@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { adminRoutePrefixes } from "./lib/adminRoutes";
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -17,6 +18,28 @@ const nextConfig: NextConfig = {
     },
   },
   // cacheComponents: true,
+  async redirects() {
+    return [
+      {
+        source: "/admin",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/admin/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return {
+      beforeFiles: adminRoutePrefixes.map((prefix) => ({
+        source: `${prefix}/:path*`,
+        destination: `/admin${prefix}/:path*`,
+      })),
+    };
+  },
   async headers() {
     return [
       {

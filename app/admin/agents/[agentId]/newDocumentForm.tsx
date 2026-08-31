@@ -111,7 +111,7 @@ export default function NewDocumentForm({ agentId }: { agentId: string }) {
 
     if (response.success) {
       toast.success(`Document "${values.title}" created`);
-      router.push(`/admin/agents/${agentId}?tab=knowledge`);
+      router.push(`/agents/${agentId}?tab=knowledge`);
       return;
     }
 

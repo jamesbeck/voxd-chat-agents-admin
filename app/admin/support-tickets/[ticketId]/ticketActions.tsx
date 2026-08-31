@@ -112,7 +112,7 @@ export default function TicketActions({
 
     toast.success(`Successfully deleted ticket #${ticketNumber}`);
     setIsDeleting(false);
-    router.push("/admin/support-tickets");
+    router.push("/support-tickets");
   };
 
   return (

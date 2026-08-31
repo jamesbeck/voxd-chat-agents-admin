@@ -38,15 +38,15 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
           {
             label: partialPrompt.agentNiceName || "Agent",
-            href: `/admin/agents/${agentId}`,
+            href: `/agents/${agentId}`,
           },
           {
             label: "Partial Prompts",
-            href: `/admin/agents/${agentId}?tab=partial-prompts`,
+            href: `/agents/${agentId}?tab=partial-prompts`,
           },
           { label: partialPrompt.name },
         ]}
@@ -59,12 +59,12 @@ export default async function Page({
           {
             value: "info",
             label: "Info",
-            href: `/admin/agents/${agentId}/partial-prompts/${partialPromptId}?tab=info`,
+            href: `/agents/${agentId}/partial-prompts/${partialPromptId}?tab=info`,
           },
           {
             value: "edit",
             label: "Edit",
-            href: `/admin/agents/${agentId}/partial-prompts/${partialPromptId}?tab=edit`,
+            href: `/agents/${agentId}/partial-prompts/${partialPromptId}?tab=edit`,
           },
         ]}
         actions={

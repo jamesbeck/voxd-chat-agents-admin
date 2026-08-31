@@ -65,15 +65,15 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
           {
             label: document.agentNiceName || "Agent",
-            href: `/admin/agents/${agentId}`,
+            href: `/agents/${agentId}`,
           },
           {
             label: "Knowledge",
-            href: `/admin/agents/${agentId}?tab=knowledge`,
+            href: `/agents/${agentId}?tab=knowledge`,
           },
           { label: document.title },
         ]}
@@ -86,17 +86,17 @@ export default async function Page({
           {
             value: "info",
             label: "Info",
-            href: `/admin/agents/${agentId}/documents/${documentId}?tab=info`,
+            href: `/agents/${agentId}/documents/${documentId}?tab=info`,
           },
           {
             value: "edit",
             label: "Edit",
-            href: `/admin/agents/${agentId}/documents/${documentId}?tab=edit`,
+            href: `/agents/${agentId}/documents/${documentId}?tab=edit`,
           },
           {
             value: "knowledge-blocks",
             label: "Knowledge Blocks",
-            href: `/admin/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`,
+            href: `/agents/${agentId}/documents/${documentId}?tab=knowledge-blocks`,
           },
         ]}
         actions={
@@ -207,7 +207,7 @@ export default async function Page({
                     />
                     <Button asChild>
                       <Link
-                        href={`/admin/agents/${agentId}/documents/${documentId}?tab=smart-import`}
+                        href={`/agents/${agentId}/documents/${documentId}?tab=smart-import`}
                       >
                         <Layers className="h-4 w-4 mr-2" />
                         Smart Import (AI)
@@ -215,7 +215,7 @@ export default async function Page({
                     </Button>
                     <Button asChild variant="outline">
                       <Link
-                        href={`/admin/agents/${agentId}/documents/${documentId}?tab=new-block`}
+                        href={`/agents/${agentId}/documents/${documentId}?tab=new-block`}
                       >
                         <Layers className="h-4 w-4 mr-2" />
                         New Block

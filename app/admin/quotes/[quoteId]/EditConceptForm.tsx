@@ -22,7 +22,6 @@ import { Switch } from "@/components/ui/switch";
 import saUpdateQuoteConcept from "@/actions/saUpdateQuoteConcept";
 import saGenerateQuoteConcept from "@/actions/saGenerateQuoteConcept";
 import { Sparkles, AlertCircle } from "lucide-react";
-import { MarkdownContent } from "@/components/MarkdownContent";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { SimpleMarkdownEditor } from "@/components/SimpleMarkdownEditor";
 import {
@@ -424,7 +423,6 @@ export default function EditConceptForm({
               <FormItem>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {[
-                    { id: "case-studies", label: "Case Studies" },
                     { id: "how-it-works", label: "How It Works" },
                     { id: "portal", label: "Portal" },
                     { id: "service", label: "Service" },

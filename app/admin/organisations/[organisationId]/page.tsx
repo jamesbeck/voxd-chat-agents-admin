@@ -118,8 +118,8 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Organisations", href: "/admin/organisations" },
+          { label: "Admin", href: "/" },
+          { label: "Organisations", href: "/organisations" },
           { label: organisation?.name || "New Organisation" },
         ]}
       />
@@ -133,68 +133,68 @@ export default async function Page({
                 {
                   value: "about",
                   label: "About",
-                  href: `/admin/organisations/${organisation.id}?tab=about`,
+                  href: `/organisations/${organisation.id}?tab=about`,
                 },
                 {
                   value: "logo",
                   label: "Logo & Branding",
-                  href: `/admin/organisations/${organisation.id}?tab=logo`,
+                  href: `/organisations/${organisation.id}?tab=logo`,
                 },
                 {
                   value: "billing",
                   label: "Billing",
-                  href: `/admin/organisations/${organisation.id}?tab=billing`,
+                  href: `/organisations/${organisation.id}?tab=billing`,
                 },
                 ...(token.superAdmin || token.partner
                   ? [
                       {
                         value: "quotes",
                         label: "Quotes",
-                        href: `/admin/organisations/${organisation.id}?tab=quotes`,
+                        href: `/organisations/${organisation.id}?tab=quotes`,
                       },
                     ]
                   : []),
                 {
                   value: "adminUsers",
                   label: "Admin Users",
-                  href: `/admin/organisations/${organisation.id}?tab=adminUsers`,
+                  href: `/organisations/${organisation.id}?tab=adminUsers`,
                 },
                 {
                   value: "chatUsers",
                   label: "Chat Users",
-                  href: `/admin/organisations/${organisation.id}?tab=chatUsers`,
+                  href: `/organisations/${organisation.id}?tab=chatUsers`,
                 },
                 {
                   value: "agents",
                   label: "Agents",
-                  href: `/admin/organisations/${organisation.id}?tab=agents`,
+                  href: `/organisations/${organisation.id}?tab=agents`,
                 },
                 ...(showPartnerTabs
                   ? [
                       {
                         value: "partnerDomains",
                         label: "Domains",
-                        href: `/admin/organisations/${organisation.id}?tab=partnerDomains`,
+                        href: `/organisations/${organisation.id}?tab=partnerDomains`,
                       },
                       {
                         value: "partnerPrototyping",
                         label: "Prototyping",
-                        href: `/admin/organisations/${organisation.id}?tab=partnerPrototyping`,
+                        href: `/organisations/${organisation.id}?tab=partnerPrototyping`,
                       },
                       {
                         value: "partnerSalesAgent",
                         label: "Sales Agent",
-                        href: `/admin/organisations/${organisation.id}?tab=partnerSalesAgent`,
+                        href: `/organisations/${organisation.id}?tab=partnerSalesAgent`,
                       },
                       {
                         value: "partnerPricing",
                         label: "Pricing",
-                        href: `/admin/organisations/${organisation.id}?tab=partnerPricing`,
+                        href: `/organisations/${organisation.id}?tab=partnerPricing`,
                       },
                       {
                         value: "partnerContactLegal",
                         label: "Contact & Legal",
-                        href: `/admin/organisations/${organisation.id}?tab=partnerContactLegal`,
+                        href: `/organisations/${organisation.id}?tab=partnerContactLegal`,
                       },
                     ].filter(
                       (tab) =>
@@ -206,7 +206,7 @@ export default async function Page({
                       {
                         value: "providerApiKeys",
                         label: "API Keys",
-                        href: `/admin/organisations/${organisation.id}?tab=providerApiKeys`,
+                        href: `/organisations/${organisation.id}?tab=providerApiKeys`,
                       },
                     ]
                   : []),

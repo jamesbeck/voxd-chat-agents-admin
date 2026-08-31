@@ -128,7 +128,7 @@ export default function AgentTicketBadge({
                   </div>
                 </div>
                 <Button size="sm" variant="outline" asChild>
-                  <Link href={`/admin/support-tickets/${ticket.id}`}>
+                  <Link href={`/support-tickets/${ticket.id}`}>
                     View
                     <ExternalLink className="ml-2 h-3 w-3" />
                   </Link>

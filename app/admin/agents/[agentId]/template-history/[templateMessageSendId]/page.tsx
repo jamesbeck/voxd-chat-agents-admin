@@ -66,12 +66,12 @@ export default async function Page({
     <Container>
       <BreadcrumbSetter
         breadcrumbs={[
-          { label: "Admin", href: "/admin" },
-          { label: "Agents", href: "/admin/agents" },
-          { label: "Agent", href: `/admin/agents/${agentId}` },
+          { label: "Admin", href: "/" },
+          { label: "Agents", href: "/agents" },
+          { label: "Agent", href: `/agents/${agentId}` },
           {
             label: "Template History",
-            href: `/admin/agents/${agentId}?tab=template-history`,
+            href: `/agents/${agentId}?tab=template-history`,
           },
           { label: send.templateName || "Template Send" },
         ]}

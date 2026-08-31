@@ -50,8 +50,8 @@ export async function GET(request: NextRequest) {
   const getRedirectUrls = (originDomain: string | null | undefined) => {
     const baseUrl = getRedirectBaseUrl(partners, originDomain);
     return {
-      errorPageUrl: `${baseUrl}/admin/oauth-accounts/error`,
-      successUrl: `${baseUrl}/admin/oauth-accounts`,
+      errorPageUrl: `${baseUrl}/oauth-accounts/error`,
+      successUrl: `${baseUrl}/oauth-accounts`,
     };
   };
 
@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
 
     // For catch block errors, we don't have access to originDomain from state
     // Fall back to default URL
-    const catchErrorUrl = `${fallbackUrl}/admin/oauth-accounts/error`;
+    const catchErrorUrl = `${fallbackUrl}/oauth-accounts/error`;
     return NextResponse.redirect(
       `${catchErrorUrl}?error=${encodeURIComponent(errorMessage)}`,
     );

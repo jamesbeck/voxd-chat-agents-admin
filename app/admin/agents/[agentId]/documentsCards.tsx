@@ -306,7 +306,7 @@ const DocumentsCards = ({ agentId }: { agentId: string }) => {
                         size="sm"
                       >
                         <Link
-                          href={`/admin/agents/${agentId}/documents/${block.documentId}`}
+                          href={`/agents/${agentId}/documents/${block.documentId}`}
                         >
                           <FileText className="h-3 w-3 mr-1" />
                           Document
@@ -314,7 +314,7 @@ const DocumentsCards = ({ agentId }: { agentId: string }) => {
                       </Button>
                       <Button asChild className="flex-1" size="sm">
                         <Link
-                          href={`/admin/agents/${agentId}/documents/${block.documentId}/knowledge-blocks/${block.blockId}`}
+                          href={`/agents/${agentId}/documents/${block.documentId}/knowledge-blocks/${block.blockId}`}
                         >
                           <Layers className="h-3 w-3 mr-1" />
                           Block
@@ -408,7 +408,7 @@ const DocumentsCards = ({ agentId }: { agentId: string }) => {
               <CardFooter className="border-t mt-auto">
                 <Button asChild className="w-full" variant="outline">
                   <Link
-                    href={`/admin/agents/${agentId}/documents/${doc.id}`}
+                    href={`/agents/${agentId}/documents/${doc.id}`}
                     className="flex items-center justify-center gap-2"
                   >
                     View Document

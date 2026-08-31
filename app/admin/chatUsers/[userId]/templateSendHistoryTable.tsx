@@ -57,7 +57,7 @@ const TemplateSendHistoryTable = ({
       actions={(row: any) =>
         row.templateMessageSendId ? (
           <TableActions
-            href={`/admin/agents/${agentId}/template-history/${row.templateMessageSendId}`}
+            href={`/agents/${agentId}/template-history/${row.templateMessageSendId}`}
             label="View Send"
           />
         ) : null

@@ -145,7 +145,7 @@ function LogEntryCard({ log }: { log: LogEntry }) {
                 <span>
                   {log.adminUserName && (
                     <Link
-                      href={`/admin/adminUsers/${log.adminUserId}`}
+                      href={`/adminUsers/${log.adminUserId}`}
                       className="text-primary hover:underline"
                     >
                       {log.adminUserName}{" "}
@@ -188,7 +188,7 @@ function LogEntryCard({ log }: { log: LogEntry }) {
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {log.organisationId && (
-                    <Link href={`/admin/organisations/${log.organisationId}`}>
+                    <Link href={`/organisations/${log.organisationId}`}>
                       <Badge
                         variant="outline"
                         className="cursor-pointer hover:bg-accent"
@@ -199,7 +199,7 @@ function LogEntryCard({ log }: { log: LogEntry }) {
                     </Link>
                   )}
                   {log.partnerId && (
-                    <Link href={`/admin/organisations/${log.partnerId}`}>
+                    <Link href={`/organisations/${log.partnerId}`}>
                       <Badge
                         variant="outline"
                         className="cursor-pointer hover:bg-accent"
@@ -210,7 +210,7 @@ function LogEntryCard({ log }: { log: LogEntry }) {
                     </Link>
                   )}
                   {log.sessionId && (
-                    <Link href={`/admin/sessions/${log.sessionId}`}>
+                    <Link href={`/sessions/${log.sessionId}`}>
                       <Badge
                         variant="outline"
                         className="cursor-pointer hover:bg-accent"
@@ -221,7 +221,7 @@ function LogEntryCard({ log }: { log: LogEntry }) {
                     </Link>
                   )}
                   {log.agentId && (
-                    <Link href={`/admin/agents/${log.agentId}`}>
+                    <Link href={`/agents/${log.agentId}`}>
                       <Badge
                         variant="outline"
                         className="cursor-pointer hover:bg-accent"
@@ -232,7 +232,7 @@ function LogEntryCard({ log }: { log: LogEntry }) {
                     </Link>
                   )}
                   {log.chatUserId && (
-                    <Link href={`/admin/chatUsers/${log.chatUserId}`}>
+                    <Link href={`/chatUsers/${log.chatUserId}`}>
                       <Badge
                         variant="outline"
                         className="cursor-pointer hover:bg-accent"

@@ -83,7 +83,7 @@ export default function NewQuoteForm({
 
     if (response.success) {
       toast.success(`Quote ${values.title} created`);
-      router.push(`/admin/quotes/${response.data.id}`);
+      router.push(`/quotes/${response.data.id}`);
     }
 
     setLoading(false);
