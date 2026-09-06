@@ -145,6 +145,26 @@ const saSendLoginCode = async ({
           )} minutes.\n\nIf you didn't request this code, please ignore this email.`,
         });
 
+        if (emailR.error) {
+          await addLog({
+            adminUserId: adminUser.id,
+            event: "OTP Email Failed",
+            description: `Failed to send login code to ${adminUser.email}`,
+            organisationId: adminUser.organisationId || undefined,
+            data: {
+              email: adminUser.email,
+              resendError: emailR.error,
+            },
+          });
+
+          return {
+            success: false,
+            fieldErrors: {
+              root: "Failed to send login code. Please try again later.",
+            },
+          };
+        }
+
         console.log("Email sent", emailR);
 
         // Log OTP email sent
@@ -156,7 +176,6 @@ const saSendLoginCode = async ({
           data: {
             email: adminUser.email,
             resendEmailId: emailR.data?.id,
-            resendError: emailR.error || undefined,
           },
         });
       } catch (error) {
