@@ -51,9 +51,7 @@ export default function LineItemsTable({
 }) {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const canCreateLineItems =
-    agentOptions.length > 0 &&
-    organisationOptions.length > 0 &&
-    partnerOptions.length > 0;
+    organisationOptions.length > 0 && partnerOptions.length > 0;
 
   const columns = [
     {
@@ -89,11 +87,14 @@ export default function LineItemsTable({
       label: "Agent",
       name: "agentName",
       sort: true,
-      format: (row: any) => (
-        <TableLink href={`/agents/${row.agentId}`}>
-          {row.agentNiceName || row.agentName}
-        </TableLink>
-      ),
+      format: (row: any) =>
+        row.agentId ? (
+          <TableLink href={`/agents/${row.agentId}`}>
+            {row.agentNiceName || row.agentName || row.agentId}
+          </TableLink>
+        ) : (
+          "-"
+        ),
     },
     {
       label: "Invoice",

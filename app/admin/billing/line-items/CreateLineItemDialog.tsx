@@ -37,7 +37,7 @@ import saCreateInvoiceLineItem from "@/actions/saCreateInvoiceLineItem";
 const formSchema = z
   .object({
     invoiceId: z.string().optional(),
-    agentId: z.string().min(1, "Agent ID is required"),
+    agentId: z.string().optional(),
     toOrganisationId: z.string().optional(),
     toPartnerId: z.string().optional(),
     serviceFromDate: z.string().optional(),
@@ -181,7 +181,7 @@ export default function CreateLineItemDialog({
                 name="agentId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Agent</FormLabel>
+                    <FormLabel>Agent (optional)</FormLabel>
                     <div className="flex gap-2">
                       <FormControl>
                         <Select
@@ -189,7 +189,7 @@ export default function CreateLineItemDialog({
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select an agent" />
+                            <SelectValue placeholder="Optional agent" />
                           </SelectTrigger>
                           <SelectContent>
                             {agentOptions.map((agent) => (
@@ -225,7 +225,7 @@ export default function CreateLineItemDialog({
                       <FormControl>
                         <Select
                           value={field.value}
-                          onValueChange={field.onChange}
+                          onValueChange={selectToOrganisation}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select an organisation" />

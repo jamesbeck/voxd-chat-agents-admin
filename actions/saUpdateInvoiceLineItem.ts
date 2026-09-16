@@ -30,7 +30,7 @@ const saUpdateInvoiceLineItem = async ({
 }: {
   lineItemId: string;
   invoiceId?: string;
-  agentId: string;
+  agentId?: string;
   toOrganisationId?: string;
   toPartnerId?: string;
   serviceFromDate?: string;
@@ -44,6 +44,7 @@ const saUpdateInvoiceLineItem = async ({
   const resolvedToOrganisationId = emptyToNull(toOrganisationId);
   const resolvedToPartnerId = emptyToNull(toPartnerId);
   const resolvedInvoiceId = emptyToNull(invoiceId);
+  const resolvedAgentId = emptyToNull(agentId);
   const resolvedServiceFromDate = emptyToNull(serviceFromDate);
   const resolvedServiceToDate = emptyToNull(serviceToDate);
 
@@ -71,7 +72,7 @@ const saUpdateInvoiceLineItem = async ({
 
   await db("invoiceLineItem").where({ id: lineItemId }).update({
     invoiceId: resolvedInvoiceId,
-    agentId,
+    agentId: resolvedAgentId,
     toOrganisationId: resolvedToOrganisationId,
     toPartnerId: resolvedToPartnerId,
     serviceFromDate: resolvedServiceFromDate,
@@ -88,7 +89,7 @@ const saUpdateInvoiceLineItem = async ({
     data: {
       lineItemId,
       invoiceId: resolvedInvoiceId,
-      agentId,
+      agentId: resolvedAgentId,
       toOrganisationId: resolvedToOrganisationId,
       toPartnerId: resolvedToPartnerId,
       serviceFromDate: resolvedServiceFromDate,

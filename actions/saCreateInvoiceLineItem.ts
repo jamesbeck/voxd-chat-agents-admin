@@ -30,7 +30,7 @@ const saCreateInvoiceLineItem = async ({
   VAT,
 }: {
   invoiceId?: string;
-  agentId: string;
+  agentId?: string;
   toOrganisationId?: string;
   toPartnerId?: string;
   serviceFromDate?: string;
@@ -44,6 +44,7 @@ const saCreateInvoiceLineItem = async ({
   const resolvedToOrganisationId = emptyToNull(toOrganisationId);
   const resolvedToPartnerId = emptyToNull(toPartnerId);
   const resolvedInvoiceId = emptyToNull(invoiceId);
+  const resolvedAgentId = emptyToNull(agentId);
   const resolvedServiceFromDate = emptyToNull(serviceFromDate);
   const resolvedServiceToDate = emptyToNull(serviceToDate);
 
@@ -54,7 +55,10 @@ const saCreateInvoiceLineItem = async ({
     };
   }
 
-  if (!(await userCanViewAgent({ agentId, accessToken }))) {
+  if (
+    resolvedAgentId &&
+    !(await userCanViewAgent({ agentId: resolvedAgentId, accessToken }))
+  ) {
     return {
       success: false,
       error: "Agent not found",
@@ -108,7 +112,7 @@ const saCreateInvoiceLineItem = async ({
   const createdLineItem = await db("invoiceLineItem")
     .insert({
       invoiceId: resolvedInvoiceId,
-      agentId,
+      agentId: resolvedAgentId,
       toOrganisationId: resolvedToOrganisationId,
       toPartnerId: resolvedToPartnerId,
       serviceFromDate: resolvedServiceFromDate,
@@ -128,7 +132,7 @@ const saCreateInvoiceLineItem = async ({
     data: {
       lineItemId,
       invoiceId: resolvedInvoiceId,
-      agentId,
+      agentId: resolvedAgentId,
       toOrganisationId: resolvedToOrganisationId,
       toPartnerId: resolvedToPartnerId,
       serviceFromDate: resolvedServiceFromDate,

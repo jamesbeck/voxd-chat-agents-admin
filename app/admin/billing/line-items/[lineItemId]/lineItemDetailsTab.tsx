@@ -30,7 +30,7 @@ import saUpdateInvoiceLineItem from "@/actions/saUpdateInvoiceLineItem";
 const formSchema = z
   .object({
     invoiceId: z.string().optional(),
-    agentId: z.string().min(1),
+    agentId: z.string().optional(),
     toOrganisationId: z.string().optional(),
     toPartnerId: z.string().optional(),
     serviceFromDate: z.string().optional(),
@@ -174,7 +174,7 @@ export default function LineItemDetailsTab({
             name="agentId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Agent</FormLabel>
+                <FormLabel>Agent (optional)</FormLabel>
                 <div className="flex gap-2">
                   <FormControl>
                     <Select
@@ -183,7 +183,7 @@ export default function LineItemDetailsTab({
                       disabled={!canEdit}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select an agent" />
+                        <SelectValue placeholder="Optional agent" />
                       </SelectTrigger>
                       <SelectContent>
                         {agentOptions.map((agent) => (
