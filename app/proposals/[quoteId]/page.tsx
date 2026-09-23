@@ -1012,10 +1012,10 @@ export default async function PublicQuotePage({
                   Meta/WhatsApp Costs
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Only messages sent outside the 24-hour reply window are
-                  chargeable. These messages must be templated and pre-approved
-                  by Meta. Costs vary but are typically around 1.7p for an
-                  admin/transactional message and 3.5p for a marketing message.
+                  Messages sent outside the 24-hour reply window must be
+                  templated and pre-approved by Meta. All outbound messages are
+                  chargeable by Meta, costs vary by region and nature or
+                  message.
                 </p>
               </div>
             </section>
